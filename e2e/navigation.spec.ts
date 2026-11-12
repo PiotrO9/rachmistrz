@@ -145,12 +145,12 @@ test("menu mobilne: nawigacja, zamykanie i zmiana szerokości", async ({
   const close = dialog.getByRole("button", { name: "Zamknij menu" });
   await expect(close).toBeFocused();
   await page.keyboard.press("Shift+Tab");
-  await expect(nav.getByRole("button", { name: "Zainstaluj" })).toBeFocused();
+  await expect(nav.getByRole("button", { name: "Historia" })).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(close).toBeFocused();
   await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
   await expect(dialog).toHaveCSS("height", "800px");
-  await expect(nav.getByRole("button")).toHaveCount(4);
+  await expect(nav.getByRole("button")).toHaveCount(3);
   await expect(nav.getByRole("button", { name: "Trening" })).toHaveAttribute(
     "aria-current",
     "page",
@@ -184,13 +184,10 @@ test("menu mobilne: nawigacja, zamykanie i zmiana szerokości", async ({
     equation!,
   );
   await toggle.click();
-  await nav.getByRole("button", { name: "Zainstaluj" }).click();
-  await expect(nav).toBeHidden();
-  await toggle.click();
   await page.setViewportSize({ width: 1280, height: 800 });
   await expect(toggle).toBeHidden();
   await expect(nav).toBeVisible();
-  await expect(page.getByRole("button", { name: "Zainstaluj" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Zainstaluj" })).toHaveCount(0);
   await page.setViewportSize({ width: 320, height: 700 });
   await expect(nav).toBeHidden();
   await toggle.click();

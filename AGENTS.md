@@ -14,6 +14,7 @@
 - Rozpoczętego zadania nie zmieniaj po ustawieniach, jeśli jego działanie pozostaje włączone. Nie oceniaj nowego poziomu zadaniem ze starszej epoki.
 - Weryfikacja: `npm run check` oraz `npm run test:e2e` po buildzie. Node 22.13+ lub 24+. Offline weryfikuj na buildzie produkcyjnym przez `npm run preview`.
 - Nie otwieraj automatycznie widocznego podglądu. Testy przeglądarki wykonuj bez przejmowania fokusu.
+- Komunikaty commitów pisz po angielsku zgodnie z Conventional Commits: `type(scope): description` (scope opcjonalny). Przy proponowaniu lub tworzeniu commitów używaj skilla `conventional-commits`; dobieraj typ do rzeczywistej zmiany, np. `feat`, `fix`, `docs`, `refactor`, `test`, `chore`.
 
 ## Dokumentacja i skille
 

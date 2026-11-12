@@ -188,3 +188,15 @@ kbd {
     font-size: clamp(4rem, 12vh, 6rem);
   }
 }
+
+.unaryEquation {
+  display: block;
+  padding-block: 0.5em;
+}
+.unaryEquation sup {
+  font-size: 0.45em;
+  vertical-align: super;
+}
+.radical > span {
+  border-top: 0.025em solid currentColor;
+}

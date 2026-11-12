@@ -21,6 +21,8 @@ export function defaults(): SavedProgress {
       subtract: module(),
       multiply: module(),
       divide: module(),
+      power: { ...module(), enabled: false },
+      root: { ...module(), enabled: false },
     },
     history: [],
   };

@@ -9,8 +9,9 @@ import {
   type LevelChange,
   type Level,
 } from "../domain/types";
+import { defaults } from "../domain/defaults";
 import { ADAPTATION } from "../domain/config";
-export type PreviousSaved = Omit<SavedProgress, "version"> & { version: 2 };
+export type PreviousSaved = Omit<SavedProgress, "version"> & { version: 2 | 3 };
 export interface LegacySaved {
   version: 1;
   modules: SavedProgress["modules"];
@@ -79,10 +80,53 @@ const isLevelChange = (x: unknown): x is LevelChange =>
 export function validateStored(
   x: unknown,
 ): SavedProgress | PreviousSaved | LegacySaved {
+  if (isRecord(x) && (x.version === 1 || x.version === 2 || x.version === 3)) {
+    const initial = defaults();
+    x = {
+      ...x,
+      modules: isRecord(x.modules)
+        ? {
+            ...x.modules,
+            power: initial.modules.power,
+            root: initial.modules.root,
+          }
+        : x.modules,
+      history: Array.isArray(x.history)
+        ? x.history.map((day: unknown) =>
+            isRecord(day)
+              ? {
+                  ...day,
+                  modules: isRecord(day.modules)
+                    ? { ...day.modules, power: 0, root: 0 }
+                    : day.modules,
+                  details: isRecord(day.details)
+                    ? {
+                        ...day.details,
+                        power: {
+                          solved: 0,
+                          skipped: 0,
+                          corrections: 0,
+                          clean: 0,
+                        },
+                        root: {
+                          solved: 0,
+                          skipped: 0,
+                          corrections: 0,
+                          clean: 0,
+                        },
+                      }
+                    : day.details,
+                }
+              : day,
+          )
+        : x.history,
+    };
+  }
   if (
     !isRecord(x) ||
     (x.version !== 1 &&
       x.version !== 2 &&
+      x.version !== 3 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");

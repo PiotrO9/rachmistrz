@@ -35,6 +35,8 @@ describe("generatory", () => {
             expect(t.b).toBeLessThanOrEqual(99);
             expect(t.answer).toBe(t.a * t.b);
           }
+          if (op === "power") expect(t.answer).toBe(t.a ** t.b);
+          if (op === "root") expect(t.answer ** t.b).toBe(t.a);
           if (op === "divide") {
             expect(t.b).toBeGreaterThan(0);
             expect(t.a % t.b).toBe(0);

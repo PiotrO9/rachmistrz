@@ -15,7 +15,7 @@ describe("format danych", () => {
     previous.theme = "dark";
     const raw = JSON.stringify({ ...previous, version: 2 });
     const migrated = parseSaved(raw);
-    expect(migrated.version).toBe(3);
+    expect(migrated.version).toBe(4);
     expect(migrated.history).toEqual(previous.history);
     expect(migrated.changes).toEqual(previous.changes);
     expect(migrated.theme).toBe("dark");
@@ -58,12 +58,19 @@ describe("format danych", () => {
           solved: 7,
           skipped: 2,
           corrections: 3,
-          modules: { add: 9, subtract: 0, multiply: 0, divide: 0 },
+          modules: {
+            add: 9,
+            subtract: 0,
+            multiply: 0,
+            divide: 0,
+            power: 0,
+            root: 0,
+          },
         },
       ],
     };
     const saved = parseSaved(JSON.stringify(old));
-    expect(saved.version).toBe(3);
+    expect(saved.version).toBe(4);
     expect(saved.history[0].solved).toBe(7);
     expect(saved.history[0].details).toBeUndefined();
     expect(saved.changes).toEqual([]);
@@ -76,7 +83,14 @@ describe("format danych", () => {
         solved: 7,
         skipped: 0,
         corrections: 0,
-        modules: { add: 7, subtract: 0, multiply: 0, divide: 0 },
+        modules: {
+          add: 7,
+          subtract: 0,
+          multiply: 0,
+          divide: 0,
+          power: 0,
+          root: 0,
+        },
       },
     ];
     const next = record(
@@ -99,7 +113,14 @@ describe("format danych", () => {
             solved: 0,
             skipped: 0,
             corrections: 0,
-            modules: { add: 0, subtract: 0, multiply: 0, divide: 0 },
+            modules: {
+              add: 0,
+              subtract: 0,
+              multiply: 0,
+              divide: 0,
+              power: 0,
+              root: 0,
+            },
           },
         ],
       }),

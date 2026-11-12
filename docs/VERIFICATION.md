@@ -170,3 +170,17 @@ Cloudflare Wrangler sprawdzony: brak zalogowanego konta. Wdrożenie publiczne ni
 - Dodatkowy pomiar pełnego `npm run build`: 3,183 s. Sam komunikat Vite wskazał 131 ms; nie obejmuje wcześniejszego sprawdzania typów ani późniejszego generowania service workera. W osobnych przebiegach od komunikatu o bundlu do zakończenia procesu upłynęło 1,089–1,122 s (etap PWA i zamknięcie procesu).
 - Build: główny JS 355,49 kB / 114,96 kB gzip, CSS 21,53 kB / 8,02 kB gzip, precache 480,64 KiB. Dane pomiaru: `output/build-timings.json`; skrypt: `output/measure-build.cjs`.
 - Nie zmieniano kodu ani konfiguracji aplikacji. Nie powtarzano testów funkcjonalnych; pomiar dotyczył wyłącznie czasu i powodzenia buildu. Nie obejmuje instalacji zależności, zimnego cache, infrastruktury CI ani publikacji na Cloudflare.
+
+## Opcjonalne potęgowanie i pierwiastkowanie — 12 listopada 2026
+
+- Dodano domyślnie wyłączone działania, pięć poziomów, wyjaśnienia, zapis v4 i migrację v1–v3. Test v3 usuwa nowe pola z wejścia i potwierdza zachowanie starej historii, bloków i epok; zapis v4 wymaga kompletu nowych pól.
+- `npm exec --yes --package=node@22 -- npm run check`: formatowanie, lint, 127/127 testów, TypeScript i produkcyjny build PWA przeszły. Pierwszy przebieg wykrył brak równania końcowego w wyjaśnieniu pierwiastka; poprawiono wyjaśnienie i rozszerzono parser testowy o matematyczną weryfikację pierwiastków.
+- `npm exec --yes --package=node@22 -- npm run test:e2e -- --workers=4`: końcowo 16/16 scenariuszy Chromium headless. Nowy scenariusz obejmuje domyślne wyłączenie, ręczne włączenie, poprawną odpowiedź, zapis po przeładowaniu, zmianę poziomu i wyłączenie. Dotychczasowe regresje obejmują migracje, retry, kopie, dwie karty, offline i aktualizację PWA.
+- Sprawdzono brak poziomego przewijania dla nowego zadania przy 320 i 1280 px; obejrzano zrzut pierwiastka przy 320 px. Zrzuty: `output/optional-root-320.png` i `output/optional-root-1280.png`. Nie otwierano widocznego podglądu.
+- Nie wykonano testów na fizycznym telefonie, w Safari ani z czytnikiem ekranu. Nie publikowano aplikacji.
+
+## Usunięcie interfejsu instalacji — 12 listopada 2026
+
+- Usunięto przycisk instalacji z nagłówka i menu mobilnego, instrukcję instalacji oraz przechwytywanie `beforeinstallprompt`. Instalacja pozostaje po stronie przeglądarki. Obsługa aktualizacji PWA pozostaje aktywna. Dostosowano test pętli fokusu do trzech pozycji menu.
+- `npm run check` przez `npm exec --yes --package=node@22`: formatowanie, lint, 127/127 testów, TypeScript i build PWA przeszły. Następnie `npm run test:e2e -- --workers=4` w tym samym środowisku: 16/16 testów Chromium headless, w tym nawigacja, układy mobilne, offline i aktualizacja PWA.
+- Nie sprawdzano instalacji na fizycznym urządzeniu ani w Safari. Nie publikowano aplikacji.

@@ -2,6 +2,8 @@
 
 Minimalistyczny, nieskończony trening liczenia w pamięci. React + TypeScript + Vite, instalowalna PWA, bez backendu i kont.
 
+Pytania użytkowników i odpowiedzi: [FAQ](docs/FAQ.md).
+
 Favicon przedstawia znak „r·” z nagłówka na jasnym, zaokrąglonym tle.
 
 ## Uruchomienie
@@ -20,15 +22,15 @@ Test aktualizacji PWA tworzy dodatkowy build i osobny preview na wolnym porcie. 
 
 ## Działanie
 
-Na ekranach do 650 px przycisk menu w nagłówku wysuwa z prawej strony panel z Treningiem, Ustawieniami, Historią i instalacją aplikacji. Panel przyciemnia tło i blokuje jego przewijanie. Zamyka się po wyborze opcji, kliknięciu tła, przyciskiem zamknięcia lub Escape; fokus wraca do przycisku menu. Na większych ekranach dostępne są zakładki.
+Na ekranach do 650 px przycisk menu w nagłówku wysuwa z prawej strony panel z Treningiem, Ustawieniami i Historią. Panel przyciemnia tło i blokuje jego przewijanie. Zamyka się po wyborze opcji, kliknięciu tła, przyciskiem zamknięcia lub Escape; fokus wraca do przycisku menu. Na większych ekranach dostępne są zakładki.
 
 W widoku treningu wystarczy zacząć wpisywać cyfry: jeśli fokus jest poza odpowiedzią, pierwsza cyfra przenosi go do pola i od razu trafia do wpisu. Pole jest pomijane klawiszem Tab i nie przejmuje fokusu po kliknięciu myszą. Na telefonie dotknięcie pola nadal umożliwia otwarcie klawiatury. Wpisywanie w innych polach i kontrolkach oraz skróty Ctrl/Alt/Meta nie są przechwytywane.
 
-Poprawny wynik automatycznie zmienia zadanie. Błędny pozostaje do ręcznej korekty. Enter i Spacja w polu odpowiedzi pomijają zadanie. Na desktopie „Pomiń zadanie” jest nieklikalną podpowiedzią skrótów; na ekranach do 650 px i urządzeniach ze wskaźnikiem dotykowym jest przyciskiem. Opcjonalne rozwiązanie po pominięciu czeka na kolejne potwierdzenie, bez podwójnego liczenia pominięć. Domyślnie wszystkie działania, poziom 1, adaptacja włączona, rozwiązania wyłączone. Pięć poziomów, wyniki całkowite, brak liczb ujemnych. Generator wybiera rodziny zadań o określonych umiejętnościach: około 80% bieżącego poziomu i 20% powtórek z poprzedniego. Na poziomie 1 nie ma powtórek. Dodawanie i odejmowanie przechodzą od liczb do 20 przez dwucyfrowe do trzycyfrowych z wieloma przeniesieniami i pożyczkami. Mnożenie przechodzi od mnożników 2, 5 i 10 do tabliczki, mnożenia przez jedną cyfrę, wygodnych mnożników 11/12/15/25 i pełnych działań dwucyfrowych. Dzielenie ma osobną drabinkę: od tabliczki do dzielników dwucyfrowych; dzielna nie przekracza 999. Opisy w ustawieniach pokazują przykłady.
+Poprawny wynik automatycznie zmienia zadanie. Błędny pozostaje do ręcznej korekty. Enter i Spacja w polu odpowiedzi pomijają zadanie. Na desktopie „Pomiń zadanie” jest nieklikalną podpowiedzią skrótów; na ekranach do 650 px i urządzeniach ze wskaźnikiem dotykowym jest przyciskiem. Opcjonalne rozwiązanie po pominięciu czeka na kolejne potwierdzenie, bez podwójnego liczenia pominięć. Domyślnie cztery podstawowe działania, poziom 1, adaptacja włączona, rozwiązania wyłączone. Pięć poziomów, wyniki całkowite, brak liczb ujemnych. Generator wybiera rodziny zadań o określonych umiejętnościach: około 80% bieżącego poziomu i 20% powtórek z poprzedniego. Na poziomie 1 nie ma powtórek. Dodawanie i odejmowanie przechodzą od liczb do 20 przez dwucyfrowe do trzycyfrowych z wieloma przeniesieniami i pożyczkami. Mnożenie przechodzi od mnożników 2, 5 i 10 do tabliczki, mnożenia przez jedną cyfrę, wygodnych mnożników 11/12/15/25 i pełnych działań dwucyfrowych. Dzielenie ma osobną drabinkę: od tabliczki do dzielników dwucyfrowych; dzielna nie przekracza 999. Opisy w ustawieniach pokazują przykłady.
 
 Każde działanie oceniamy osobno w blokach po 8 zadań. Dwa kolejne dobre bloki (minimum 7 odpowiedzi bez poprawek i zero pominięć) podnoszą poziom. Dwa kolejne trudne bloki (minimum 3 pominięcia, 5 poprawianych zadań lub 8 poprawek) obniżają go. Neutralny blok przerywa serię. Granice 1–5. Czas nie wpływa na poziom. Seria kasowania i ponownego wpisywania liczy się jako jedna poprawka; dopisywanie cyfr nie jest błędem. To przybliżenie obejmujące literówki.
 
-Historia dzienna (maks. 365 dni aktywności), ustawienia i adaptacja zapisują się transakcyjnie w IndexedDB, format v3. Formaty v1 i v2 są migrowane automatycznie: historia, motyw i numery poziomów pozostają zachowane, a bloki i trendy adaptacji są jednorazowo zerowane. Starsze karty po migracji wymagają aktualizacji. Zapis v1 z localStorage jest migrowany automatycznie i pozostaje nietknięty jako źródło migracji. Karty tej samej przeglądarki synchronizują się, a transakcje zapobiegają utracie równoczesnych odpowiedzi. Brak synchronizacji między urządzeniami — służą do tego eksport/import pliku JSON w ustawieniach. Import wymaga podglądu i potwierdzenia zastąpienia danych.
+Historia dzienna (maks. 365 dni aktywności), ustawienia i adaptacja zapisują się transakcyjnie w IndexedDB, format v4. Format v3 jest migrowany z zachowaniem dotychczasowej adaptacji i dodaniem wyłączonych modułów potęgowania i pierwiastkowania. Formaty v1 i v2 są migrowane automatycznie: historia, motyw i numery poziomów pozostają zachowane, a bloki i trendy adaptacji są jednorazowo zerowane. Starsze karty po migracji wymagają aktualizacji. Zapis v1 z localStorage jest migrowany automatycznie i pozostaje nietknięty jako źródło migracji. Karty tej samej przeglądarki synchronizują się, a transakcje zapobiegają utracie równoczesnych odpowiedzi. Brak synchronizacji między urządzeniami — służą do tego eksport/import pliku JSON w ustawieniach. Import wymaga podglądu i potwierdzenia zastąpienia danych.
 
 Historia pokazuje wyniki według działań, udział rozwiązań bez poprawek, pominięcia i zmiany poziomów (maks. 500). Szczegóły są liczone dopiero od v2; starsze sumy pozostają zachowane bez szacowania brakujących danych. Zmiana ustawień nie usuwa bieżącego zadania, dopóki jego działanie jest włączone. Zakończenie zadania rozpoczętego przed ręczną zmianą poziomu trafia do historii, lecz nie ocenia nowego modelu adaptacji. Aktualnego zadania i wpisu nie zachowujemy po przeładowaniu. Nieudana transakcja zachowuje wpis w otwartej karcie i udostępnia przycisk ponowienia. Kopię można zaimportować również po błędzie odczytu; uszkodzone dane nie są automatycznie zerowane.
 
@@ -61,4 +63,10 @@ Ustawienia pokazują postęp bieżącego bloku i kierunek poprzedniej oceny. Pro
 
 ## Dalszy rozwój
 
-Liczby ujemne, ułamki, procenty i potęgi. Generator oraz reguły poziomów dodawaj niezależnie od widoku gry. Reguły adaptacji są punktem wyjścia do oceny w praktyce.
+Liczby ujemne, ułamki i procenty. Generator oraz reguły poziomów dodawaj niezależnie od widoku gry. Reguły adaptacji są punktem wyjścia do oceny w praktyce.
+
+## Opcjonalne działania
+
+W ustawieniach można osobno włączyć potęgowanie i pierwiastkowanie. Domyślnie są wyłączone, również po aktualizacji. Zestaw „Podstawowe działania” obejmuje cztery dotychczasowe działania. Nowe działania mają własne poziomy i adaptację; pierwiastki zawsze mają całkowity wynik. Poziomy obejmują kwadraty podstaw 2–10, kwadraty 11–20, sześciany 2–10, kwadraty 21–30 oraz czwarte potęgi 2–6 (dla pierwiastków są to zakresy wyników).
+
+Instalacja PWA jest dostępna przez menu przeglądarki. Aplikacja nie wyświetla własnego przycisku ani instrukcji instalacji.

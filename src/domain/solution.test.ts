@@ -23,6 +23,11 @@ describe("sposób liczenia", () => {
           for (const step of solution.steps) {
             if (step.includes("?")) continue;
             const [expression, result] = step.split(" = ");
+            const root = /^√\[(\d+)\]\((\d+)\)$/.exec(expression);
+            if (root) {
+              expect(Number(result) ** Number(root[1])).toBe(Number(root[2]));
+              continue;
+            }
             const terms = expression.split(" ");
             let value = Number(terms[0]);
             for (let j = 1; j < terms.length; j += 2) {

@@ -32,7 +32,8 @@ export function SettingsView({
   return (
     <section>
       <SectionTitle title="Ustawienia treningu">
-        Wybierz działania i ich trudność. Zmiany zapisują się od razu.
+        Wybierz działania i ich trudność. Potęgowanie i pierwiastkowanie są
+        opcjonalne — włącz je poniżej. Zmiany zapisują się od razu.
       </SectionTitle>
       <div className="preset themeSetting">
         <label htmlFor="theme">Motyw</label>

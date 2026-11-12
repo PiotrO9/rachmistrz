@@ -5,11 +5,9 @@ import { Icon } from "./Icon";
 export function AppNavigation({
   view,
   onNavigate,
-  onInstall,
 }: {
   view: AppView;
   onNavigate: (view: AppView) => void;
-  onInstall: () => void;
 }) {
   const { open, setOpen, drawer, toggle, ...drawerEvents } =
     useNavigationDrawer();
@@ -53,10 +51,6 @@ export function AppNavigation({
           <span>rachmistrz</span>
         </a>
         <span className="headerNote">Trening liczenia w pamięci</span>
-        <button className="install" onClick={onInstall}>
-          <Icon name="download" />
-          <span>Zainstaluj</span>
-        </button>
         <button
           className="menuToggle"
           ref={toggle}
@@ -99,16 +93,6 @@ export function AppNavigation({
           aria-label="Główna nawigacja"
         >
           {tabs}
-          <button
-            className="mobileInstall"
-            onClick={() => {
-              setOpen(false);
-              onInstall();
-            }}
-          >
-            <Icon name="download" />
-            <span>Zainstaluj</span>
-          </button>
         </nav>
       </dialog>
     </div>

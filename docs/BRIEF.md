@@ -51,3 +51,7 @@ Historyczna tabela powyżej opisuje pierwszy zakres. Zastępujemy go pięcioma p
 | 5      | Łańcuchy przeniesień i pożyczki przez zero    | Ogólne iloczyny dwucyfrowe                      | Trudniejsze dzielniki dwucyfrowe |
 
 Składniki dodawania/odejmowania nie przekraczają 999, podobnie dzielna. Około 20% zadań na poziomach 2–5 stanowią powtórki poprzedniego poziomu. Progi adaptacji i zasady treningu pozostają zachowane. Zapis v3 migruje historię i ustawienia v1/v2 oraz jednorazowo resetuje bloki/trendy i zwiększa epoki. Odczucie balansu wymaga dalszej oceny podczas gry.
+
+## Późniejsza zmiana: działania opcjonalne — 12 listopada 2026
+
+Potęgowanie i pierwiastkowanie wchodzą do zakresu jako osobno włączane działania w ustawieniach. Domyślnie pozostają wyłączone, także po migracji. Używamy dodatnich podstaw, wykładników 2–4 i dokładnych całkowitych pierwiastków. Każde działanie ma pięć poziomów, własną adaptację i historię. Zestaw podstawowy nadal obejmuje tylko cztery wcześniejsze działania.

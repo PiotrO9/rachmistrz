@@ -38,7 +38,14 @@ export function record(
       solved: 0,
       skipped: 0,
       corrections: 0,
-      modules: { add: 0, subtract: 0, multiply: 0, divide: 0 },
+      modules: {
+        add: 0,
+        subtract: 0,
+        multiply: 0,
+        divide: 0,
+        power: 0,
+        root: 0,
+      },
     };
     history.unshift(day);
   }

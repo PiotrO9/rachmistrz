@@ -35,7 +35,7 @@ export async function readRawProgress(page: Page): Promise<unknown> {
 export async function readProgress(page: Page): Promise<SavedProgress> {
   const raw = await readRawProgress(page);
   const checked = validateStored(raw);
-  if (checked.version !== 3) throw new Error("Expected persisted v3 progress");
+  if (checked.version !== 4) throw new Error("Expected persisted v4 progress");
   return checked;
 }
 export async function answer(page: Page) {
@@ -44,13 +44,17 @@ export async function answer(page: Page) {
     a = Number(left),
     b = Number(right);
   return String(
-    operator === "+"
-      ? a + b
-      : operator === "−"
-        ? a - b
-        : operator === "×"
-          ? a * b
-          : a / b,
+    operator === "^"
+      ? a ** b
+      : operator === "√"
+        ? Math.round(a ** (1 / b))
+        : operator === "+"
+          ? a + b
+          : operator === "−"
+            ? a - b
+            : operator === "×"
+              ? a * b
+              : a / b,
   );
 }
 export async function settings(page: Page) {

@@ -32,7 +32,21 @@ export function generate(
     families.find((item) => (weight -= item.weight) < 0) ??
     families[families.length - 1];
   let a: number, b: number;
-  if (family.kind === "digits") [a, b] = digitPair(operation, family, pick);
+  if (family.kind === "power") {
+    const base = int(...family.base);
+    b = family.exponent;
+    a = operation === "root" ? base ** b : base;
+    return {
+      operation,
+      level,
+      materialLevel,
+      familyId: family.id,
+      a,
+      b,
+      answer: operation === "root" ? base : base ** b,
+    };
+  } else if (family.kind === "digits")
+    [a, b] = digitPair(operation, family, pick);
   else if (family.kind === "nearHundred") {
     a = int(200, 999);
     b = int(1, Math.floor(a / 100)) * 100 - pick([1, 2]);

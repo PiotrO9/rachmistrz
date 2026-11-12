@@ -8,6 +8,8 @@ const spoken = {
   subtract: "minus",
   multiply: "razy",
   divide: "podzielić przez",
+  power: "do potęgi",
+  root: "pierwiastek stopnia",
 };
 interface TrainingViewProps {
   state: Pick<
@@ -46,16 +48,30 @@ export function TrainingView({
         {state.announcement}{" "}
         {state.revealed
           ? `Wynik: ${state.task.answer}. Wybierz następne zadanie.`
-          : `${state.task.a} ${spoken[state.task.operation]} ${state.task.b}. Wpisz wynik.`}
+          : `${state.task.operation === "root" ? `Pierwiastek stopnia ${state.task.b} z ${state.task.a}` : `${state.task.a} ${spoken[state.task.operation]} ${state.task.b}`}. Wpisz wynik.`}
       </p>
       <div className="exercise">
         <div
-          className="equation"
-          aria-label={`${state.task.a} ${symbols[state.task.operation]} ${state.task.b}`}
+          className={`equation ${state.task.operation === "power" || state.task.operation === "root" ? "unaryEquation" : ""}`}
+          aria-label={`${state.task.a} ${state.task.operation === "power" ? "^" : symbols[state.task.operation]} ${state.task.b}`}
         >
-          <span className="firstOperand">{state.task.a}</span>
-          <span className="operator">{symbols[state.task.operation]}</span>
-          <span className="secondOperand">{state.task.b}</span>
+          {state.task.operation === "root" ? (
+            <span className="radical">
+              <sup>{state.task.b === 2 ? "" : state.task.b}</sup>√
+              <span>{state.task.a}</span>
+            </span>
+          ) : state.task.operation === "power" ? (
+            <span>
+              {state.task.a}
+              <sup>{state.task.b}</sup>
+            </span>
+          ) : (
+            <>
+              <span className="firstOperand">{state.task.a}</span>
+              <span className="operator">{symbols[state.task.operation]}</span>
+              <span className="secondOperand">{state.task.b}</span>
+            </>
+          )}
         </div>
         <div className="answerWrap">
           <span className="srOnly">Twoja odpowiedź</span>

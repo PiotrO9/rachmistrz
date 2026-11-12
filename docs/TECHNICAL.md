@@ -12,7 +12,7 @@ Aktualizacja zależności z 11 listopada 2026: React/React DOM 19.3.1, Vite 8.3.
 - `src/persistence/schema.ts`: walidacja na granicy `unknown`; `migrations.ts`: migracja i odczyt JSON; `database.ts`: fabryka repozytorium i transakcje IndexedDB; `sync.ts`: powiadomienia kart. `src/storage.ts` udostępnia instancję dla aplikacji. Nie ma drugiej ścieżki odczytu z legacy localStorage.
 - `src/features/`: osobne widoki treningu, ustawień, historii i kopii danych. `src/App.tsx`: powłoka, nawigacja i komunikaty.
 - `src/ui/Select.tsx`: ogólny, typowany select Radix: portal, kolizje, klawiatura i przywracanie fokusu. `src/features/settings/LevelSelect.tsx`: nazwy, wskaźnik i zakresy poziomów z jednej konfiguracji.
-- `src/usePwa.ts`: instalacja i aktualizacja, wraz z obsługą błędów obietnic. Status gotowości offline nie jest wyświetlany w stopce; cache nadal obsługuje service worker.
+- `src/usePwa.ts`: aktualizacja wraz z obsługą błędów obietnic. Instalację obsługuje przeglądarka; aplikacja nie przechwytuje `beforeinstallprompt` i nie pokazuje własnego przycisku ani instrukcji instalacji. Status gotowości offline nie jest wyświetlany w stopce; cache nadal obsługuje service worker.
 - `src/theme.ts` i `public/theme-init.js`: jasny/ciemny/systemowy, kolory przeglądarki i cache pierwszego renderu. Pole motywu wprowadzone w v2 domyślnie ma `system`. Źródłem prawdy jest IndexedDB; `rachmistrz:theme-cache` to tylko pochodny cache renderowania.
 - `src/styles/`: tokeny, bazowe style, trening, selecty, układ, panele, historia i reguły responsywne. Kolejność importów w `src/styles.css`.
 - `e2e/training.spec.ts`, `navigation.spec.ts`, `persistence.spec.ts`, `offline.spec.ts` i `pwa-update.spec.ts`: scenariusze Chromium na produkcyjnym buildzie; `helpers.ts`: wspólne operacje testowe; `playwright.config.ts`: headless i automatyczny preview.
@@ -79,3 +79,9 @@ Rodziny w `config.ts` mają jawne ograniczenia (`bridgeToTwenty`, `zeroAt`, `exc
 `CURRENT_PROGRESS_VERSION` określa aktualną wersję zapisu. Migracje mają osobne kroki v1 → v2 i v2 → v3, po których wykonywana jest normalizacja kopii danych. `migrateStored` zwraca stan i informację o zmianie wersji; repozytorium używa jej do utrwalenia migracji w transakcji czytającej najnowszy rekord. Normalizacja v3 nie resetuje adaptacji ani epok. Usunięto testowy helper `decode`, który ukrywał błędy danych — `parseSaved` zgłasza błędny format. Format rekordu nadal wynosi v3, a wersja bazy IndexedDB pozostaje 1.
 
 Testowy `readRawProgress` zwraca rzeczywisty rekord bez konwersji. `readProgress` waliduje go i wymaga utrwalonego v3, nie uruchamia migracji. Test aktualizacji PWA porównuje surowe rekordy.
+
+## Opcjonalne działania i zapis v4 — 12 listopada 2026
+
+Aktualna wersja rekordu i eksportu to v4. Dodano moduły `power` i `root`, domyślnie wyłączone. Starsze rekordy v1–v3 dostają wyłączone moduły oraz zerowe liczniki nowych działań w historii przed walidacją pełnej struktury. Migracja v3 zachowuje bloki, trendy i epoki istniejących działań; v1/v2 zachowują dotychczasowy reset związany ze zmianą programu nauki. Repozytorium utrwala migrację w transakcji na najnowszym rekordzie, bez zmiany wersji bazy IndexedDB. Starszy klient odrzuca v4.
+
+Rodzina `power` w `CURRICULUM` określa zakres podstaw i wykładnik. Pierwiastki generujemy od całkowitego wyniku przez potęgowanie, bez zaokrągleń. Renderowanie używa indeksu górnego i symbolu pierwiastka, a komunikat czytnika podaje stopień pierwiastka i liczbę pod nim. Preset „Podstawowe działania” nie włącza nowych modułów.

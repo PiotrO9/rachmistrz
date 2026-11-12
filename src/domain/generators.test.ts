@@ -66,7 +66,13 @@ describe("balans rodzin zadań", () => {
               1,
             );
           expect(unique.size).toBeGreaterThan(
-            level === 1 ? 20 : level === 2 ? 70 : 100,
+            op === "power" || op === "root"
+              ? 4
+              : level === 1
+                ? 20
+                : level === 2
+                  ? 70
+                  : 100,
           );
         },
       );

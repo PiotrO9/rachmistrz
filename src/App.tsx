@@ -17,7 +17,6 @@ export default function App() {
     setNotice,
     needRefresh,
     setNeedRefresh,
-    installApp,
     updateServiceWorker,
   } = usePwa();
 
@@ -29,7 +28,6 @@ export default function App() {
           setView(next);
           setNotice("");
         }}
-        onInstall={() => void installApp()}
       />
       {!storageOK && (
         <div className="notice" role="alert">

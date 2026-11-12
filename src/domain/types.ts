@@ -1,4 +1,11 @@
-export const operations = ["add", "subtract", "multiply", "divide"] as const;
+export const operations = [
+  "add",
+  "subtract",
+  "multiply",
+  "divide",
+  "power",
+  "root",
+] as const;
 export type Operation = (typeof operations)[number];
 export type Level = 1 | 2 | 3 | 4 | 5;
 export type Theme = "system" | "light" | "dark";
@@ -45,7 +52,7 @@ export interface Day {
   modules: Record<Operation, number>;
   details?: Record<Operation, Stats>;
 }
-export const CURRENT_PROGRESS_VERSION = 3 as const;
+export const CURRENT_PROGRESS_VERSION = 4 as const;
 export interface SavedProgress {
   version: typeof CURRENT_PROGRESS_VERSION;
   revision: number;

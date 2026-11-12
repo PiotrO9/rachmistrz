@@ -31,6 +31,7 @@ export type Family = { id: string; weight: number } & (
       zeroAt?: number;
     }
   | { kind: "nearHundred" }
+  | { kind: "power"; base: Interval; exponent: number }
   | {
       kind: "product";
       left: Interval;
@@ -214,6 +215,124 @@ export const CURRICULUM: Record<
       ],
     },
   ],
+  power: [
+    {
+      description: "Potęga 2 · podstawy 2–10",
+      families: [
+        {
+          id: "power-2-2",
+          weight: 1,
+          kind: "power",
+          base: [2, 10],
+          exponent: 2,
+        },
+      ],
+    },
+    {
+      description: "Potęga 2 · podstawy 11–20",
+      families: [
+        {
+          id: "power-2-11",
+          weight: 1,
+          kind: "power",
+          base: [11, 20],
+          exponent: 2,
+        },
+      ],
+    },
+    {
+      description: "Potęga 3 · podstawy 2–10",
+      families: [
+        {
+          id: "power-3-2",
+          weight: 1,
+          kind: "power",
+          base: [2, 10],
+          exponent: 3,
+        },
+      ],
+    },
+    {
+      description: "Potęga 2 · podstawy 21–30",
+      families: [
+        {
+          id: "power-2-21",
+          weight: 1,
+          kind: "power",
+          base: [21, 30],
+          exponent: 2,
+        },
+      ],
+    },
+    {
+      description: "Potęga 4 · podstawy 2–6",
+      families: [
+        {
+          id: "power-4-2",
+          weight: 1,
+          kind: "power",
+          base: [2, 6],
+          exponent: 4,
+        },
+      ],
+    },
+  ],
+  root: [
+    {
+      description: "Pierwiastek stopnia 2 · wyniki 2–10",
+      families: [
+        {
+          id: "root-2-2",
+          weight: 1,
+          kind: "power",
+          base: [2, 10],
+          exponent: 2,
+        },
+      ],
+    },
+    {
+      description: "Pierwiastek stopnia 2 · wyniki 11–20",
+      families: [
+        {
+          id: "root-2-11",
+          weight: 1,
+          kind: "power",
+          base: [11, 20],
+          exponent: 2,
+        },
+      ],
+    },
+    {
+      description: "Pierwiastek stopnia 3 · wyniki 2–10",
+      families: [
+        {
+          id: "root-3-2",
+          weight: 1,
+          kind: "power",
+          base: [2, 10],
+          exponent: 3,
+        },
+      ],
+    },
+    {
+      description: "Pierwiastek stopnia 2 · wyniki 21–30",
+      families: [
+        {
+          id: "root-2-21",
+          weight: 1,
+          kind: "power",
+          base: [21, 30],
+          exponent: 2,
+        },
+      ],
+    },
+    {
+      description: "Pierwiastek stopnia 4 · wyniki 2–6",
+      families: [
+        { id: "root-4-2", weight: 1, kind: "power", base: [2, 6], exponent: 4 },
+      ],
+    },
+  ],
 };
 export function levelDescription(operation: Operation, level: Level) {
   return CURRICULUM[operation][level - 1].description;
@@ -223,16 +342,20 @@ export const labels: Record<Operation, string> = {
   subtract: "Odejmowanie",
   multiply: "Mnożenie",
   divide: "Dzielenie",
+  power: "Potęgowanie",
+  root: "Pierwiastkowanie",
 };
 export const symbols: Record<Operation, string> = {
   add: "+",
   subtract: "−",
   multiply: "×",
   divide: "÷",
+  power: "xⁿ",
+  root: "√",
 };
 export const PRESETS: { name: string; active: Operation[] }[] = [
   {
-    name: "Wszystkie działania",
+    name: "Podstawowe działania",
     active: ["add", "subtract", "multiply", "divide"],
   },
   { name: "Dodawanie i odejmowanie", active: ["add", "subtract"] },
