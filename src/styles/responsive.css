@@ -1,0 +1,17 @@
+@media (max-width: 650px) {
+  .app {
+    padding: 0 6vw;
+  }
+  .panelMain {
+    padding-top: 39px;
+  }
+  .sectionTitle h1 {
+    font-size: 1.5rem;
+  }
+  .sectionTitle p {
+    font-size: 0.875rem;
+  }
+  .notice {
+    flex-wrap: wrap;
+  }
+}

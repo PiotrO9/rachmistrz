@@ -1,0 +1,79 @@
+import {
+  operations,
+  type Operation,
+  type Level,
+  type Task,
+  type SavedProgress,
+} from "./types";
+import { CURRICULUM, REVIEW_SHARE } from "./config";
+
+import { digitPair } from "./generation/additive";
+import { productPool } from "./generation/product";
+export { regroupCount, hasCarry, hasBorrow } from "./generation/additive";
+
+export function generate(
+  operation: Operation,
+  level: Level,
+  random = Math.random,
+): Task {
+  const int = (lo: number, hi: number) =>
+    Math.floor(random() * (hi - lo + 1)) + lo;
+  const pick = <T>(items: readonly T[]): T => {
+    if (!items.length) throw new Error("Empty task family");
+    return items[int(0, items.length - 1)];
+  };
+  const materialLevel = (
+    level > 1 && random() < REVIEW_SHARE ? level - 1 : level
+  ) as Level;
+  const families = CURRICULUM[operation][materialLevel - 1].families;
+  let weight =
+    random() * families.reduce((sum, family) => sum + family.weight, 0);
+  const family =
+    families.find((item) => (weight -= item.weight) < 0) ??
+    families[families.length - 1];
+  let a: number, b: number;
+  if (family.kind === "digits") [a, b] = digitPair(operation, family, pick);
+  else if (family.kind === "nearHundred") {
+    a = int(200, 999);
+    b = int(1, Math.floor(a / 100)) * 100 - pick([1, 2]);
+  } else {
+    [a, b] = pick(productPool(operation, family));
+    if (operation === "divide") a *= b;
+  }
+  return {
+    operation,
+    level,
+    materialLevel,
+    familyId: family.id,
+    a,
+    b,
+    answer:
+      operation === "add"
+        ? a + b
+        : operation === "subtract"
+          ? a - b
+          : operation === "multiply"
+            ? a * b
+            : a / b,
+  };
+}
+export function nextTask(
+  modules: SavedProgress["modules"],
+  previous?: Task,
+  random = Math.random,
+): Task {
+  const active = operations.filter((op) => modules[op].enabled);
+  const op = active[Math.floor(random() * active.length)] ?? "add";
+  let task = generate(op, modules[op].level, random);
+  for (
+    let i = 0;
+    i < 10 &&
+    previous &&
+    task.operation === previous.operation &&
+    task.a === previous.a &&
+    task.b === previous.b;
+    i++
+  )
+    task = generate(op, modules[op].level, random);
+  return { ...task, epoch: modules[op].epoch ?? 0 };
+}

@@ -1,0 +1,44 @@
+.app {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 6vw;
+}
+.panelMain {
+  flex: 1;
+  width: min(100%, 56rem);
+  align-self: center;
+  padding: 3rem 0 4rem;
+}
+.sectionTitle {
+  margin-bottom: 38px;
+}
+.sectionTitle h1 {
+  font-size: 1.875rem;
+  font-weight: 550;
+  letter-spacing: -0.8px;
+  margin: 0 0 12px;
+}
+.sectionTitle p {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.notice {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 56rem;
+  background: var(--notice);
+  border: 1px solid var(--notice-border);
+  border-radius: 10px;
+  padding: 13px 17px;
+  margin-top: 20px;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+.notice button {
+  text-decoration: underline;
+  white-space: nowrap;
+}

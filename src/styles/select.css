@@ -1,0 +1,201 @@
+.selectTrigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-width: 16rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 5px;
+  padding: 0.7rem 0.9rem;
+  min-height: 2.75rem;
+  max-width: 100%;
+  font-size: 0.875rem;
+  text-align: left;
+  transition:
+    border-color 120ms ease,
+    background 120ms ease;
+}
+.selectTrigger:hover:not(:disabled),
+.selectTrigger[data-state="open"] {
+  border-color: var(--control-border);
+}
+.selectTrigger:disabled {
+  cursor: not-allowed;
+}
+.selectTrigger > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.selectChevron {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: transform 120ms ease;
+}
+.selectTrigger[data-state="open"] .selectChevron {
+  transform: rotate(180deg);
+}
+.selectCompact {
+  min-width: 10rem;
+  gap: 10px;
+  border-color: var(--control-border);
+  border-radius: 0.5rem;
+}
+.levelValue {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.levelNumber {
+  font-size: 1.65rem;
+  font-weight: 550;
+  line-height: 1.1;
+  min-width: 1ch;
+  font-variant-numeric: tabular-nums;
+}
+.levelControlText {
+  display: grid;
+  gap: 0.35rem;
+}
+.levelName {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.levelMeter {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.16rem;
+  height: 0.8rem;
+  flex-shrink: 0;
+}
+.levelMeter > span {
+  display: block;
+  width: 0.22rem;
+  min-width: 3px;
+  border-radius: 2px;
+  background: var(--line);
+}
+.levelMeter > span[data-filled="true"] {
+  background: var(--rule-focus);
+}
+.levelOptionNumber {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.8rem;
+  height: 2.2rem;
+  font-size: 1.15rem;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.selectMenuCompact .selectOption {
+  gap: 0.7rem;
+  min-height: 4rem;
+}
+.selectMenuCompact .selectOptionText {
+  flex: 1;
+}
+.selectMenuCompact .levelMeter {
+  margin-inline: 0.3rem;
+}
+.selectMenuCompact .selectCheck {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.55rem;
+}
+.selectMenuCompact .selectOption[data-state="checked"] .levelOptionNumber {
+  color: var(--ink);
+}
+.selectMenu {
+  z-index: 100;
+  min-width: var(--radix-select-trigger-width);
+  max-width: calc(100vw - 24px);
+  max-height: min(26rem, var(--radix-select-content-available-height));
+  overflow: hidden;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow:
+    0 8px 28px #00000016,
+    0 2px 6px #0000000a;
+  font-size: 0.875rem;
+  transform-origin: var(--radix-select-content-transform-origin);
+  animation: selectEnter 100ms ease-out;
+}
+.selectMenuCompact {
+  min-width: min(20rem, calc(100vw - 24px));
+}
+.selectViewport {
+  padding: 5px;
+}
+.selectOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  position: relative;
+  padding: 0.7rem 0.8rem;
+  min-height: 2.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+.selectOption[data-state="checked"] {
+  background: var(--hover);
+}
+.selectOption[data-highlighted] {
+  background: var(--select-highlight);
+}
+.selectOptionText {
+  display: grid;
+  gap: 4px;
+}
+.selectDescription {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.selectCheck {
+  display: flex;
+  color: var(--action-text);
+  flex-shrink: 0;
+}
+.selectCheck svg {
+  width: 1rem;
+  height: 1rem;
+}
+.selectScroll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  color: var(--muted);
+  background: var(--surface);
+}
+@keyframes selectEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (pointer: coarse) {
+  .selectOption {
+    min-height: 44px;
+  }
+  .selectTrigger {
+    min-height: 44px;
+  }
+}

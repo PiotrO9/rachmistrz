@@ -1,0 +1,217 @@
+.preset {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 0 24px;
+}
+.preset label,
+.levelRow label {
+  font-size: 1rem;
+}
+.modules {
+  border-top: 1px solid var(--line);
+}
+.module {
+  display: grid;
+  grid-template-columns: minmax(165px, 1fr) minmax(200px, 1.35fr) minmax(
+      165px,
+      1fr
+    );
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.module.muted .moduleHeading h2,
+.module.muted .operationBadge {
+  color: var(--muted);
+}
+.moduleHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.moduleHeading h2 {
+  font-size: 1rem;
+  font-weight: 550;
+  margin: 0;
+  flex: 1;
+}
+.operationBadge {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  color: var(--operation-badge);
+}
+.switch {
+  position: relative;
+  width: 2.5rem;
+  height: 1.5rem;
+  border-radius: 20px;
+  background: var(--switch-off);
+  padding: 0.1875rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+.switch::after {
+  content: "";
+  position: absolute;
+  inset: -12px -5px;
+}
+.switch span {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  background: var(--switch-thumb);
+  box-shadow: 0 1px 2px #0001;
+  transition: transform 0.2s;
+}
+.switch.checked {
+  background: var(--switch-on);
+}
+.switch.checked span {
+  transform: translateX(1rem);
+}
+.levelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0;
+}
+.levelRow p {
+  font-size: 0.8125rem;
+  margin: 7px 0 0;
+  color: var(--muted);
+}
+.levelRow .selectTrigger {
+  font-size: 0.875rem;
+  padding: 0.65rem 0.75rem;
+}
+.adaptive {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.explanation {
+  margin-top: 26px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 20px;
+  font-size: 0.875rem;
+}
+.explanation summary {
+  cursor: pointer;
+}
+.explanation p {
+  color: var(--muted);
+  line-height: 1.9;
+}
+.smallNote {
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.9;
+  margin-top: 25px;
+}
+.solutionSetting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 0;
+  border-block: 1px solid var(--line);
+  margin-top: 28px;
+}
+.solutionSetting h2,
+.dataTools h2 {
+  font-size: 1rem;
+  font-weight: 550;
+  margin: 0 0 9px;
+}
+.solutionSetting p,
+.dataTools p {
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.dataTools {
+  padding-top: 30px;
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.dataActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.secondary {
+  border: 1px solid var(--control-border);
+  border-radius: 5px;
+  padding: 10px 14px;
+  min-height: 44px;
+  font-size: 0.875rem;
+}
+.secondary:hover {
+  background: var(--hover);
+}
+.importPreview {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+.importPreview button + button {
+  margin-left: 10px;
+}
+.historyTable small {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.themeSetting {
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+@media (max-width: 650px) {
+  .preset {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .preset .selectTrigger {
+    width: 100%;
+  }
+  .module {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 22px 0;
+  }
+}
+@media (min-width: 651px) and (max-width: 900px) {
+  .module {
+    grid-template-columns: 1fr 1.4fr;
+    gap: 20px;
+  }
+  .adaptive {
+    grid-column: 2;
+  }
+}
+@media (min-width: 901px) and (max-width: 1100px) {
+  .levelRow {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+@media (max-width: 380px) {
+  .levelRow {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}

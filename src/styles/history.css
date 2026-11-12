@@ -1,0 +1,99 @@
+.levelSummary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-block: 1px solid var(--line);
+  margin: 35px 0;
+}
+.levelSummary > div {
+  padding: 20px 18px;
+  border-left: 1px solid var(--line);
+}
+.levelSummary > div:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+.levelSummary > div > span {
+  display: block;
+  font-size: 1.125rem;
+}
+.levelSummary > div > span > span {
+  font-size: 0.8125rem;
+  margin-left: 4px;
+  color: var(--muted);
+}
+.levelSummary strong {
+  display: block;
+  font-size: 1.875rem;
+  font-weight: 450;
+  margin-top: 12px;
+}
+.levelSummary small {
+  font-size: 0.875rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+.empty {
+  text-align: center;
+  padding: 35px 0;
+}
+.empty h2 {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+.empty p {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.primary {
+  display: inline-flex;
+  gap: 15px;
+  align-items: center;
+  background: var(--ink);
+  color: var(--primary-text);
+  padding: 13px 20px;
+  border-radius: 5px;
+  margin-top: 16px;
+  font-size: 0.875rem;
+}
+.historyTable {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: right;
+  white-space: nowrap;
+}
+th,
+td {
+  padding: 19px 12px;
+  border-bottom: 1px solid var(--line);
+}
+thead th {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+th:first-child {
+  text-align: left;
+}
+tbody th {
+  font-weight: 500;
+}
+
+@media (max-width: 650px) {
+  .levelSummary {
+    grid-template-columns: 1fr 1fr;
+  }
+  .levelSummary > div {
+    padding: 17px 12px;
+  }
+  .levelSummary > div:nth-child(3) {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .levelSummary > div:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+}

@@ -1,0 +1,8 @@
+scripts/browser-qa.js
+dist/
+output/
+node_modules/
+.playwright-cli/
+playwright-report/
+test-results/
+package-lock.json
