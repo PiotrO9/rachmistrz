@@ -2,7 +2,11 @@ import { MISSING_NUMBER_SHARE } from "./config";
 import type { Task, MissingNumberTask } from "./types";
 import type { Solution } from "./solutions/types";
 
-export function withMissingOperand(task: Task, random: () => number): Task {
+export function withMissingOperand(
+  task: Task,
+  random: () => number,
+  force = false,
+): Task {
   const { operation, a, b, answer } = task;
   if (
     operation !== "add" &&
@@ -11,7 +15,7 @@ export function withMissingOperand(task: Task, random: () => number): Task {
     operation !== "divide"
   )
     return task;
-  if (random() >= MISSING_NUMBER_SHARE) return task;
+  if (!force && random() >= MISSING_NUMBER_SHARE) return task;
   const allowA = operation !== "multiply" || b !== 0;
   const allowB =
     (operation !== "multiply" || a !== 0) &&

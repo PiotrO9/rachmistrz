@@ -7,13 +7,20 @@ export function defaults(): SavedProgress {
   const module = (): OperationProgress => ({
     enabled: true,
     level: 1,
+    startPhase: "opening",
     adaptive: true,
     block: [],
   });
   return {
     version: CURRENT_PROGRESS_VERSION,
-    matches: { ...module(), enabled: false, history: [] },
+    matches: {
+      ...module(),
+      startPhase: undefined,
+      enabled: false,
+      history: [],
+    },
     revision: 0,
+    sessionPresets: [],
     missingNumber: false,
     negativeNumbers: false,
     logarithms: { enabled: false, set: "basic", solved: 0, skipped: 0 },

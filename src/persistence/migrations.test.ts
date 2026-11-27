@@ -2,6 +2,61 @@ import { describe, it, expect } from "vitest";
 import { defaults, record, operations } from "../domain";
 import { parseSaved } from "./migrations";
 describe("format danych", () => {
+  it("wznawia serię nowego materiału po imporcie i zachowuje blok v14", () => {
+    const old = defaults();
+    old.modules.add = {
+      enabled: true,
+      adaptive: true,
+      level: 2,
+      block: [{ corrections: 1, skipped: false }],
+      trend: 1,
+      epoch: 7,
+    };
+    const saved = parseSaved(JSON.stringify({ ...old, version: 14 }));
+    expect(saved.modules.add).toEqual(old.modules.add);
+    const task = {
+      operation: "add",
+      level: 2,
+      materialLevel: 2,
+      epoch: 7,
+      a: 21,
+      b: 2,
+      answer: 23,
+    } as const;
+    let state = saved;
+    for (let i = 0; i < 5; i++)
+      state = record(
+        state,
+        "add",
+        { corrections: 0, skipped: false },
+        "2026-11-27",
+        task,
+      );
+    state = parseSaved(JSON.stringify(state));
+    const promoted = record(
+      state,
+      "add",
+      { corrections: 0, skipped: false },
+      "2026-11-27",
+      task,
+    );
+    expect(promoted.modules.add).toMatchObject({
+      level: 3,
+      epoch: 8,
+      block: [],
+    });
+    expect(promoted.changes).toHaveLength(1);
+    const stale = record(
+      promoted,
+      "add",
+      { corrections: 0, skipped: false },
+      "2026-11-27",
+      task,
+    );
+    expect(stale.modules.add).toEqual(promoted.modules.add);
+    state.modules.add.materialResults = Array(6).fill(true);
+    expect(() => parseSaved(JSON.stringify(state))).toThrow();
+  });
   it("preserves v10 progress and validates logarithm backups", () => {
     const saved = defaults();
     saved.missingNumber = true;
@@ -36,6 +91,7 @@ describe("format danych", () => {
       "2026-11-27",
     );
     saved.viete.solved = 3;
+    delete saved.modules.add.startPhase;
     const legacy = { ...saved, missingNumber: undefined, version: 9 };
     expect(parseSaved(JSON.stringify(legacy))).toEqual(saved);
     saved.missingNumber = true;
@@ -57,7 +113,7 @@ describe("format danych", () => {
     previous.theme = "dark";
     const raw = JSON.stringify({ ...previous, version: 2 });
     const migrated = parseSaved(raw);
-    expect(migrated.version).toBe(12);
+    expect(migrated.version).toBe(15);
     expect(migrated.history).toEqual(previous.history);
     expect(migrated.changes).toEqual(previous.changes);
     expect(migrated.theme).toBe("dark");
@@ -112,7 +168,7 @@ describe("format danych", () => {
       ],
     };
     const saved = parseSaved(JSON.stringify(old));
-    expect(saved.version).toBe(12);
+    expect(saved.version).toBe(15);
     expect(saved.history[0].solved).toBe(7);
     expect(saved.history[0].details).toBeUndefined();
     expect(saved.changes).toEqual([]);

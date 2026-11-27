@@ -75,11 +75,17 @@ export function OperationSettings({
         <p className="smallNote">
           Ocena poziomu: {m.block.length} / {ADAPTATION.blockSize} zadań w
           bieżącym bloku.
-          {m.trend === 1
-            ? " Poprzedni blok był łatwy. Kolejny dobry blok może podnieść poziom."
-            : m.trend === -1
-              ? " Poprzedni blok był trudny. Kolejny trudny blok może obniżyć poziom."
-              : " Do zmiany poziomu potrzebne są dwa kolejne bloki o tym samym kierunku."}
+          {m.startPhase === "opening"
+            ? " Osiem pierwszych zadań bez poprawek i pominięć daje awans."
+            : m.startPhase === "confirm"
+              ? " Awans wymaga dobrego bloku i kolejnego bloku bez poprawek ani pominięć."
+              : m.level === 2 || m.level === 3
+                ? ` Seria ${m.level === 2 ? ADAPTATION.levelTwoCleanRun : ADAPTATION.levelThreeCleanRun} samodzielnych odpowiedzi na materiale tego poziomu daje awans.${m.checkFirstPromotion ? " Trzy zadania z poprawką lub pominięciem w pierwszych sześciu z nowego materiału oznaczają powrót na poziom 1." : ""}`
+                : m.trend === 1
+                  ? " Poprzedni blok był łatwy. Kolejny dobry blok może podnieść poziom."
+                  : m.trend === -1
+                    ? " Poprzedni blok był trudny. Kolejny trudny blok może obniżyć poziom."
+                    : " Do zmiany poziomu potrzebne są dwa kolejne bloki o tym samym kierunku."}
         </p>
       )}
     </div>

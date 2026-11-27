@@ -25,6 +25,7 @@ it("migruje prawdziwy rekord v3 bez zmiany starej adaptacji i historii", () => {
     "2026-11-12",
   );
   saved.modules.add.epoch = 12;
+  delete saved.modules.add.startPhase;
   const old = JSON.parse(JSON.stringify({ ...saved, version: 3 }));
   for (const op of ["power", "root", "percent", "fraction", "polynomial"]) {
     delete old.modules[op];
@@ -74,6 +75,7 @@ it("adds disabled fractions to v6 while preserving signed input, history and ada
   );
   saved.negativeNumbers = true;
   saved.modules.percent.enabled = true;
+  delete saved.modules.percent.startPhase;
   const old = JSON.parse(JSON.stringify(saved));
   delete old.modules.fraction;
   delete old.history[0].modules.fraction;
@@ -91,6 +93,7 @@ it("migrates a v11 backup with history and preserves other modules", () => {
     "2026-11-27",
   );
   saved.logarithms.solved = 3;
+  delete saved.modules.fraction.startPhase;
   const old = JSON.parse(JSON.stringify(saved));
   delete old.modules.polynomial;
   delete old.history[0].modules.polynomial;

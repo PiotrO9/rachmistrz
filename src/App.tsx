@@ -7,7 +7,7 @@ import { useTraining } from "./useTraining";
 import { useTheme } from "./theme";
 import { usePwa } from "./usePwa";
 import { AppNavigation } from "./ui/AppNavigation";
-import { TrainingView } from "./features/training/TrainingView";
+import { SessionTraining } from "./features/session/SessionTraining";
 import { SettingsView } from "./features/settings/SettingsView";
 import { HistoryView } from "./features/history/HistoryView";
 export default function App() {
@@ -82,17 +82,7 @@ export default function App() {
         }
       >
         {view === "game" ? (
-          <TrainingView
-            state={training.state}
-            ready={training.ready}
-            busy={training.busy}
-            canInteract={training.canInteract}
-            storageOK={training.storageOK}
-            onInput={(value, inputType) =>
-              training.dispatch({ type: "input", value, inputType })
-            }
-            onSkip={() => training.dispatch({ type: "skip" })}
-          />
+          <SessionTraining training={training} />
         ) : view === "matches" ? (
           <Matches
             saved={training.state.saved}

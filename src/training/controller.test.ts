@@ -1,3 +1,4 @@
+import { newRule } from "../domain/session";
 import { deferred } from "../testing/deferred";
 import { createMemoryTrainingPort } from "../testing/training-port";
 import { describe, it, expect, vi } from "vitest";
@@ -24,6 +25,40 @@ async function setup() {
   };
 }
 describe("trening i asynchroniczny zapis", () => {
+  it("ponawia wynik szybkiej sesji i kończy ją dopiero po zatwierdzeniu", async () => {
+    const { controller, port, stop, random } = await setup();
+    await controller.dispatch({
+      type: "startQuick",
+      config: { rules: [newRule("add")], goal: "tasks", count: 1 },
+    });
+    const task = controller.getSnapshot().state.quick!.exercise.task;
+    const transact = port.transact;
+    port.transact = vi
+      .fn()
+      .mockRejectedValueOnce(Error("Brak miejsca"))
+      .mockImplementation(transact);
+    random.mockClear();
+    expect(
+      await controller.dispatch({
+        type: "quickInput",
+        value: String(task.answer),
+        inputType: "insertText",
+      }),
+    ).toBe(false);
+    expect(controller.getSnapshot().state.quick).toMatchObject({
+      finished: false,
+      solved: 0,
+      exercise: { task, input: String(task.answer) },
+    });
+    expect(await controller.retry()).toBe(true);
+    expect(controller.getSnapshot().state.quick).toMatchObject({
+      finished: true,
+      solved: 1,
+    });
+    expect(controller.getSnapshot().state.saved.history[0].solved).toBe(1);
+    expect(random).not.toHaveBeenCalled();
+    stop();
+  });
   it("retries a logarithm once and uses the newly selected set for the following task", async () => {
     const { controller, port, random, stop } = await setup();
     await controller.dispatch({ type: "logEnabled", enabled: true });

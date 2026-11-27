@@ -238,3 +238,92 @@ Cloudflare Wrangler sprawdzony: brak zalogowanego konta. Wdrożenie publiczne ni
 - Node 24.22.3. `npm run check` przeszło wraz ze 184 testami i produkcyjnym buildem PWA. Sprawdzono wartości reszt na pięciu poziomach oraz migrację historii z v11.
 - Po buildzie `npm run test:e2e -- --workers=4` przeszło w Chromium headless (27/27). Scenariusz wielomianów obejmuje włączenie modułu, przeładowanie, ujemną odpowiedź, pominięcie i wyjaśnienie przy szerokości 320 px.
 - Nie sprawdzano Safari, fizycznego telefonu ani czytnika ekranu.
+
+## Odstęp przy symbolu wielomianu — 27 listopada 2026
+
+- Na buildzie produkcyjnym w Chromium odstęp między tekstem `W(x)` a nagłówkiem wyniósł 8 px dla szerokości 320, 651, 900, 901, 1024 i 1473 px. Pomiar wykonano po załadowaniu fontu. Nie sprawdzano Safari.
+- Node 24.22.3. Przeszły `npm run check` (184 testy i build) oraz `npm run test:e2e -- --workers=4` (27/27).
+
+## Separatory ustawień — 27 listopada 2026
+
+- Chromium przy szerokościach 320 i 1473 px wyświetla pojedyncze obramowanie 1 px na wszystkich pięciu sprawdzonych granicach sekcji. Nie sprawdzano Safari.
+- Przeszły `npm run check` (184 testy i build) oraz `npm run test:e2e -- --workers=4` (27/27).
+
+## Lista poziomów — 27 listopada 2026
+
+- Chromium, szerokości 320 i 1473 px. Po otwarciu listy klawiaturą wybrany poziom miał widoczne słupki trudności i ukrytą ikonę zaznaczenia. Nie sprawdzano Safari.
+- Przeszły `npm run check` (184 testy i build) i `npm run test:e2e -- --workers=4` (27/27).
+
+## Nawigacja w górnym pasku — 27 listopada 2026
+
+- W Chromium włączono Zapałki, Logarytmy i Wzory Viète’a. Wszystkie sześć zakładek mieściło się w nagłówku obok logo przy szerokościach 651, 768, 1024, 1473 i 2143 px. Nie sprawdzano Safari.
+- Przeszły `npm run check` (184 testy i build) oraz `npm run test:e2e -- --workers=4` (27/27), w tym testy mobilnego menu i granicy 650/651 px.
+
+## Wykresy działań w Historii — 27 listopada 2026
+
+- `npm run check` przeszło wraz ze 185 testami i buildem PWA. Sprawdzono granice 30 dni, pominięcia, przerwy i wpis bez szczegółów.
+- Na produkcyjnym preview test Historii przeszedł przy 320 i 1280 px, z wyborem słupka klawiaturą i kontrolą szerokości strony. Pierwszy przebieg E2E zakończył się limitem czasu na planszy Zapałek. Pełne powtórzenie `npm run test:e2e -- --workers=4` przeszło (28/28).
+- Nie sprawdzano Safari, fizycznego telefonu ani czytnika ekranu.
+
+## Symulacja tempa adaptacji — 27 listopada 2026
+
+- Uruchomiono `node scripts/simulate-adaptation.mjs` na Node 24.22.3. Sześć profili × dwie proporcje poprawiania błędów × trzy reguły × 10 000 przebiegów dało 360 000 treningów i 64 800 000 odpowiedzi. Plik wynikowy: `output/adaptation-simulation.json`. Warianty korzystają z tych samych ziaren i z produkcyjnej funkcji adaptacji.
+- Biegli uczniowie osiągali poziom 2 do ósmego zadania w 0% przebiegów obecnej reguły i 92,41% obu reguł z awansem po 8/8. Przy przyspieszeniu na poziomach 1 i 2 osiągali poziom 3 do 24. zadania w 96,96–98,10% przebiegów, a poziom 4 do 48. zadania w 80,53–95,35%.
+- Przy progu ochronnym 15% początkujących awans w pierwszych 24 zadaniach wystąpił w 4,52–16,58% przebiegów obecnej reguły i 27,66–34,15% obu przyspieszonych reguł. Żadna reguła nie spełniła wszystkich celów w obu stylach odpowiedzi.
+- Symulowano poziom materiału i 20% powtórek, odróżniając odpowiedzi czyste, jedną poprawkę oraz pominięcie. Nie oceniano rzeczywistych uczniów, różnic trudności rodzin w obrębie poziomu ani wyników matury.
+
+## Jednorazowa próba startowa — 27 listopada 2026
+
+- Uruchomiono `node scripts/simulate-adaptation.mjs` na Node 24.22.3. Porównanie objęło pięć reguł na tych samych ziarnach, 600 000 treningów i 108 mln odpowiedzi. Dwa nowe warianty obejmowały 240 000 treningów. Pierwsza poprawka lub pominięcie kończyły szybką ścieżkę osobno dla danego działania. Sprawdzono szybkie awanse maksymalnie do poziomu 3 oraz do poziomu 5.
+- W wariancie do poziomu 3 biegli osiągali poziom 2 do ósmego zadania w 92,41% przebiegów (cel ≥90%), poziom 3 do 24. zadania w 81,96–89,17% (cel ≥90%) i poziom 4 do 48. zadania w 73,67–92,25% (cel ≥90%). Przy dłuższej ścieżce ostatni wynik wyniósł 79,69–93,12%.
+- Początkujący awansowali do 24. zadania w 13,11% przebiegów przy przewadze pominięć i 23,47% przy przewadze poprawek (limit 15%). W obu wariantach pierwsze 8/8 dało 10,21% awansów w tej grupie. Pozostałe pierwsze awanse wynikały ze zwykłej adaptacji.
+- Model pomija różnice między rodzinami zadań na tym samym poziomie i nie mierzy wyników rzeczywistych uczniów. Pełne dane: `output/adaptation-simulation.json`.
+
+## Zakres dat na wykresach Historii — 27 listopada 2026
+
+- Na Node 24.22.3 przeszło `npm run check` z 186 testami i produkcyjnym buildem. Test zakresów uwzględnia lokalną północ, przełom roku i wykluczenie przyszłych dat.
+- Po buildzie przeszło `npm run test:e2e -- --workers=4` (28/28). W Chromium przy 320 i 1280 px sprawdzono przełączanie trzech okresów dla wybranego działania, obsługę klawiatury i dzisiejsze podsumowanie. Nie testowano na fizycznym telefonie ani w Safari.
+
+## Animacja przełącznika zakresu — 27 listopada 2026
+
+- Przeszły `npm run check` (186 testów i build PWA) oraz `npm run test:e2e -- --workers=4` (28/28). W Chromium przy 1280 px sprawdzono przejście wskaźnika na środkowy segment po wyborze klawiaturą, a przy 320 px natychmiastową zmianę z włączonym ograniczeniem ruchu. Safari i fizyczny telefon pozostają niesprawdzone.
+
+## Przesuwane podświetlenie nawigacji — 27 listopada 2026
+
+- Przeszło `npm run check` z 186 testami i buildem PWA. W Chromium sprawdzono wybór klawiaturą, pozycję wskaźnika i ograniczenie ruchu przy 651 px ze wszystkimi sześcioma zakładkami.
+- Pierwszy przebieg E2E przekroczył limit czasu w teście wielomianu. W kolejnym zabrakło plików śledzenia przy zamykaniu kontekstów. Pełne powtórzenie z osobnym katalogiem wyników zakończyło się wynikiem 29/29. Nie sprawdzano Safari ani fizycznego telefonu.
+
+## Pierwszy awans w aplikacji — 27 listopada 2026
+
+- Symulator porównał siedem reguł na tych samych ziarnach, w tym produkcyjną adaptację v13, po 10 000 przebiegów na profil i styl odpowiedzi. Pierwsze 8/8 zapewniło awans 92,41% biegłych. U początkujących awans do zadania 24 nastąpił w 12,25–14,98% przebiegów (limit 15%). Wariant jednorazowy ze zwykłym potwierdzeniem osiągał 13,11–23,47%. Są to wyniki dla syntetycznych profili.
+- Weryfikacja na Node 24.22.3: przeszły `npm run check` (187 testów i build PWA) oraz `npm run test:e2e -- --workers=4` (29/29). Test procentów przeładował stronę po czterech odpowiedziach i potwierdził awans po ósmej. Nie prowadzono sesji z uczniami.
+
+## Szybka sesja — 27 listopada 2026
+
+- Node 24.22.3, `npm run check` — formatowanie, lint, 192 testy, typy i produkcyjny build PWA przeszły.
+- Po buildzie `npm run test:e2e -- --workers=4` — 31/31 w Chromium headless. Dla kreatora przy 320 i 1280 px sprawdzono ustawienie stałego poziomu, własny cel, zapis nazwy, zakończenie, powtórzenie, powrót do poprzedniego zadania i start z zapisanego zestawu po przeładowaniu.
+- Testy logiki objęły oba cele, niezależną adaptację, ważenie działań, stały poziom materiału, brakującą liczbę, ponowienie po błędzie zapisu i migrację v13. Safari, klawiatura ekranowa na fizycznym telefonie i czytnik ekranu pozostają niesprawdzone.
+
+## Badanie 48 profili adaptacji — 27 listopada 2026
+
+- Pilotaż objął 1 152 000 treningów. Pełne badanie na odrębnych ziarnach objęło 115 200 000 treningów i 20 736 000 000 odpowiedzi. Sprawdzono 3465 przejść modelu względem funkcji produkcyjnej.
+- Pierwszy awans biegłych spełnił cel we wszystkich sześciu stylach. Limit awansów początkujących został przekroczony przy błędach występujących seriami (40,21%, przedział 95% od 39,90% do 40,51%). Wyniki pozostałych kryteriów, mianowniki i ograniczenia zawiera [raport badania](ADAPTATION-STUDY.md).
+- Przeszły kontrole `npm run check` (192 testy, typy, lint i build PWA) i produkcyjne E2E (31/31 w Chromium). Przebiegi symulacyjne modelują odpowiedzi i poziom materiału bez rzeczywistych sesji uczniów.
+
+## Adaptacja na bieżącym materiale — 27 listopada 2026
+
+Porównano trzy reguły na tych samych ziarnach (48 profili, 12 scenariuszy, po 100 000 treningów). Łącznie 172,8 mln przebiegów i 31,104 mld odpowiedzi, w tym 57,6 mln przebiegów nowej reguły. Historyczne wyniki dwóch wcześniejszych wariantów odtworzono we wszystkich komórkach. Surowe dane: `output/study-v15.csv`. Sprawdzono zgodność 3465 przejść blokowych oraz 30 000 kolejnych kroków z produkcyjną funkcją adaptacji.
+
+| Kryterium                                                                                                                          |   Poprzednio |    Wersja 15 |
+| ---------------------------------------------------------------------------------------------------------------------------------- | -----------: | -----------: |
+| Biegły na poziomie 3 do 24. zadania (cel ≥90%)                                                                                     | 72,90–86,06% | 92,21–95,58% |
+| Biegły na poziomie 4 do 48. zadania (cel ≥90%)                                                                                     | 56,40–83,58% | 95,39–98,28% |
+| Po poprawie skuteczności na materiale poziomu 3 z 60% do 90%, poziom co najmniej 4 w kolejnych 24 zadaniach (pełne okna, cel ≥75%) | 31,04–65,46% | 79,07–92,19% |
+
+U początkujących liczba poprawianych lub pomijanych zadań z nowego poziomu po pierwszym awansie spadła o 47,06–54,75%. Zliczano maksymalnie 24 kolejne zadania działania, do pierwszego spadku poniżej osiągniętego poziomu lub końca treningu. Odsetek pierwszych awansów nie zmienił się. U ucznia skutecznego w powtórkach, lecz rozwiązującego samodzielnie tylko 55% nowego materiału, awans z poziomu 3 na 4 do 32. zadania występował w 3,84–6,55% treningów przy niezależnych odpowiedziach. Przy błędach seriami odsetek wzrósł z 11,05% do 28,77% (założony limit 10%). Dziewięć czystych odpowiedzi wybrano po porównaniu progów; osiem dawało w tym ostatnim scenariuszu 37,48%, a przy dziesięciu w próbie porównawczej nie osiągnięto celu 75% dla profilu uczącego się z przewagą pominięć.
+
+Przeszły `npm run check` (196 testów, typy, lint i build) oraz produkcyjne E2E w Chromium (31/31). Sprawdzono m.in. migrację v14, wznowienie serii po imporcie, odrzucenie wyniku starej epoki, wygaśnięcie próby po sześciu nowych zadaniach oraz oddzielne traktowanie powtórek. Nie prowadzono sesji z rzeczywistymi uczniami.
+
+## Sprawdzenie przed pushem na develop — 27 listopada 2026
+
+Przeszły `npm run check`, 196 testów i build PWA. Dwa pełne przebiegi E2E w Chromium zakończyły się wynikiem 30/31. Przy czterech workerach limit czasu przekroczył test dwóch zapałek, a przy dwóch workerach test wielomianu czekający na „Pokaż sposób liczenia”. Każdy z nich przeszedł w drugim z tych przebiegów.

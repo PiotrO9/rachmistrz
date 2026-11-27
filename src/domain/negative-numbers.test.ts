@@ -77,6 +77,7 @@ it("completes the current signed task after disabling the setting and updates it
 it("migrates v5 with signed training off and validates the new preference in backups", () => {
   const saved = defaults();
   saved.modules.add.block.push({ skipped: true, corrections: 1 });
+  delete saved.modules.add.startPhase;
   const old = { ...saved, version: 5, negativeNumbers: undefined };
   expect(parseSaved(JSON.stringify(old))).toEqual(saved);
   saved.negativeNumbers = true;

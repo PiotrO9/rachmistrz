@@ -1,13 +1,72 @@
 import type { OperationProgress, Outcome, Level } from "./types";
 import { ADAPTATION, LEVELS } from "./config";
+/** The material-specific rules apply only to regular training tasks with known material. */
 export function adapt(
+  module: OperationProgress,
+  outcome: Outcome,
+  maxLevel: Level = LEVELS[LEVELS.length - 1].value,
+  materialLevel?: Level,
+): OperationProgress {
+  const next = adaptBlock(module, outcome, maxLevel);
+  if (!module.adaptive || maxLevel <= 2) return next;
+  let level = next.level;
+  let results = module.materialResults;
+  let checking = module.checkFirstPromotion;
+  if (
+    materialLevel === module.level &&
+    (materialLevel === 2 || materialLevel === 3)
+  ) {
+    const clean = !outcome.skipped && outcome.corrections === 0;
+    const limit =
+      materialLevel === 2
+        ? ADAPTATION.levelTwoCleanRun
+        : ADAPTATION.levelThreeCleanRun;
+    results = [...(results ?? []), clean].slice(-limit);
+    if (
+      checking &&
+      results.filter((ok) => !ok).length >= ADAPTATION.firstPromotionErrors
+    ) {
+      level = 1;
+    } else if (results.length === limit && results.every(Boolean)) {
+      level = Math.min(maxLevel, materialLevel + 1) as Level;
+    }
+    if (checking && results.length >= ADAPTATION.firstPromotionWindow)
+      checking = undefined;
+    if (!checking) {
+      const lastError = results.lastIndexOf(false);
+      if (lastError >= 0) results = results.slice(lastError + 1);
+    }
+  }
+  if (level !== module.level) {
+    return {
+      ...next,
+      level,
+      epoch: (module.epoch ?? 0) + 1,
+      block: [],
+      trend: 0,
+      startPhase: undefined,
+      materialResults: undefined,
+      checkFirstPromotion:
+        module.level === 1 && level === 2 && module.startPhase
+          ? true
+          : undefined,
+    };
+  }
+  return { ...next, materialResults: results, checkFirstPromotion: checking };
+}
+
+function adaptBlock(
   module: OperationProgress,
   outcome: Outcome,
   maxLevel: Level = LEVELS[LEVELS.length - 1].value,
 ): OperationProgress {
   if (!module.adaptive) return { ...module, block: [], trend: 0 };
+  const cleanAnswer = !outcome.skipped && outcome.corrections === 0;
+  const phase = module.level === 1 ? module.startPhase : undefined;
+  const startPhase = phase === "opening" && !cleanAnswer ? "confirm" : phase;
   const block = [...module.block, outcome];
-  if (block.length < ADAPTATION.blockSize) return { ...module, block };
+  if (block.length < ADAPTATION.blockSize)
+    return { ...module, block, startPhase };
   const skips = block.filter((x) => x.skipped).length;
   const clean = block.filter((x) => !x.skipped && x.corrections === 0).length;
   const corrected = block.filter((x) => x.corrections > 0).length;
@@ -27,7 +86,13 @@ export function adapt(
       : Math.sign(previous) === direction
         ? previous + direction
         : direction;
-  const delta = Math.abs(trend) >= ADAPTATION.consecutiveBlocks ? direction : 0;
+  const perfect = clean === ADAPTATION.blockSize;
+  const ready = Math.abs(trend) >= ADAPTATION.consecutiveBlocks;
+  const promote =
+    direction === 1 &&
+    (startPhase === "opening" || ready) &&
+    (!startPhase || perfect);
+  const delta = promote ? 1 : ready && direction === -1 ? -1 : 0;
   const level = Math.max(
     LEVELS[0].value,
     Math.min(maxLevel, module.level + delta),
@@ -37,6 +102,7 @@ export function adapt(
     level,
     ...(level !== module.level ? { epoch: (module.epoch ?? 0) + 1 } : {}),
     block: [],
-    trend: delta ? 0 : trend,
+    startPhase: level === 1 ? startPhase : undefined,
+    trend: delta ? 0 : Math.sign(trend),
   };
 }

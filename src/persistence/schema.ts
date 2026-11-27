@@ -12,8 +12,9 @@ import {
 } from "../domain/types";
 import { defaults } from "../domain/defaults";
 import { LOG_SETS, ADAPTATION } from "../domain/config";
+import { validPreset } from "../domain/session";
 export type PreviousSaved = Omit<SavedProgress, "version"> & {
-  version: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+  version: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
 };
 export interface LegacySaved {
   version: 1;
@@ -52,7 +53,20 @@ const isOperationProgress = (x: unknown): x is OperationProgress =>
   isRecord(x) &&
   typeof x.enabled === "boolean" &&
   typeof x.adaptive === "boolean" &&
+  (x.startPhase === undefined ||
+    x.startPhase === "opening" ||
+    x.startPhase === "confirm") &&
   isLevel(x.level) &&
+  (x.checkFirstPromotion === undefined ||
+    (x.checkFirstPromotion === true && x.level === 2)) &&
+  (x.materialResults === undefined ||
+    ((x.level === 2 || x.level === 3) &&
+      Array.isArray(x.materialResults) &&
+      x.materialResults.length <
+        (x.level === 2
+          ? ADAPTATION.levelTwoCleanRun
+          : ADAPTATION.levelThreeCleanRun) &&
+      x.materialResults.every((v) => typeof v === "boolean"))) &&
   isList(x.block, isOutcome) &&
   x.block.length < ADAPTATION.blockSize &&
   (x.trend === undefined || x.trend === -1 || x.trend === 0 || x.trend === 1) &&
@@ -154,6 +168,9 @@ export function validateStored(
       x.version !== 9 &&
       x.version !== 10 &&
       x.version !== 11 &&
+      x.version !== 12 &&
+      x.version !== 13 &&
+      x.version !== 14 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");
@@ -170,6 +187,12 @@ export function validateStored(
     throw new SavedDataError("Szczegóły historii nie zgadzają się z sumami.");
   if (x.version === 1)
     return { version: 1, modules: x.modules, history: x.history };
+  const sessionPresets = x.version < 14 ? [] : x.sessionPresets;
+  if (
+    !isList(sessionPresets, validPreset) ||
+    new Set(sessionPresets.map((p) => p.name)).size !== sessionPresets.length
+  )
+    throw new SavedDataError("Niepoprawne zestawy szybkiej sesji.");
   const matches = x.version < 8 ? defaults().matches : x.matches;
   if (
     !isOperationProgress(matches) ||
@@ -224,6 +247,7 @@ export function validateStored(
       skipped: viete.skipped,
     },
     version: x.version,
+    sessionPresets,
     revision: x.revision,
     modules: x.modules,
     history: x.history,

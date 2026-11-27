@@ -58,3 +58,35 @@ a {
     transition: none !important;
   }
 }
+
+.segmentedControl {
+  display: inline-grid;
+  grid-template-columns: repeat(var(--segments, 3), minmax(0, 1fr));
+  position: relative;
+  padding: 0.2rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+}
+.segmentedControl::before {
+  content: "";
+  position: absolute;
+  grid-area: 1 / 1 / 2 / 2;
+  inset: 0;
+  border-radius: 0.35rem;
+  background: var(--ink);
+  pointer-events: none;
+  transform: translateX(var(--segment-offset, 0%));
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.segmentedControl button {
+  position: relative;
+  transition: color 180ms ease;
+  border-radius: 0.35rem;
+  min-height: 44px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+}
+.segmentedControl button[aria-current="page"],
+.segmentedControl button[aria-pressed="true"] {
+  color: var(--primary-text);
+}

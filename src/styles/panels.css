@@ -38,7 +38,7 @@
   flex: 1;
 }
 .operationBadge {
-  width: 2rem;
+  min-width: 2rem;
   height: 2rem;
   flex-shrink: 0;
   display: grid;
@@ -145,6 +145,13 @@
   padding-top: 30px;
   margin-top: 24px;
   border-top: 1px solid var(--line);
+}
+.solutionSetting + .solutionSetting,
+.solutionSetting + .modules,
+.modules + .solutionSetting,
+.solutionSetting + .dataTools {
+  margin-top: 0;
+  border-top: 0;
 }
 .dataActions {
   display: flex;

@@ -73,9 +73,9 @@ describe("generatory", () => {
       });
 });
 describe("adaptacja", () => {
-  it("awansuje po dwóch stabilnych blokach i nie zmienia innego działania", () => {
+  it("awansuje po bezbłędnym bloku startowym i nie zmienia innego działania", () => {
     let s = defaults();
-    for (let i = 0; i < 15; i++)
+    for (let i = 0; i < 7; i++)
       s = record(s, "add", { corrections: 0, skipped: false });
     expect(s.modules.add.level).toBe(1);
     s = record(s, "add", { corrections: 0, skipped: false });

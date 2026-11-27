@@ -117,3 +117,17 @@ Generator w `domain/logarithms.ts` buduje pule z dokładnych potęg i czynników
 ## Reszta z dzielenia wielomianu i zapis v12
 
 Generator dobiera wielomian stopnia 1–3 oraz dzielnik liniowy. Wynik to wartość wielomianu w miejscu zerowym dzielnika. Wspólny silnik treningu obsługuje wpis, pomijanie, rozwiązanie i adaptację. Migracja starszych zapisów dodaje wyłączony moduł i zerowe liczniki w historii.
+
+## Pierwszy awans i zapis v13
+
+Pole startPhase w module rozróżnia próbę startową i oczekiwanie na potwierdzenie. Brak pola oznacza zwykłą adaptację. Pierwszy awans, ręczne ustawienie poziomu lub adaptacji kończy próbę. Zmiana zestawu działań zachowuje jej stan. Migracja przyznaje próbę tylko włączonej adaptacji poziomu 1 bez bloku, trendu, epoki, zapisanej historii działania ani zmiany poziomu. Gry z osobnym widokiem zachowują dotychczasowe reguły.
+
+## Szybka sesja i zapis v14
+
+Kontroler przechowuje aktywną sesję w pamięci karty obok zwykłego zadania. Silnik interpretuje wpis tym samym mechanizmem co w treningu, a komenda zakończenia zadania zapisuje wynik w historii w transakcji na najnowszym rekordzie. Po zatwierdzeniu silnik aktualizuje lokalny blok adaptacji i licznik celu, a następnie kończy sesję, odsłania rozwiązanie albo generuje następne zadanie. Tryb stałego poziomu losuje materiał wyłącznie z wybranego poziomu. Opcja „Ćwicz częściej” daje działaniu dwukrotną wagę losowania.
+
+Zapis v14 dodaje listę nazwanych zestawów. Migracja v13 zachowuje stan adaptacji. Eksport i import obejmują reguły i cel. Poziom „Mój poziom” jest rozwiązywany przy każdym uruchomieniu. Bieżąca sesja kończy się przy przeładowaniu strony.
+
+## Ocena materiału i zapis v15
+
+Przy zapisie zgodnego zadania record przekazuje materialLevel do adapt. O wyniku decyduje aktualny stan modułu w transakcji. Na poziomach 2 i 3 zapisujemy serię czystych odpowiedzi z bieżącego materiału, odpowiednio do sześciu i dziewięciu. Podczas sprawdzania pierwszego awansu na poziom 2 zapis obejmuje także nieczyste odpowiedzi. Trzecia taka odpowiedź w pierwszych sześciu kończy próbę powrotem na poziom 1. Po ocenie szóstej odpowiedzi zostaje tylko końcowa czysta seria. Powtórki oceniają zwykły blok, a materiał nieznany nie uruchamia szybkiej oceny. Zmiana poziomu zeruje obie oceny, podnosi epokę raz i zapisuje jedną zmianę poziomu. Ręczne ustawienie poziomu lub adaptacji też czyści próbę. Migracja v14 zachowuje blok i trend; brak nowych pól oznacza pustą serię bez wstecznej oceny pierwszego awansu.

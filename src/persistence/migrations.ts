@@ -68,11 +68,34 @@ export function migrateStored(value: unknown): {
     case 9:
     case 10:
     case 11:
+    case 12:
+    case 13:
+    case 14:
       current = { ...checked, version: CURRENT_PROGRESS_VERSION };
       break;
     case CURRENT_PROGRESS_VERSION:
       current = checked;
       break;
+  }
+  if (checked.version < 13) {
+    const modules = { ...current.modules };
+    for (const op of operations) {
+      const old = checked.modules[op];
+      const untouched =
+        old.level === 1 &&
+        old.adaptive &&
+        !old.epoch &&
+        !old.trend &&
+        old.block.length === 0 &&
+        !checked.history.some((day) => day.modules[op] > 0) &&
+        (checked.version === 1 ||
+          !checked.changes.some((change) => change.operation === op));
+      modules[op] = {
+        ...modules[op],
+        startPhase: untouched ? "opening" : undefined,
+      };
+    }
+    current = { ...current, modules };
   }
   return {
     saved: normalizeProgress(current),

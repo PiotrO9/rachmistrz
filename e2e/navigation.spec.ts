@@ -1,6 +1,56 @@
 import { test, expect } from "@playwright/test";
 import { ready, readProgress, settings } from "./helpers";
 
+test("wskaźnik nawigacji trafia pod aktywny tryb po włączeniu dodatkowych zakładek", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await ready(page);
+  await settings(page);
+  for (const name of ["Zapałki", "Logarytmy", "Wzory Viète’a"]) {
+    await page.getByRole("switch", { name, exact: true }).click();
+  }
+  await page.setViewportSize({ width: 651, height: 900 });
+  const nav = page.locator(".desktopNavigation");
+  await expect(nav.getByRole("button")).toHaveCount(6);
+  for (const [name, reduce] of [
+    ["Wzory Viète’a", false],
+    ["Historia", true],
+  ] as const) {
+    await page.emulateMedia({
+      reducedMotion: reduce ? "reduce" : "no-preference",
+    });
+    const button = nav.getByRole("button", { name, exact: true });
+    await button.press("Enter");
+    await expect(button).toHaveAttribute("aria-current", "page");
+    await expect
+      .poll(() =>
+        nav.evaluate((el) => {
+          const style = getComputedStyle(el, "::before");
+          const buttons = el.querySelectorAll("button");
+          const active = el
+            .querySelector('[aria-current="page"]')!
+            .getBoundingClientRect();
+          return Math.abs(
+            buttons[0].getBoundingClientRect().left +
+              new DOMMatrix(style.transform).m41 -
+              active.left,
+          );
+        }),
+      )
+      .toBeLessThan(1);
+    expect(
+      await nav.evaluate(
+        (el) =>
+          parseFloat(getComputedStyle(el, "::before").transitionDuration) > 0,
+      ),
+    ).toBe(!reduce);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
+    651,
+  );
+});
+
 test("układ i menu zachowują granicę 650/651 px", async ({ page }) => {
   await page.goto("/");
   await ready(page);

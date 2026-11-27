@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { useNavigationDrawer } from "./useNavigationDrawer";
 import type { AppView } from "../app-view";
 import { Icon } from "./Icon";
@@ -22,16 +23,15 @@ export function AppNavigation({
     setOpen(false);
     onNavigate(next);
   };
-  const tabs = (
-    [
-      { id: "game", name: "Trening" },
-      ...(matches ? [{ id: "matches", name: "Zapałki" } as const] : []),
-      { id: "settings", name: "Ustawienia" },
-      { id: "history", name: "Historia" },
-      ...(logarithms ? [{ id: "logarithms", name: "Logarytmy" } as const] : []),
-      ...(viete ? [{ id: "viete", name: "Wzory Viète’a" } as const] : []),
-    ] as const
-  ).map((tab) => (
+  const items = [
+    { id: "game", name: "Trening" },
+    ...(matches ? [{ id: "matches", name: "Zapałki" } as const] : []),
+    { id: "settings", name: "Ustawienia" },
+    { id: "history", name: "Historia" },
+    ...(logarithms ? [{ id: "logarithms", name: "Logarytmy" } as const] : []),
+    ...(viete ? [{ id: "viete", name: "Wzory Viète’a" } as const] : []),
+  ] as const;
+  const tabs = items.map((tab) => (
     <button
       key={tab.id}
       className={view === tab.id ? "active" : ""}
@@ -59,7 +59,24 @@ export function AppNavigation({
           </span>
           <span>rachmistrz</span>
         </a>
-        <span className="headerNote">Trening liczenia w pamięci</span>
+        <nav
+          className="segmentedControl desktopNavigation"
+          style={
+            {
+              "--segments": items.length,
+              "--segment-offset":
+                Math.max(
+                  0,
+                  items.findIndex((tab) => tab.id === view),
+                ) *
+                  100 +
+                "%",
+            } as CSSProperties
+          }
+          aria-label="Główna nawigacja"
+        >
+          {tabs}
+        </nav>
         <button
           className="menuToggle"
           ref={toggle}
@@ -72,12 +89,6 @@ export function AppNavigation({
           <Icon name="menu" />
         </button>
       </header>
-      <nav
-        className="navigation desktopNavigation"
-        aria-label="Główna nawigacja"
-      >
-        {tabs}
-      </nav>
       <dialog
         id="mobile-navigation"
         className="navigationDrawer"

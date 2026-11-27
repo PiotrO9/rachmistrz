@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { ready, settings, readProgress, answer } from "./helpers";
 
-test("procenty: ręczne włączenie i niezależny awans po dwóch blokach", async ({
+test("procenty: ręczne włączenie i niezależny awans po pierwszych ośmiu zadaniach", async ({
   page,
 }) => {
   await page.goto("/");
@@ -16,7 +16,8 @@ test("procenty: ręczne włączenie i niezależny awans po dwóch blokach", asyn
       .click();
   }
   await page.getByRole("button", { name: "Trening", exact: true }).click();
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 8; i++) {
+    if (i === 4) await page.reload();
     const input = await ready(page);
     const equation = page.locator(".equation");
     const rate = await equation.locator(".firstOperand").innerText();
@@ -33,7 +34,7 @@ test("procenty: ręczne włączenie i niezależny awans po dwóch blokach", asyn
     adaptive: true,
     level: 2,
   });
-  expect(saved.history[0].details?.percent.clean).toBe(16);
+  expect(saved.history[0].details?.percent.clean).toBe(8);
   expect(saved.modules.add.level).toBe(1);
 });
 

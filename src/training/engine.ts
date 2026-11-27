@@ -19,7 +19,33 @@ import {
   type Outcome,
 } from "../domain";
 
+import {
+  sessionModule,
+  sessionTask,
+  type SessionConfig,
+  type SessionPreset,
+} from "../domain/session";
+
+type Exercise = Pick<
+  TrainingState,
+  | "task"
+  | "input"
+  | "editing"
+  | "corrections"
+  | "sequence"
+  | "revealed"
+  | "announcement"
+>;
+interface QuickSession {
+  config: SessionConfig;
+  modules: SavedProgress["modules"];
+  exercise: Exercise;
+  solved: number;
+  skipped: number;
+  finished: boolean;
+}
 export interface TrainingState {
+  quick?: QuickSession;
   saved: SavedProgress;
   task: Task;
   input: string;
@@ -33,6 +59,7 @@ export interface TrainingState {
   announcement?: string;
 }
 export type SettingsAction =
+  | { type: "saveSessionPreset"; preset: SessionPreset }
   | { type: "matches"; enabled: boolean }
   | { type: "matchResult"; id: string; epoch: number; outcome: Outcome }
   | { type: "preset"; active: Operation[] }
@@ -52,6 +79,11 @@ export type SettingsAction =
     };
 export type Action =
   | SettingsAction
+  | { type: "startQuick"; config: SessionConfig }
+  | { type: "endQuick" }
+  | { type: "exitQuick" }
+  | { type: "quickSkip" }
+  | { type: "quickInput"; value: string; inputType: string }
   | { type: "logInput"; value: string }
   | { type: "logStart" }
   | { type: "logSkip" }
@@ -69,7 +101,13 @@ export const environment: Environment = {
 };
 export type Command =
   | { type: "logResult"; skipped: boolean }
-  | { type: "complete"; task: Task; outcome: Outcome; date: string }
+  | {
+      type: "complete";
+      quick?: boolean;
+      task: Task;
+      outcome: Outcome;
+      date: string;
+    }
   | { type: "configure"; action: SettingsAction; date: string };
 export type Transition =
   | { kind: "local"; state: TrainingState }
@@ -106,6 +144,16 @@ export function configure(
   action: SettingsAction,
   date: string,
 ): SavedProgress {
+  if (action.type === "saveSessionPreset") {
+    const existing = new Set(saved.sessionPresets.map((p) => p.name));
+    let name = action.preset.name;
+    for (let suffix = 2; existing.has(name); suffix++)
+      name = action.preset.name + " (" + suffix + ")";
+    return {
+      ...saved,
+      sessionPresets: [...saved.sessionPresets, { ...action.preset, name }],
+    };
+  }
   if (action.type === "import") return importProgress(saved, action.saved);
   if (action.type === "matches")
     return { ...saved, matches: { ...saved.matches, enabled: action.enabled } };
@@ -181,6 +229,9 @@ function configureOperations(
     )
       modules[action.op] = {
         ...modules[action.op],
+        materialResults: undefined,
+        checkFirstPromotion: undefined,
+        startPhase: undefined,
         block: [],
         trend: 0,
         epoch: (old.epoch ?? 0) + 1,
@@ -237,6 +288,53 @@ export function interpret(
   action: Action,
   env = environment,
 ): Transition {
+  if (action.type === "startQuick") {
+    const modules = { ...state.saved.modules };
+    for (const rule of action.config.rules)
+      modules[rule.operation] = sessionModule(rule, state.saved);
+    const task = sessionTask(action.config, modules, state.saved, env.random);
+    return {
+      kind: "local",
+      state: {
+        ...state,
+        quick: {
+          config: action.config,
+          modules,
+          exercise: {
+            task,
+            input: "",
+            editing: false,
+            corrections: 0,
+            sequence: 0,
+          },
+          solved: 0,
+          skipped: 0,
+          finished: false,
+        },
+      },
+    };
+  }
+  if (action.type === "exitQuick")
+    return { kind: "local", state: { ...state, quick: undefined } };
+  if (
+    action.type === "endQuick" ||
+    action.type === "quickInput" ||
+    action.type === "quickSkip"
+  ) {
+    const q = state.quick;
+    if (!q || q.finished) return { kind: "local", state };
+    if (action.type === "endQuick")
+      return {
+        kind: "local",
+        state: { ...state, quick: { ...q, finished: true } },
+      };
+    if (q.exercise.revealed && action.type === "quickSkip")
+      return {
+        kind: "local",
+        state: { ...state, quick: advanceQuick(q, state.saved, env) },
+      };
+    return interpretExercise(state, action, env);
+  }
   if (action.type === "logStart")
     return {
       kind: "local",
@@ -287,59 +385,71 @@ export function interpret(
         ? reconcile(state, state.saved, { task: "replace" }, env)
         : state,
     };
-  if (action.type === "input") {
-    const value = action.value.replace(/^−/, "-");
-    const valid =
-      state.task.operation === "fraction"
-        ? /^(?:\d{1,9}(?:\/\d{0,9})?)?$/
-        : state.task.signedInput
-          ? /^-?\d{0,9}$/
-          : /^\d{0,9}$/;
-    if (state.revealed || !valid.test(value)) return { kind: "local", state };
-    const change = correction(
-      state.input,
-      value,
-      state.editing,
-      action.inputType,
-    );
-    const preview = {
-      ...state,
-      input: value,
-      corrections: state.corrections + change.increment,
-      editing: change.editing,
-    };
-    if (
-      state.task.operation === "fraction"
-        ? matchesFraction(value, state.task)
-        : value !== "" && Number(value) === expectedAnswer(state.task)
-    )
-      return {
-        kind: "commit",
-        preview,
-        command: {
-          type: "complete",
-          task: state.task,
-          outcome: { skipped: false, corrections: preview.corrections },
-          date: env.date(),
-        },
-      };
-    return { kind: "local", state: preview };
-  }
-  if (action.type === "skip")
-    return {
-      kind: "commit",
-      preview: state,
-      command: {
-        type: "complete",
-        task: state.task,
-        outcome: { skipped: true, corrections: state.corrections },
-        date: env.date(),
-      },
-    };
+  if (action.type === "input" || action.type === "skip")
+    return interpretExercise(state, action, env);
   return {
     kind: "commit",
     preview: state,
     command: { type: "configure", action, date: env.date() },
+  };
+}
+function interpretExercise(
+  state: TrainingState,
+  action: Extract<
+    Action,
+    { type: "input" | "quickInput" | "skip" | "quickSkip" }
+  >,
+  env: Environment,
+): Transition {
+  const quick =
+    action.type === "quickInput" || action.type === "quickSkip"
+      ? state.quick
+      : undefined;
+  const exercise = quick?.exercise ?? state;
+  const task = exercise.task;
+  let preview = state;
+  let corrections = exercise.corrections;
+  const skipped = action.type === "skip" || action.type === "quickSkip";
+  if (!skipped) {
+    const value = action.value.replace(/^−/, "-");
+    const valid =
+      task.operation === "fraction"
+        ? /^(?:\d{1,9}(?:\/\d{0,9})?)?$/
+        : task.signedInput
+          ? /^-?\d{0,9}$/
+          : /^\d{0,9}$/;
+    if (exercise.revealed || !valid.test(value))
+      return { kind: "local", state };
+    const change = correction(
+      exercise.input,
+      value,
+      exercise.editing,
+      action.inputType,
+    );
+    corrections += change.increment;
+    const edit = { input: value, corrections, editing: change.editing };
+    preview = quick
+      ? {
+          ...state,
+          quick: { ...quick, exercise: { ...quick.exercise, ...edit } },
+        }
+      : { ...state, ...edit };
+    const solved =
+      task.operation === "fraction"
+        ? matchesFraction(value, task)
+        : value !== "" && Number(value) === expectedAnswer(task);
+    if (!solved) return { kind: "local", state: preview };
+  }
+  return {
+    kind: "commit",
+    preview,
+    command: {
+      type: "complete",
+      ...(quick ? { quick: true } : {}),
+      task,
+      outcome: { skipped, corrections },
+      date: env.date(),
+    },
   };
 }
 export function applyCommand(
@@ -364,8 +474,31 @@ export function applyCommand(
         command.outcome,
         command.date,
         command.task,
+        !command.quick,
       )
     : configure(latest, command.action, command.date);
+}
+function advanceQuick(
+  q: QuickSession,
+  saved: SavedProgress,
+  env: Environment,
+): QuickSession {
+  return {
+    ...q,
+    exercise: {
+      task: sessionTask(
+        q.config,
+        q.modules,
+        saved,
+        env.random,
+        q.exercise.task,
+      ),
+      sequence: q.exercise.sequence + 1,
+      input: "",
+      editing: false,
+      corrections: 0,
+    },
+  };
 }
 export function settle(
   preview: TrainingState,
@@ -373,6 +506,26 @@ export function settle(
   command: Command,
   env = environment,
 ): TrainingState {
+  if (command.type === "complete" && command.quick && preview.quick) {
+    const next = reconcile(preview, saved, { task: "preserve" }, env);
+    const q = { ...preview.quick };
+    const op = command.task.operation;
+    q.modules = { ...q.modules, [op]: adapt(q.modules[op], command.outcome) };
+    if (command.outcome.skipped) q.skipped++;
+    else q.solved++;
+    q.finished =
+      q.solved + (q.config.goal === "tasks" ? q.skipped : 0) >= q.config.count;
+    if (q.finished) return { ...next, quick: q };
+    if (command.outcome.skipped && saved.showSolution) {
+      q.exercise = {
+        ...q.exercise,
+        revealed: true,
+        input: formatAnswer(command.task),
+      };
+      return { ...next, quick: q };
+    }
+    return { ...next, quick: advanceQuick(q, saved, env) };
+  }
   if (command.type === "logResult") {
     const next = reconcile(preview, saved, { task: "preserve" }, env);
     if (!next.logPractice) return next;
@@ -391,7 +544,9 @@ export function settle(
     };
   if (command.type === "configure")
     return reconcile(
-      preview,
+      command.action.type === "import"
+        ? { ...preview, quick: undefined }
+        : preview,
       saved,
       { task: command.action.type === "import" ? "replace" : "preserve" },
       env,

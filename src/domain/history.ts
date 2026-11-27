@@ -18,6 +18,7 @@ export function record(
   outcome: Outcome,
   date = localDate(),
   task?: Task,
+  trainLevel = true,
 ): SavedProgress {
   const history: Day[] = saved.history.slice();
   const index = history.findIndex((x) => x.date === date);
@@ -72,10 +73,13 @@ export function record(
   const current = saved.modules[operation];
   // A task started before a manual setting change must not train the new level's model.
   const compatible =
+    trainLevel &&
     current.enabled &&
     (!task || task.level === undefined || task.level === current.level) &&
     (!task || (task.epoch ?? 0) === (current.epoch ?? 0));
-  const adapted = compatible ? adapt(current, outcome) : current;
+  const adapted = compatible
+    ? adapt(current, outcome, undefined, task?.materialLevel)
+    : current;
   const changes =
     adapted.level === current.level
       ? saved.changes

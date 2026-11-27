@@ -41,6 +41,7 @@ describe("matchstick puzzles", () => {
   it("adds disabled matches to v7 without resetting other progress", () => {
     const old = defaults();
     old.modules.fraction.level = 3;
+    delete old.modules.fraction.startPhase;
     const saved = migrateStored({
       ...old,
       version: 7,

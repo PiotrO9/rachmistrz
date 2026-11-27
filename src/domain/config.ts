@@ -15,6 +15,10 @@ export type LogSet = (typeof LOG_SETS)[number]["value"];
 export const ADAPTATION = {
   blockSize: 8,
   consecutiveBlocks: 2,
+  levelTwoCleanRun: 6,
+  levelThreeCleanRun: 9,
+  firstPromotionWindow: 6,
+  firstPromotionErrors: 3,
   cleanToAdvance: 7,
   skipsToLower: 3,
   correctedToLower: 5,

@@ -84,3 +84,15 @@ Włącz **Zapałki** w ustawieniach i wybierz je w menu. Przeciągnij zapałkę 
 ## Reszta z dzielenia wielomianu — 27 listopada 2026
 
 W ustawieniach włącz **Resztę z dzielenia wielomianu**, aby dodać te zadania do treningu. Wpisz wartość wielomianu w miejscu zerowym dzielnika. Dla `x³ + 2x + 5` i dzielnika `x − 2` odpowiedzią jest `17`. Moduł ma pięć poziomów i własną adaptację.
+
+## Późniejsza zmiana — 27 listopada 2026
+
+Każde działanie ma jednorazową próbę 8/8 na poziomie 1. Po poprawce lub pominięciu dobry blok wymaga bezbłędnego potwierdzenia w następnym bloku.
+
+## Późniejsze ustalenie — szybka sesja (27 listopada 2026)
+
+Opcjonalny kreator obok nieskończonego treningu pozwala połączyć działania o niezależnej trudności i wybrać wspólny cel. Po sesji dostępne są jej podsumowanie, powtórzenie zestawu i powrót do rozpoczętego zadania.
+
+## Późniejsza zmiana — ocena bieżącego materiału
+
+Poziomy 2 i 3 mają dodatkową ścieżkę awansu po serii samodzielnych rozwiązań bieżącego materiału. Po pierwszym automatycznym awansie trudności z trzema spośród pierwszych sześciu nowych zadań powodują powrót do podstaw.

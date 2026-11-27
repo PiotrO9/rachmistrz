@@ -1,4 +1,6 @@
 import { summarizeDay } from "./summary";
+import { recentActivity, type ActivityPeriod } from "./activity";
+import { ActivityRankings, ActivityTrend } from "./ActivityCharts";
 import { useState } from "react";
 import {
   operations,
@@ -15,12 +17,22 @@ const formatDate = (s: string) =>
   });
 export function ProgressHistory({ saved }: { saved: SavedProgress }) {
   const [operation, setOperation] = useState<Operation | "all">("all");
+  const [period, setPeriod] = useState<ActivityPeriod>(30);
+  const { rows, dates } = recentActivity(saved.history, period);
+  const selected = rows.find((row) => row.operation === operation);
   const changes = saved.changes
     .filter((change) => operation === "all" || change.operation === operation)
     .slice()
     .reverse();
   return (
     <>
+      <ActivityRankings
+        period={period}
+        onPeriodChange={setPeriod}
+        rows={rows}
+        selected={operation}
+        onSelect={setOperation}
+      />
       <div className="preset">
         <label htmlFor="history-operation">Działanie</label>
         <Select<Operation | "all">
@@ -33,6 +45,7 @@ export function ProgressHistory({ saved }: { saved: SavedProgress }) {
           ]}
         />
       </div>
+      {selected && <ActivityTrend row={selected} dates={dates} />}
       <div className="historyTable">
         <table>
           <caption className="srOnly">Dzienna historia treningów</caption>

@@ -97,3 +97,119 @@ tbody th {
     border-bottom: 1px solid var(--line);
   }
 }
+.activityCharts {
+  margin-block: 1.6rem;
+}
+.activityCharts h2,
+.activityCharts h3,
+.activityCharts p {
+  margin: 0;
+}
+.activityCharts h2 {
+  font-size: 1.3rem;
+}
+.activityCharts h3 {
+  font-size: 1rem;
+}
+.activityCharts p,
+.rankingRow small,
+.trendDates,
+.trendScale {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.activityCharts p {
+  margin-top: 0.4rem;
+}
+.rankingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.rankingGrid > section,
+.trend {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: var(--surface);
+}
+.rankingGrid h3 {
+  margin-bottom: 0.5rem;
+}
+.rankingRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 0.7rem;
+  width: 100%;
+  padding: 0.65rem 0.4rem;
+  text-align: left;
+  border-radius: 0.3rem;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+.rankingRow:hover,
+.rankingRow[aria-pressed="true"] {
+  background: var(--hover);
+}
+.rankingTrack {
+  grid-column: 1 / -1;
+  height: 0.4rem;
+  background: var(--line);
+  border-radius: 1rem;
+}
+.rankingTrack i {
+  display: block;
+  height: 100%;
+  background: var(--focus);
+  border-radius: inherit;
+}
+.trendPlot {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  margin: 1.2rem 0.35rem 1rem 0;
+  gap: 0.5rem 0.75rem;
+}
+.trendPlot svg {
+  width: 100%;
+  height: 7rem;
+  overflow: visible;
+  fill: var(--focus);
+}
+.trendPlot line {
+  stroke: var(--focus);
+  stroke-width: 2;
+}
+.trendPlot .trendGrid {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.trendScale,
+.trendDates {
+  display: flex;
+  justify-content: space-between;
+}
+.trendScale {
+  flex-direction: column;
+  text-align: right;
+}
+.trendDates {
+  grid-column: 2;
+}
+.trend summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.activityHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.activityPeriod[data-period="7"] {
+  --segment-offset: 100%;
+}
+.activityPeriod[data-period="30"] {
+  --segment-offset: 200%;
+}

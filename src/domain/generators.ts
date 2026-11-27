@@ -19,6 +19,7 @@ export function generate(
   level: Level,
   random = Math.random,
   negativeNumbers = false,
+  fixed = false,
 ): Task {
   const int = (lo: number, hi: number) =>
     Math.floor(random() * (hi - lo + 1)) + lo;
@@ -27,7 +28,7 @@ export function generate(
     return items[int(0, items.length - 1)];
   };
   const materialLevel = (
-    level > 1 && random() < REVIEW_SHARE ? level - 1 : level
+    !fixed && level > 1 && random() < REVIEW_SHARE ? level - 1 : level
   ) as Level;
   const families = CURRICULUM[operation][materialLevel - 1].families;
   let weight =
@@ -123,10 +124,18 @@ export function nextTask(
   random = Math.random,
   negativeNumbers = false,
   missingNumber = false,
+  options?: { operation: Operation; fixed: boolean; forceMissing: boolean },
 ): Task {
   const active = operations.filter((op) => modules[op].enabled);
-  const op = active[Math.floor(random() * active.length)] ?? "add";
-  let task = generate(op, modules[op].level, random, negativeNumbers);
+  const op =
+    options?.operation ?? active[Math.floor(random() * active.length)] ?? "add";
+  let task = generate(
+    op,
+    modules[op].level,
+    random,
+    negativeNumbers,
+    options?.fixed,
+  );
   for (
     let i = 0;
     i < 10 &&
@@ -144,7 +153,14 @@ export function nextTask(
         task.denominatorB === previous.denominatorB));
     i++
   )
-    task = generate(op, modules[op].level, random, negativeNumbers);
-  if (missingNumber) task = withMissingOperand(task, random);
+    task = generate(
+      op,
+      modules[op].level,
+      random,
+      negativeNumbers,
+      options?.fixed,
+    );
+  if (missingNumber)
+    task = withMissingOperand(task, random, options?.forceMissing);
   return { ...task, epoch: modules[op].epoch ?? 0 };
 }

@@ -105,9 +105,7 @@
   margin-inline: 0.3rem;
 }
 .selectMenuCompact .selectCheck {
-  position: absolute;
-  right: 0.5rem;
-  top: 0.55rem;
+  display: none;
 }
 .selectMenuCompact .selectOption[data-state="checked"] .levelOptionNumber {
   color: var(--ink);
