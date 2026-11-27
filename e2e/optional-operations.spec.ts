@@ -84,6 +84,9 @@ test("opcjonalne działania: włączenie, odpowiedź, trwałość i wyłączenie
     expect((await readProgress(page)).modules[op].enabled).toBe(true);
     await settings(page);
   }
+  await page
+    .getByRole("button", { name: "Dostosuj: Pierwiastkowanie", exact: true })
+    .click();
   await page.getByLabel("Poziom: Pierwiastkowanie", { exact: true }).click();
   await page.getByRole("option", { name: "Ekspercki", exact: true }).click();
   await page.getByRole("button", { name: "Trening", exact: true }).click();

@@ -58,7 +58,7 @@ export interface OperationProgress {
   level: Level;
   adaptive: boolean;
   block: Outcome[];
-  materialResults?: boolean[];
+  materialResults?: (boolean | "carry")[];
   checkFirstPromotion?: boolean;
   startPhase?: "opening" | "confirm";
   trend?: number;
@@ -85,7 +85,7 @@ export interface Day {
   modules: Record<Operation, number>;
   details?: Record<Operation, Stats>;
 }
-export const CURRENT_PROGRESS_VERSION = 15 as const;
+export const CURRENT_PROGRESS_VERSION = 16 as const;
 export interface SavedProgress {
   sessionPresets: import("./session").SessionPreset[];
   version: typeof CURRENT_PROGRESS_VERSION;

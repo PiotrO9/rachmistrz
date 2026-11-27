@@ -22,6 +22,12 @@ test("polynomial remainder is opt-in and accepts a negative remainder", async ({
       .click();
   }
   await page
+    .getByRole("button", {
+      name: "Dostosuj: Reszta z dzielenia wielomianu",
+      exact: true,
+    })
+    .click();
+  await page
     .getByLabel("Poziom: Reszta z dzielenia wielomianu", { exact: true })
     .click();
   await page.getByRole("option", { name: "Trudny", exact: true }).click();

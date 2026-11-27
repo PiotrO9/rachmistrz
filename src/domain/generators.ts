@@ -6,6 +6,7 @@ import {
   type SavedProgress,
 } from "./types";
 import { withMissingOperand } from "./missing-number";
+import { needsCarryTask } from "./addition-evidence";
 import { CURRICULUM, REVIEW_SHARE } from "./config";
 
 import { generateFraction } from "./fractions";
@@ -20,7 +21,9 @@ export function generate(
   random = Math.random,
   negativeNumbers = false,
   fixed = false,
+  requireCarry = false,
 ): Task {
+  requireCarry = requireCarry && operation === "add" && level === 2;
   const int = (lo: number, hi: number) =>
     Math.floor(random() * (hi - lo + 1)) + lo;
   const pick = <T>(items: readonly T[]): T => {
@@ -28,9 +31,14 @@ export function generate(
     return items[int(0, items.length - 1)];
   };
   const materialLevel = (
-    !fixed && level > 1 && random() < REVIEW_SHARE ? level - 1 : level
+    !fixed && !requireCarry && level > 1 && random() < REVIEW_SHARE
+      ? level - 1
+      : level
   ) as Level;
-  const families = CURRICULUM[operation][materialLevel - 1].families;
+  const pool = CURRICULUM[operation][materialLevel - 1].families;
+  const families = requireCarry
+    ? pool.filter((f) => f.kind === "digits" && f.regroup > 0)
+    : pool;
   let weight =
     random() * families.reduce((sum, family) => sum + family.weight, 0);
   const family =
@@ -95,7 +103,7 @@ export function generate(
     [a, b] = pick(productPool(operation, family));
     if (operation === "divide") a *= b;
   }
-  if (negativeNumbers && random() < 0.25) {
+  if (negativeNumbers && !requireCarry && random() < 0.25) {
     if (operation === "subtract") [a, b] = [b, a];
     else if (operation === "add") [a, b] = [-Math.max(a, b), Math.min(a, b)];
     else a = -a;
@@ -129,12 +137,14 @@ export function nextTask(
   const active = operations.filter((op) => modules[op].enabled);
   const op =
     options?.operation ?? active[Math.floor(random() * active.length)] ?? "add";
+  const requireCarry = !options && op === "add" && needsCarryTask(modules.add);
   let task = generate(
     op,
     modules[op].level,
     random,
     negativeNumbers,
     options?.fixed,
+    requireCarry,
   );
   for (
     let i = 0;
@@ -159,8 +169,9 @@ export function nextTask(
       random,
       negativeNumbers,
       options?.fixed,
+      requireCarry,
     );
-  if (missingNumber)
+  if (missingNumber && !requireCarry)
     task = withMissingOperand(task, random, options?.forceMissing);
   return { ...task, epoch: modules[op].epoch ?? 0 };
 }

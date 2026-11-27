@@ -96,3 +96,7 @@ Opcjonalny kreator obok nieskończonego treningu pozwala połączyć działania 
 ## Późniejsza zmiana — ocena bieżącego materiału
 
 Poziomy 2 i 3 mają dodatkową ścieżkę awansu po serii samodzielnych rozwiązań bieżącego materiału. Po pierwszym automatycznym awansie trudności z trzema spośród pierwszych sześciu nowych zadań powodują powrót do podstaw.
+
+## Późniejsza zmiana — przeniesienia w dodawaniu
+
+Szybki awans z poziomu 2 dodawania wymaga dwóch pełnych sum z przeniesieniem wśród sześciu czystych odpowiedzi z bieżącego materiału. Gdy liczba pozostałych miejsc odpowiada liczbie brakujących przykładów, kolejne dodawanie sprawdza tę umiejętność.

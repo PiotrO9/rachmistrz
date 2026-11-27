@@ -78,7 +78,7 @@ export function record(
     (!task || task.level === undefined || task.level === current.level) &&
     (!task || (task.epoch ?? 0) === (current.epoch ?? 0));
   const adapted = compatible
-    ? adapt(current, outcome, undefined, task?.materialLevel)
+    ? adapt(current, outcome, undefined, task?.materialLevel, task)
     : current;
   const changes =
     adapted.level === current.level

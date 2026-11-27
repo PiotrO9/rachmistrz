@@ -23,6 +23,9 @@ test("automatyczna odpowiedź, poprawki, zachowanie rachunku i skróty", async (
   await input.fill("999999");
   await expect(input).toHaveValue("999999");
   await settings(page);
+  await page
+    .getByRole("button", { name: "Dostosuj: Dodawanie", exact: true })
+    .click();
   await page.getByLabel("Poziom: Dodawanie", { exact: true }).click();
   await page.getByRole("option", { name: "Trudny", exact: true }).click();
   await expect(
@@ -114,6 +117,9 @@ test("cyfry poza polem trafiają do odpowiedzi bez przejmowania innych kontrolek
     .poll(async () => (await readProgress(page)).history[0]?.solved)
     .toBe(1);
   await settings(page);
+  await page
+    .getByRole("button", { name: "Dostosuj: Dodawanie", exact: true })
+    .click();
   const level = page.getByLabel("Poziom: Dodawanie", { exact: true });
   await level.click();
   await page.keyboard.press("2");

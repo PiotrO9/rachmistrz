@@ -44,7 +44,7 @@ test("migracja v2 zachowuje postęp i pozwala trenować po przeładowaniu", asyn
   }, previous);
   await page.reload();
   const input = await ready(page);
-  expect(await readRawProgress(page)).toMatchObject({ version: 15 });
+  expect(await readRawProgress(page)).toMatchObject({ version: 16 });
   const migrated = await readProgress(page);
   expect(migrated.modules.multiply).toMatchObject({
     level: 5,
@@ -64,6 +64,9 @@ test("migracja v2 zachowuje postęp i pozwala trenować po przeładowaniu", asyn
   expect(current.modules.multiply.block).toHaveLength(1);
   expect(current.history[0].solved).toBe(1);
   await settings(page);
+  await page
+    .getByRole("button", { name: "Dostosuj: Mnożenie", exact: true })
+    .click();
   await page.getByLabel("Poziom: Mnożenie", { exact: true }).click();
   await expect(
     page
@@ -206,6 +209,9 @@ test("błąd zapisu zachowuje odpowiedź i pozwala zatwierdzić ją ponownie", a
     page.getByRole("button", { name: /Pomiń zadanie/ }),
   ).toBeHidden();
   await settings(page);
+  await page
+    .getByRole("button", { name: "Dostosuj: Dodawanie", exact: true })
+    .click();
   await expect(
     page.getByLabel("Poziom: Dodawanie", { exact: true }),
   ).toBeDisabled();

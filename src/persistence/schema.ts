@@ -14,7 +14,7 @@ import { defaults } from "../domain/defaults";
 import { LOG_SETS, ADAPTATION } from "../domain/config";
 import { validPreset } from "../domain/session";
 export type PreviousSaved = Omit<SavedProgress, "version"> & {
-  version: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
+  version: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
 };
 export interface LegacySaved {
   version: 1;
@@ -66,7 +66,9 @@ const isOperationProgress = (x: unknown): x is OperationProgress =>
         (x.level === 2
           ? ADAPTATION.levelTwoCleanRun
           : ADAPTATION.levelThreeCleanRun) &&
-      x.materialResults.every((v) => typeof v === "boolean"))) &&
+      x.materialResults.every(
+        (v) => typeof v === "boolean" || (x.level === 2 && v === "carry"),
+      ))) &&
   isList(x.block, isOutcome) &&
   x.block.length < ADAPTATION.blockSize &&
   (x.trend === undefined || x.trend === -1 || x.trend === 0 || x.trend === 1) &&
@@ -171,12 +173,21 @@ export function validateStored(
       x.version !== 12 &&
       x.version !== 13 &&
       x.version !== 14 &&
+      x.version !== 15 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");
   if (!isOperationRecord(x.modules, isOperationProgress))
     throw new SavedDataError("Niepoprawne ustawienia działań.");
   const modules = x.modules;
+  if (
+    operations.some(
+      (op) =>
+        (op !== "add" || x.version !== CURRENT_PROGRESS_VERSION) &&
+        modules[op].materialResults?.includes("carry"),
+    )
+  )
+    throw new SavedDataError("Niepoprawny zapis przeniesienia.");
   if (!operations.some((op) => modules[op].enabled))
     throw new SavedDataError("Włącz co najmniej jedno działanie.");
   if (!isList(x.history, isSavedDay))
@@ -197,6 +208,7 @@ export function validateStored(
   if (
     !isOperationProgress(matches) ||
     matches.level > 2 ||
+    matches.materialResults?.includes("carry") ||
     !("history" in matches) ||
     !isList(matches.history, isMatchDay)
   )

@@ -17,43 +17,66 @@ import {
   polynomialExpression,
   polynomialDivisor,
 } from "../../domain/polynomial";
-import { formatRatio } from "../../domain/fractions";
+import { formatRatio, formatAnswer } from "../../domain/fractions";
 
-function example(rule: SessionRule, saved: SavedProgress) {
+function SessionExample({
+  rule,
+  saved,
+}: {
+  rule: SessionRule;
+  saved: SavedProgress;
+}) {
   const task = sessionTask(
     { rules: [rule], count: 1, goal: "tasks" },
     { ...saved.modules, [rule.operation]: sessionModule(rule, saved) },
     saved,
     () => 0.62,
   );
-  if (task.operation === "polynomial")
+  const answer = <mark>{formatAnswer(task)}</mark>;
+  function expression() {
+    if (task.operation === "polynomial")
+      return (
+        "Reszta z dzielenia (" +
+        polynomialExpression(task) +
+        ") przez (" +
+        polynomialDivisor(task.a) +
+        ")"
+      );
+    if (task.operation === "fraction")
+      return [
+        formatRatio(task.a, task.denominatorA),
+        task.operator,
+        formatRatio(task.b, task.denominatorB),
+      ].join(" ");
+    if (task.operation === "root")
+      return "Pierwiastek stopnia " + task.b + " z " + task.a;
+    if (task.operation === "power")
+      return (
+        <>
+          {task.a}
+          <sup>{task.b}</sup>
+        </>
+      );
     return (
-      "Reszta z (" +
-      polynomialExpression(task) +
-      ") ÷ (" +
-      polynomialDivisor(task.a) +
-      ")"
+      <>
+        {task.missingOperand === "a" ? answer : task.a}{" "}
+        {task.operation === "percent" ? "% z" : symbols[task.operation]}{" "}
+        {task.missingOperand === "b" ? answer : task.b}
+      </>
     );
-  if (task.operation === "fraction")
-    return [
-      formatRatio(task.a, task.denominatorA),
-      task.operator,
-      formatRatio(task.b, task.denominatorB),
-      "= □",
-    ].join(" ");
-  if (task.operation === "root")
-    return "Pierwiastek stopnia " + task.b + " z " + task.a;
-  return [
-    task.missingOperand === "a" ? "□" : task.a,
-    task.operation === "power"
-      ? "^"
-      : task.operation === "percent"
-        ? "% z"
-        : symbols[task.operation],
-    task.missingOperand === "b" ? "□" : task.b,
-    "=",
-    task.missingOperand ? task.answer : "□",
-  ].join(" ");
+  }
+  return (
+    <figure className="sessionExample">
+      <figcaption>
+        Przykład · {task.missingOperand ? "brakująca liczba" : "wynik"}
+      </figcaption>
+      <div>
+        {expression()}
+        {" = "}
+        {task.missingOperand ? task.answer : answer}
+      </div>
+    </figure>
+  );
 }
 export function SessionRuleEditor({
   rule,
@@ -163,7 +186,7 @@ export function SessionRuleEditor({
           </button>
         )}
       </div>
-      <p className="sessionExample">Przykład · {example(rule, saved)}</p>
+      <SessionExample rule={rule} saved={saved} />
       {(basic || multiple) && (
         <details>
           <summary>Więcej opcji</summary>

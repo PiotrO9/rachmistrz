@@ -1,11 +1,13 @@
-import type { OperationProgress, Outcome, Level } from "./types";
+import type { OperationProgress, Outcome, Level, Task } from "./types";
 import { ADAPTATION, LEVELS } from "./config";
+import { demonstratesCarry } from "./addition-evidence";
 /** The material-specific rules apply only to regular training tasks with known material. */
 export function adapt(
   module: OperationProgress,
   outcome: Outcome,
   maxLevel: Level = LEVELS[LEVELS.length - 1].value,
   materialLevel?: Level,
+  task?: Task,
 ): OperationProgress {
   const next = adaptBlock(module, outcome, maxLevel);
   if (!module.adaptive || maxLevel <= 2) return next;
@@ -21,13 +23,22 @@ export function adapt(
       materialLevel === 2
         ? ADAPTATION.levelTwoCleanRun
         : ADAPTATION.levelThreeCleanRun;
-    results = [...(results ?? []), clean].slice(-limit);
+    const checkCarries = materialLevel === 2 && task?.operation === "add";
+    const result =
+      clean && checkCarries && demonstratesCarry(task) ? "carry" : clean;
+    results = (results ?? []).concat(result).slice(-limit);
     if (
       checking &&
       results.filter((ok) => !ok).length >= ADAPTATION.firstPromotionErrors
     ) {
       level = 1;
-    } else if (results.length === limit && results.every(Boolean)) {
+    } else if (
+      results.length === limit &&
+      results.every(Boolean) &&
+      (!checkCarries ||
+        results.filter((value) => value === "carry").length >=
+          ADAPTATION.requiredAdditionCarries)
+    ) {
       level = Math.min(maxLevel, materialLevel + 1) as Level;
     }
     if (checking && results.length >= ADAPTATION.firstPromotionWindow)
@@ -35,6 +46,8 @@ export function adapt(
     if (!checking) {
       const lastError = results.lastIndexOf(false);
       if (lastError >= 0) results = results.slice(lastError + 1);
+      if (results.length === limit && level === module.level)
+        results = results.slice(1);
     }
   }
   if (level !== module.level) {

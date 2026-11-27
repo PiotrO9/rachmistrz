@@ -106,9 +106,84 @@
   font-weight: 600;
 }
 .sessionExample {
-  margin: 0.7rem 0;
-  font-variant-numeric: tabular-nums;
+  margin: 0.85rem 0;
+  padding-inline-start: 0.85rem;
+  border-inline-start: 2px solid var(--control-border);
+}
+.sessionDialog details {
+  border-top: 1px solid var(--line);
+}
+.sessionDialog summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  border-radius: 0.35rem;
+  padding: 0.5rem 2.5rem 0.5rem 0.5rem;
+  list-style: none;
+}
+.sessionDialog summary::-webkit-details-marker {
+  display: none;
+}
+.sessionDialog summary:hover,
+.sessionDialog summary:focus-visible {
+  background: var(--hover);
+}
+.sessionDialog summary::before,
+.sessionDialog summary::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 0.8rem;
+  width: 0.85rem;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+}
+.sessionDialog summary::after {
+  transform: rotate(90deg);
+}
+.sessionDialog details[open] > summary::after {
+  transform: rotate(0deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sessionDialog summary::after {
+    transition: transform 180ms ease;
+  }
+  @supports (interpolate-size: allow-keywords) {
+    .sessionDialog details::details-content {
+      interpolate-size: allow-keywords;
+      block-size: 0;
+      opacity: 0;
+      overflow: clip;
+      overflow-clip-margin: 8px;
+      transition:
+        block-size 220ms ease,
+        opacity 180ms ease,
+        content-visibility 220ms allow-discrete;
+    }
+    .sessionDialog details[open]::details-content {
+      block-size: auto;
+      opacity: 1;
+    }
+  }
+}
+.sessionExample figcaption {
   color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.sessionExample > div {
+  margin-top: 0.25rem;
+  font-size: 1.25rem;
+  line-height: 1.55;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.sessionExample mark {
+  color: var(--action-text);
+  background: color-mix(in srgb, var(--action-text) 13%, transparent);
+  padding: 0.06em 0.35em;
+  border-radius: 0.3em;
 }
 .sessionDialog details,
 .sessionAdd {

@@ -35,8 +35,8 @@ export async function readRawProgress(page: Page): Promise<unknown> {
 export async function readProgress(page: Page): Promise<SavedProgress> {
   const raw = await readRawProgress(page);
   const checked = validateStored(raw);
-  if (checked.version !== 15)
-    throw new Error("Expected persisted v15 progress");
+  if (checked.version !== 16)
+    throw new Error("Expected persisted v16 progress");
   return checked;
 }
 export async function answer(page: Page) {

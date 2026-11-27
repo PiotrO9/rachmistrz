@@ -48,6 +48,7 @@ export function SessionCreator({
       ref={dialog}
       className="sessionDialog"
       aria-labelledby="sessionTitle"
+      closedby="any"
       onCancel={onClose}
     >
       <header>

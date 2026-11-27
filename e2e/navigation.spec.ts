@@ -100,6 +100,9 @@ test("select obsługuje klawiaturę, fokus i zapamiętanie motywu", async ({
   await page.goto("/");
   await ready(page);
   await settings(page);
+  await page
+    .getByRole("button", { name: "Dostosuj: Dodawanie", exact: true })
+    .click();
   const level = page.getByLabel("Poziom: Dodawanie", { exact: true });
   await level.focus();
   await level.press("Enter");
@@ -128,6 +131,9 @@ test("select obsługuje klawiaturę, fokus i zapamiętanie motywu", async ({
   await ready(page);
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await settings(page);
+  await page
+    .getByRole("button", { name: "Dostosuj: Dodawanie", exact: true })
+    .click();
   await expect(
     page.getByLabel("Poziom: Dodawanie", { exact: true }),
   ).toContainText("Ekspercki");
@@ -152,6 +158,9 @@ test("układ mieści się na telefonie i dużym ekranie", async ({
   await settings(page);
   await page.getByLabel("Motyw", { exact: true }).click();
   await page.getByRole("option", { name: "Ciemny", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Dostosuj: Dodawanie", exact: true })
+    .click();
   await page.getByLabel("Poziom: Dodawanie", { exact: true }).click();
   await expect(page.getByRole("option")).toHaveCount(5);
   await expect(page.getByRole("listbox")).toBeVisible();
@@ -263,7 +272,9 @@ for (const touch of [false, true]) {
       await page.goto("/");
       await ready(page);
       await settings(page);
+      await page.getByRole("button", { name: "Dostosuj: Odejmowanie" }).click();
       const level = page.locator("#level-subtract");
+      await level.click({ trial: true });
       await level.scrollIntoViewIfNeeded();
       const press = async () => {
         const box = await level.boundingBox();

@@ -180,6 +180,11 @@ tbody th {
   background: var(--focus);
   border-radius: inherit;
 }
+@media (prefers-reduced-motion: no-preference) {
+  .rankingTrack i {
+    transition: width 400ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+}
 .trendPlot {
   display: grid;
   grid-template-columns: auto 1fr;

@@ -1,8 +1,34 @@
+import { useLayoutEffect, useRef } from "react";
 import { labels, type Operation } from "../../domain";
 import type { ActivityPeriod, ActivityRow } from "./activity";
 import type { HistoryFilter } from "./summary";
 
 const percent = (rate: number) => Math.round(rate * 100) + "%";
+function RankingNumber({ value }: { value: number }) {
+  const element = useRef<HTMLSpanElement>(null);
+  useLayoutEffect(() => {
+    const node = element.current!;
+    const start = node.textContent ? Number(node.textContent) : value;
+    const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    if (start === value || motion.matches) {
+      node.textContent = String(value);
+      return;
+    }
+    const since = performance.now();
+    let frame: number;
+    function draw(now: number) {
+      const progress = motion.matches
+        ? 1
+        : Math.min(1, Math.max(0, now - since) / 400);
+      const eased = 1 - (1 - progress) ** 3;
+      node.textContent = String(Math.round(start + (value - start) * eased));
+      if (progress < 1) frame = requestAnimationFrame(draw);
+    }
+    frame = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+  return <span ref={element} />;
+}
 const shortDate = (date: string) =>
   new Date(date + "T12:00:00").toLocaleDateString("pl-PL", {
     day: "numeric",
@@ -78,12 +104,24 @@ export function ActivityRankings({
                     type="button"
                     className="rankingRow"
                     key={row.operation}
+                    aria-label={
+                      metric === "solved"
+                        ? `${labels[row.operation]}: ${row.solved}`
+                        : `${labels[row.operation]}: ${percent(row.rate)}, ${row.clean} z ${row.attempts}${row.attempts < 3 ? " · mało prób" : ""}`
+                    }
                     aria-pressed={selected === row.operation}
                     onClick={() => onSelect(row.operation)}
                   >
                     <span>{labels[row.operation]}</span>
                     <strong>
-                      {metric === "solved" ? row.solved : percent(row.rate)}
+                      <RankingNumber
+                        value={
+                          metric === "solved"
+                            ? row.solved
+                            : Math.round(row.rate * 100)
+                        }
+                      />
+                      {metric === "rate" && "%"}
                     </strong>
                     <span className="rankingTrack" aria-hidden="true">
                       <i
@@ -98,7 +136,8 @@ export function ActivityRankings({
                     </span>
                     {metric === "rate" && (
                       <small>
-                        {row.clean} z {row.attempts}
+                        <RankingNumber value={row.clean} /> z{" "}
+                        <RankingNumber value={row.attempts} />
                         {row.attempts < 3 && " · mało prób"}
                       </small>
                     )}

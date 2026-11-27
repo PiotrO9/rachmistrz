@@ -16,6 +16,7 @@ export const ADAPTATION = {
   blockSize: 8,
   consecutiveBlocks: 2,
   levelTwoCleanRun: 6,
+  requiredAdditionCarries: 2,
   levelThreeCleanRun: 9,
   firstPromotionWindow: 6,
   firstPromotionErrors: 3,

@@ -13,13 +13,7 @@
   border-top: 1px solid var(--line);
 }
 .module {
-  display: grid;
-  grid-template-columns: minmax(165px, 1fr) minmax(200px, 1.35fr) minmax(
-      165px,
-      1fr
-    );
-  gap: 1.5rem;
-  padding: 1.5rem 0;
+  padding: 0.65rem 0;
   border-bottom: 1px solid var(--line);
 }
 .module.muted .moduleHeading h2,
@@ -35,7 +29,75 @@
   font-size: 1rem;
   font-weight: 550;
   margin: 0;
+}
+.moduleTitle {
   flex: 1;
+  min-width: 0;
+}
+.moduleTitle p,
+.moduleMode p {
+  margin: 0.2rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.moduleCustomize {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-inline-start: 0.75rem;
+  min-height: 44px;
+  padding: 0.35rem 0.6rem;
+  color: var(--action-text);
+  font-size: 0.875rem;
+  border-radius: 0.4rem;
+}
+.moduleCustomize:hover {
+  background: var(--hover);
+}
+.moduleCustomize span {
+  width: 0.44rem;
+  height: 0.44rem;
+  border-right: 1.5px solid;
+  border-bottom: 1.5px solid;
+  transform: rotate(45deg);
+}
+.moduleCustomize[aria-expanded="true"] span {
+  transform: rotate(225deg);
+}
+.moduleOptions {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+.moduleOptions[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.moduleClip {
+  min-height: 0;
+  overflow: clip;
+}
+.moduleFields {
+  margin: 0.55rem 0 0.2rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.55rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 0.75rem 1.25rem;
+}
+.moduleFields .selectTrigger {
+  width: 100%;
+  min-width: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .moduleOptions {
+    transition: grid-template-rows 220ms ease;
+  }
+  .moduleCustomize span {
+    transition: transform 180ms ease;
+  }
 }
 .operationBadge {
   min-width: 2rem;
@@ -77,12 +139,11 @@
 .switch.checked span {
   transform: translateX(1rem);
 }
-.levelRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 0;
+.levelRow,
+.moduleMode {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
 }
 .levelRow p {
   font-size: 0.8125rem;
@@ -93,14 +154,7 @@
   font-size: 0.875rem;
   padding: 0.65rem 0.75rem;
 }
-.adaptive {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 0.875rem;
-  color: var(--muted);
-}
+
 .explanation {
   margin-top: 26px;
   border-bottom: 1px solid var(--line);
@@ -195,30 +249,15 @@
   .preset .selectTrigger {
     width: 100%;
   }
-  .module {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 22px 0;
+  .moduleHeading {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.15rem 0.45rem;
   }
-}
-@media (min-width: 651px) and (max-width: 900px) {
-  .module {
-    grid-template-columns: 1fr 1.4fr;
-    gap: 20px;
-  }
-  .adaptive {
-    grid-column: 2;
-  }
-}
-@media (min-width: 901px) and (max-width: 1100px) {
-  .levelRow {
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-}
-@media (max-width: 380px) {
-  .levelRow {
-    flex-wrap: wrap;
-    gap: 0.75rem;
+  .moduleCustomize {
+    grid-column: 2 / -1;
+    justify-self: start;
+    margin: 0;
+    padding-inline: 0.25rem;
   }
 }

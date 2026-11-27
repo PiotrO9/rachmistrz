@@ -19,6 +19,20 @@ for (const width of [320, 1280])
     expect(operationBox!.height).toBe(modeBox!.height);
     if (width > 600) expect(operationBox!.y).toBe(modeBox!.y);
     else expect(operationBox!.x).toBe(modeBox!.x);
+    const optionsToggle = dialog.getByText("Więcej opcji", { exact: true });
+    const form = dialog.getByRole("combobox", { name: "Forma zadania" });
+    await expect(form).toBeHidden();
+    await optionsToggle.press("Enter");
+    await expect(form).toBeVisible();
+    await optionsToggle.press("Space");
+    await expect(form).toBeHidden();
+    await expect(optionsToggle).toBeFocused();
+    const example = dialog.locator(".sessionExample");
+    await expect(example.locator("mark")).toHaveText(/\d+/);
+    await expect(example).not.toContainText("□");
+    expect(
+      await example.evaluate((el) => el.scrollWidth <= el.clientWidth),
+    ).toBe(true);
     await dialog.getByRole("combobox", { name: "Działanie" }).click();
     await dialog
       .getByRole("option", { name: "Dzielenie", exact: true })
@@ -93,3 +107,18 @@ for (const width of [320, 1280])
       page.getByRole("button", { name: "Zakończ sesję" }),
     ).toBeVisible();
   });
+
+test("kliknięcie tła zamyka kreator i zachowuje zadanie", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  await ready(page);
+  const equation = page.locator(".equation");
+  const original = await equation.getAttribute("aria-label");
+  await page.getByRole("button", { name: "Szybka sesja" }).click();
+  const dialog = page.getByRole("dialog", { name: "Szybka sesja" });
+  await dialog.getByRole("heading", { name: "Szybka sesja" }).click();
+  await expect(dialog).toBeVisible();
+  await page.mouse.click(10, 10);
+  await expect(dialog).toBeHidden();
+  await expect(equation).toHaveAttribute("aria-label", original!);
+});

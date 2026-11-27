@@ -332,6 +332,26 @@ Przeszły `npm run check`, 196 testów i build PWA. Dwa pełne przebiegi E2E w C
 
 - Na Node 24.22.3 przeszło `npm run check` z 196 testami i produkcyjnym buildem PWA. Końcowe `npm run test:e2e -- --workers=4` zakończyło się wynikiem 31/31. Przy 320 i 1280 px sprawdzono wybór działania, trudności, poziomu i liczby zadań w oknie kreatora, w tym wybór poziomu klawiaturą i powrót fokusu. Test czeka na przeniesienie fokusu przed zatwierdzeniem opcji. Nie testowano na fizycznym telefonie ani w Safari.
 
+## Dodawanie, dwa przeniesienia w szybkiej serii — 27 listopada 2026
+
+Uruchomiono `node scripts/study-addition-carries.mjs` na Node 24.22.3. Rzeczywisty generator wybierał konkretne dodatnie sumy na poziomie 2 z powtórkami. Porównano na tych samych ziarnach dwa warianty dla trzech profili po 100 000 treningów (600 000 łącznie). Obserwacja trwała do pierwszej zmiany poziomu lub 24. zadania. Po awansie każdy uczeń otrzymał dziesięć różnych nowych sum z materiału poziomu 3. W obu wariantach działało też zwykłe kryterium blokowe. Nie modelowano uczenia się w trakcie sesji.
+
+| Profil                | Awans do 24. zadania v15 → v16 | Samodzielne odpowiedzi po awansie (na 10), v15 → v16 |
+| --------------------- | -----------------------------: | ---------------------------------------------------: |
+| Słabsze przeniesienia |              67,061% → 66,815% |                                        7,155 → 7,154 |
+| Wyrównany             |              67,239% → 67,244% |                                        8,553 → 8,553 |
+| Biegły                |              99,969% → 99,970% |                                        9,605 → 9,605 |
+
+Pierwsze dwa profile mają po 75% oczekiwanej skuteczności na dotychczasowej mieszance materiału poziomu 2: odpowiednio 99%/67% oraz 75%/75% na sumach bez przeniesienia i z przeniesieniem. Już wcześniej około 75% przykładów z bieżącego materiału wymagało przeniesienia. Warunek wyklucza szybki awans bez dwóch potwierdzonych przykładów, lecz poprawa wyniku na nowych zadaniach nie jest widoczna. To test selekcji syntetycznych uczniów; pomiar efektu nauki wymaga obserwacji ludzi.
+
+Przeszły `npm run check` (199 testów, typy, lint i build) oraz `npm run test:e2e -- --workers=3` (31/31). Sprawdzono wymuszenie brakujących dwóch przykładów, rzeczywiste operandy, powtórki, luki, reset serii oraz zachowanie informacji po imporcie v15/v16. Wyniki liczbowe: `output/addition-carries.json`.
+
+## Powtórzenie oceny „2 z 6” — 27 listopada 2026
+
+- Na nowych ziarnach (przesunięcie 100 000) powtórzono sparowany test generatora: 3 profile × 2 reguły × 100 000 treningów. Awans do 24. zadania: słabsze przeniesienia 67,017% → 66,770%, wyrównany 67,060% → 67,064%, biegły 99,970% → 99,970%. Dla pierwszego profilu zmiana wyniosła −0,247 pkt proc., przybliżony sparowany przedział 95% od −0,290 do −0,204. Wśród awansujących wynik na dziesięciu nowych sumach wynosił odpowiednio 7,154 → 7,154, 8,551 → 8,551 oraz 9,600 → 9,600. Symulacja ocenia selekcję przy stałych umiejętnościach.
+- Osobno porównano v15 i v16 w modelu 48 profili i 12 scenariuszy (115,2 mln treningów). Model przyjmuje 75% przeniesień w materiale poziomu 2 oraz celowy dobór brakujących przykładów dla dodawania. W odróżnieniu od małego testu nie generuje operandów, a wrażliwość na konkretną umiejętność bada test na rzeczywistym generatorze. Dla biegłych nowa reguła dała 92,32–95,77% na poziomie 3 do 24. zadania i 95,45–98,39% na poziomie 4 do 48. zadania. Największa różnica względem poprzedniej reguły dla tych dwóch celów i sześciu stylów wyniosła 0,011 pkt proc. Przy błędach seriami w obu regułach 40,12% początkujących awansowało z poziomu 1 do 24. zadania, a około 28,99% profilu słabego na nowym materiale osiągnęło poziom 4 do 32. zadania od startu na poziomie 3.
+- Dane: `output/addition-carries-repeat.json` i `output/repeat-broad.csv`; skrypty powtórzenia: `output/repeat-carries.mjs` i `output/repeat-broad.cpp`. Przeszły `npm run check` (199 testów i build PWA) oraz produkcyjne E2E w Chromium (31/31).
+
 ## Wspólna pomoc przy selektorach — 27 listopada 2026
 
 - Node 24.22.3, `npm run check` — formatowanie, lint, 199 testów, typy i produkcyjny build PWA przeszły.
@@ -346,10 +366,34 @@ Przeszły `npm run check`, 196 testów i build PWA. Dwa pełne przebiegi E2E w C
 - `npm run check` przeszedł na Node 24.22.3, w tym 199 testów i build produkcyjny. Po buildzie przeszło 31/31 testów E2E w Chromium headless.
 - Przy szerokościach 320 i 1280 px sprawdzono otwarcie pomocy myszą bez zmiany fokusu, przejście na panel, zamknięcie po odsunięciu kursora oraz obsługę Enter i Escape. Bez próby na fizycznym ekranie dotykowym.
 
+## Rozwiązany przykład w kreatorze — 27 listopada 2026
+
+- Przeszło `npm run check` (199 testów i build). W Chromium przy 320 i 1280 px sprawdzono wyróżnioną odpowiedź, usunięcie pustego kwadratu i szerokość równania.
+- E2E: 29/31 w pierwszym przebiegu. Przy ponowieniu test zapałek przeszedł. Test treningu wielomianów ponownie przekroczył limit czasu w oczekiwaniu na „Pokaż sposób liczenia”. Bez testu na fizycznym telefonie.
+
+## Rozwijanie opcji szybkiej sesji — 27 listopada 2026
+
+- Przeszły `npm run check` (199 testów i build produkcyjny) oraz `npm run test:e2e -- --workers=4` (31/31). Przy 320 i 1280 px sprawdzono otwieranie klawiszem Enter, zamykanie spacją i zachowanie fokusu na nagłówku.
+- W Chromium zmierzono pośrednie wysokości panelu podczas rozwijania i zwijania. Przy ograniczonym ruchu panel od razu osiągał docelową wysokość. Bez próby na fizycznym telefonie.
+
 ## Fokus ikony pomocy — 27 listopada 2026
 
 - Po przejściu klawiszem Tab na pomoc przy „Działaniu” Chromium pokazał obwódkę 2 px na okrągłej ikonie przy szerokościach 320 i 1280 px. Przy emulacji dotyku ikona miała 24 px, a przycisk 44 × 44 px. Bez próby na fizycznym telefonie.
 - Przeszły `npm run check` (199 testów i build) oraz `npm run test:e2e -- --workers=4` (31/31).
+
+## Zamknięcie szybkiej sesji kliknięciem w tło — 27 listopada 2026
+
+- Przeszły `npm run check` (199 testów i build) oraz `npm run test:e2e -- --workers=4` (32/32). Chromium przy 1280 px: kliknięcie nagłówka pozostawiło kreator otwarty, a kliknięcie tła zamknęło go i przywróciło to samo zadanie. Bez prób w innych silnikach przeglądarek.
+
+## Animacja wartości rankingów — 27 listopada 2026
+
+- Przeszły `npm run check` (199 testów i build), pełny dotychczasowy zestaw E2E (32/32) oraz osobny przebieg historii z nowym scenariuszem (2/2).
+- Na dwóch dniach danych w Chromium sprawdzono wartość pośrednią licznika, odwrócenie przejścia podczas animacji, końcową wartość oraz natychmiastową zmianę przy ograniczonym ruchu. Bez testu na fizycznym telefonie.
+
+## Zwięzła lista ustawień działań — 27 listopada 2026
+
+- Przeszły `npm run check` (199 testów i build produkcyjny) oraz końcowy przebieg E2E (33/33 w Chromium). Dwa testy ponownego kliknięcia selektora wymagały otwarcia nowego panelu „Dostosuj”.
+- Przy 320 i 1280 px sprawdzono rozwinięcie klawiszem Enter, zmianę trybu, zwinięcie spacją i aktualizację podsumowania. Zwijany panel miał po zamknięciu wysokość 0, a dokument mieścił się w oknie. Bez próby na fizycznym telefonie.
 
 ## Wymiary pól szybkiej sesji — 27 listopada 2026
 
@@ -391,3 +435,7 @@ Przegląd objął drogę odpowiedzi od pola treningu przez silnik i kontroler do
 - W Chromium sprawdzono anulowanie i ponowne zatwierdzenie importu po awarii transakcji, treść eksportu awaryjnego, błąd eksportu po pierwszym nieudanym odczycie, aktualizację ustawień drugiej karty po odzyskaniu uszkodzonej bazy oraz historię zawierającą wyłącznie wyniki Viète’a. Zestaw objął też zapis offline i aktualizację PWA.
 - W pomocy dodawania na poziomie 2 potwierdzono serię 6 zadań, minimum 2 sum z przeniesieniem oraz próg 3 odpowiedzi z poprawką lub pominięciem w pierwszych 6 zadaniach po awansie. Przy testowym serwerze zajmującym port 4178 Playwright zakończył pracę komunikatem o konflikcie przed uruchomieniem scenariuszy. Testy przeglądarkowe wykonano w Chromium headless na komputerze.
 - Przed publikacją sprawdzono osobną kopię poprawek opartą na `b38a4b0` z formatem zapisu v15. Przeszły `npm run check` (203 testy w 22 plikach i build PWA) oraz 32/32 scenariusze E2E w Chromium bez ponowień. Wcześniejszy przebieg 206/34 obejmował również lokalne zmiany formatu v16, kreatora sesji i ustawień.
+
+## Weryfikacja przed commitem — 27 listopada 2026
+
+Przeszły `npm run check` (206 testów, formatowanie, lint, typy i produkcyjny build PWA) oraz `npm run test:e2e -- --workers=4` (34/34 w Chromium headless, w tym offline i aktualizacja PWA). Bez prób na fizycznym telefonie.

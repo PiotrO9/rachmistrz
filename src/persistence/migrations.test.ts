@@ -19,9 +19,9 @@ describe("format danych", () => {
       level: 2,
       materialLevel: 2,
       epoch: 7,
-      a: 21,
-      b: 2,
-      answer: 23,
+      a: 47,
+      b: 28,
+      answer: 75,
     } as const;
     let state = saved;
     for (let i = 0; i < 5; i++)
@@ -113,7 +113,7 @@ describe("format danych", () => {
     previous.theme = "dark";
     const raw = JSON.stringify({ ...previous, version: 2 });
     const migrated = parseSaved(raw);
-    expect(migrated.version).toBe(15);
+    expect(migrated.version).toBe(16);
     expect(migrated.history).toEqual(previous.history);
     expect(migrated.changes).toEqual(previous.changes);
     expect(migrated.theme).toBe("dark");
@@ -168,7 +168,7 @@ describe("format danych", () => {
       ],
     };
     const saved = parseSaved(JSON.stringify(old));
-    expect(saved.version).toBe(15);
+    expect(saved.version).toBe(16);
     expect(saved.history[0].solved).toBe(7);
     expect(saved.history[0].details).toBeUndefined();
     expect(saved.changes).toEqual([]);
