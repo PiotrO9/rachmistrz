@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { ready, readProgress } from "./helpers";
+import { answer, failNextWrite, ready, readProgress } from "./helpers";
 for (const width of [320, 1280])
   test("sesja i zapisany zestaw przy " + width + " px", async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
@@ -121,4 +121,89 @@ test("kliknięcie tła zamyka kreator i zachowuje zadanie", async ({ page }) => 
   await page.mouse.click(10, 10);
   await expect(dialog).toBeHidden();
   await expect(equation).toHaveAttribute("aria-label", original!);
+});
+
+test("odświeżenie wznawia wpis, odsłonięcie i podsumowanie sesji offline", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/");
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+  });
+  await page.reload();
+  const input = await ready(page);
+  const regular = await page.locator(".equation").innerText();
+  await page.getByRole("button", { name: "Ustawienia", exact: true }).click();
+  await page
+    .getByRole("switch", { name: /rozwiązanie po pominięciu/i })
+    .click();
+  await page.getByRole("button", { name: "Trening", exact: true }).click();
+  await page.getByRole("button", { name: "Szybka sesja" }).click();
+  await page.getByRole("button", { name: "Rozpocznij sesję" }).click();
+  await input.fill(await answer(page));
+  await expect(input).toHaveValue("");
+  const exercise = await page.locator(".equation").innerText();
+  await input.fill("999999");
+  await failNextWrite(page);
+  await input.press("Enter");
+  await expect(page.getByRole("alert")).toContainText("Nie udało się zapisać");
+  await page.waitForFunction(() => !!navigator.serviceWorker.controller);
+  await context.setOffline(true);
+  await page.reload();
+  await ready(page);
+  await expect(input).toHaveValue("999999");
+  await expect(page.locator(".equation")).toHaveText(exercise, {
+    useInnerText: true,
+  });
+  await input.press("Enter");
+  await expect(input).not.toBeEditable();
+  const revealed = await input.inputValue();
+  await page.reload();
+  await expect(input).toHaveValue(revealed);
+  await expect(input).not.toBeEditable();
+  await input.press("Space");
+  await expect(input).toBeEditable();
+  await page.getByRole("button", { name: "Zakończ sesję" }).click();
+  await page.reload();
+  await expect(page.locator(".sessionSummary dd")).toHaveText(["1", "1"]);
+  await page.getByRole("button", { name: "Wróć do treningu" }).click();
+  await expect(page.locator(".equation")).toHaveText(regular, {
+    useInnerText: true,
+  });
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: "Szybka sesja" }),
+  ).toBeEnabled();
+  expect((await readProgress(page)).history[0]).toMatchObject({
+    solved: 1,
+    skipped: 1,
+  });
+});
+
+test("odtwarza wynik zatwierdzony tuż przed przerwaniem sesji", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const input = await ready(page);
+  await page.getByRole("button", { name: "Szybka sesja" }).click();
+  await page.getByRole("button", { name: "Rozpocznij sesję" }).click();
+  await page.evaluate(() => {
+    const write = Storage.prototype.setItem;
+    let pending = false;
+    Storage.prototype.setItem = function (key, value) {
+      if (key === "rachmistrz:quick-session:v1") {
+        if (pending) throw Error("Przerwany zapis stanu karty");
+        pending = !!JSON.parse(value).pending;
+      }
+      write.call(this, key, value);
+    };
+  });
+  await input.press("Enter");
+  await expect(page.getByRole("alert")).toContainText("Postęp został zapisany");
+  await page.reload();
+  await ready(page);
+  await page.getByRole("button", { name: "Zakończ sesję" }).click();
+  await expect(page.locator(".sessionSummary dd")).toHaveText(["0", "1"]);
+  expect((await readProgress(page)).history[0].skipped).toBe(1);
 });

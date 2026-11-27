@@ -439,3 +439,7 @@ Przegląd objął drogę odpowiedzi od pola treningu przez silnik i kontroler do
 ## Weryfikacja przed commitem — 27 listopada 2026
 
 Przeszły `npm run check` (206 testów, formatowanie, lint, typy i produkcyjny build PWA) oraz `npm run test:e2e -- --workers=4` (34/34 w Chromium headless, w tym offline i aktualizacja PWA). Bez prób na fizycznym telefonie.
+
+## Mobilny znak odpowiedzi i wznowienie szybkiej sesji — 27 listopada 2026
+
+Na Node 24.22.3 przeszły `npm run check` (206 testów jednostkowych, typy, lint, format i build PWA) oraz `npm run test:e2e -- --workers=4 --retries=0` (37/37 w Chromium headless). Przy szerokości 360 px sprawdzono zmianę znaku przed cyframi i po ich wpisaniu, fokus oraz automatyczne zaliczenie. Po odłączeniu sieci przeładowanie tej samej karty przywróciło częściowy wpis po nieudanej transakcji, odsłonięte rozwiązanie i podsumowanie. Osobna próba przerwała zapis szkicu po zatwierdzeniu historii i potwierdziła pojedyncze naliczenie po wznowieniu. Klawiatura ekranowa na fizycznym telefonie pozostaje do sprawdzenia.

@@ -100,3 +100,7 @@ Poziomy 2 i 3 mają dodatkową ścieżkę awansu po serii samodzielnych rozwiąz
 ## Późniejsza zmiana — przeniesienia w dodawaniu
 
 Szybki awans z poziomu 2 dodawania wymaga dwóch pełnych sum z przeniesieniem wśród sześciu czystych odpowiedzi z bieżącego materiału. Gdy liczba pozostałych miejsc odpowiada liczbie brakujących przykładów, kolejne dodawanie sprawdza tę umiejętność.
+
+## Późniejsze ustalenie — wznowienie szybkiej sesji (27 listopada 2026)
+
+Odświeżenie tej samej karty przywraca zadanie, wpis i dotychczasowy wynik szybkiej sesji. Jeżeli gracz odsłonił rozwiązanie, może po powrocie przejść do kolejnego zadania.

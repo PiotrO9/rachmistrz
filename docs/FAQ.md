@@ -64,7 +64,7 @@ Na poziomach 2–5 około 20% losowanych zadań to powtórki z poprzedniego pozi
 
 ## 8. Czy mój postęp zapisuje się po zamknięciu aplikacji?
 
-Tak — zakończone zadania, ustawienia i poziomy zapisują się automatycznie w tej przeglądarce. Historia obejmuje maksymalnie 365 dni aktywności. Po przeładowaniu dostaniesz nowe zadanie; niedokończony rachunek i wpisana odpowiedź nie są zachowywane. Wyczyszczenie danych witryny może usunąć postęp, dlatego warto eksportować kopię w ustawieniach.
+Tak — zakończone zadania, ustawienia i poziomy zapisują się automatycznie w tej przeglądarce. Historia obejmuje maksymalnie 365 dni aktywności. W zwykłym treningu po przeładowaniu dostaniesz nowe zadanie; niedokończony rachunek i wpisana odpowiedź nie są zachowywane. Wyczyszczenie danych witryny może usunąć postęp, dlatego warto eksportować kopię w ustawieniach.
 
 ## 9. Czy mogę przenieść postęp z komputera na telefon?
 
@@ -104,7 +104,7 @@ Tak. Gdy wpiszesz prawidłowy wynik, licznik celu rośnie o jeden, również po 
 
 ### 17. Kończę sesję po 7 z 10 zadań. Co się zapisze i czy mogę wrócić do pozostałych trzech?
 
-Każde zakończone zadanie zapisuje się od razu. Wszystkie siedem znajdziesz w dziennym podsumowaniu, nawet jeśli wybierzesz „Zakończ sesję” albo odświeżysz stronę. Po zakończeniu lub odświeżeniu nie można wznowić sesji od ósmego zadania. Przycisk „Powtórz sesję” na ekranie podsumowania uruchamia ten sam zestaw z licznikiem od zera.
+Każde zakończone zadanie zapisuje się od razu. Wszystkie siedem znajdziesz w dziennym podsumowaniu, nawet jeśli wybierzesz „Zakończ sesję” albo odświeżysz stronę. Odświeżenie tej samej karty wznawia ósme zadanie z aktualnym wpisem. Wybranie „Zakończ sesję” otwiera podsumowanie. Przycisk „Powtórz sesję” na ekranie podsumowania uruchamia ten sam zestaw z licznikiem od zera.
 
 ### 18. Czy w szybkiej sesji mogę ćwiczyć działanie wyłączone w zwykłym treningu?
 

@@ -232,11 +232,17 @@ kbd {
 .stackedFraction > :first-child {
   border-bottom: 0.045em solid currentColor;
 }
-.fractionSlash {
+.answerKey {
   min-width: 44px;
   min-height: 44px;
   margin-top: 0.5rem;
   border: 1px solid var(--key-border);
   border-radius: 4px;
   color: var(--ink);
+}
+
+@media (min-width: 651px) and (pointer: fine) {
+  .signKey {
+    display: none;
+  }
 }

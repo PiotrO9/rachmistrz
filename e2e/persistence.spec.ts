@@ -1,8 +1,9 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { defaults } from "../src/domain";
 import { migrateSaved } from "../src/persistence/migrations";
 import {
+  failNextWrite,
   ready,
   readProgress,
   readRawProgress,
@@ -143,21 +144,6 @@ test("migracja, dwie karty oraz eksport i import", async ({
     ),
   ).toEqual(legacy);
 });
-
-async function failNextWrite(page: Page) {
-  await page.evaluate(() => {
-    const transaction = IDBDatabase.prototype.transaction;
-    IDBDatabase.prototype.transaction = function (
-      ...args: Parameters<typeof transaction>
-    ) {
-      if (args[1] === "readwrite") {
-        IDBDatabase.prototype.transaction = transaction;
-        throw new DOMException("Test quota", "QuotaExceededError");
-      }
-      return transaction.apply(this, args);
-    };
-  });
-}
 
 test("anulowanie po awarii importu zachowuje oryginalny rekord", async ({
   page,

@@ -137,7 +137,7 @@ Pole startPhase w module rozróżnia próbę startową i oczekiwanie na potwierd
 
 Kontroler przechowuje aktywną sesję w pamięci karty obok zwykłego zadania. Silnik interpretuje wpis tym samym mechanizmem co w treningu, a komenda zakończenia zadania zapisuje wynik w historii w transakcji na najnowszym rekordzie. Po zatwierdzeniu silnik aktualizuje lokalny blok adaptacji i licznik celu, a następnie kończy sesję, odsłania rozwiązanie albo generuje następne zadanie. Tryb stałego poziomu losuje materiał wyłącznie z wybranego poziomu. Opcja „Ćwicz częściej” daje działaniu dwukrotną wagę losowania.
 
-Zapis v14 dodaje listę nazwanych zestawów. Migracja v13 zachowuje stan adaptacji. Eksport i import obejmują reguły i cel. Poziom „Mój poziom” jest rozwiązywany przy każdym uruchomieniu. Bieżąca sesja kończy się przy przeładowaniu strony.
+Zapis v14 dodaje listę nazwanych zestawów. Migracja v13 zachowuje stan adaptacji. Eksport i import obejmują reguły i cel. Poziom „Mój poziom” jest rozwiązywany przy każdym uruchomieniu.
 
 ## Ocena materiału i zapis v15
 
@@ -146,3 +146,7 @@ Przy zapisie zgodnego zadania record przekazuje materialLevel do adapt. O wyniku
 ## Dowód przeniesienia i zapis v16
 
 Wynik czystej odpowiedzi w materialResults może mieć wartość „carry”. Kryterium opiera się na obu rzeczywistych operandach, obliczeniu przeniesienia, poziomie materiału i formie zadania. Znacznik przysługuje pełnej sumie dwóch dodatnich liczb dwucyfrowych na materiale poziomu 2. Wymuszony przykład jest generowany bezpośrednio z rodziny z przeniesieniem, także przy powtórnym losowaniu po duplikacie. Sterowanie dotyczy zwykłego treningu z adaptacją. Zwykły awans po dwóch dobrych blokach nadal działa niezależnie. Migracja v15 zachowuje wcześniejszą serię i traktuje dawne czyste odpowiedzi jako pozbawione informacji o przeniesieniu.
+
+## Wznowienie szybkiej sesji po odświeżeniu
+
+Wersjonowany szkic v1 w sessionStorage przechowuje zadania zwykłego treningu i sesji, wpis, odsłonięcie, lokalną adaptację oraz liczniki. Przed zapisem wyniku kontroler dodaje do szkicu identyfikator próby i zinterpretowaną komendę. Transakcja IndexedDB zapisuje potwierdzenie pod osobnym kluczem razem z historią. Po odświeżeniu obecność potwierdzenia pozwala dokończyć przejście bez ponownego naliczenia wyniku. Po zapisaniu nowego szkicu kontroler usuwa potwierdzenie. Wyjście z podsumowania usuwa szkic. Dane eksportu pozostają w formacie v16.

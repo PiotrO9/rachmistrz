@@ -38,3 +38,38 @@ test("signed answers keep the current task and count towards multiplication", as
   expect((await readProgress(page)).history[0].details?.multiply.clean).toBe(1);
   expect(Number(await answer(page))).toBeGreaterThan(0);
 });
+
+test("mobilny przycisk znaku działa przed cyframi i po ich wpisaniu", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 760 });
+  await page.addInitScript(() => {
+    Math.random = () => 0.1;
+  });
+  await page.goto("/");
+  await ready(page);
+  await settings(page);
+  await page
+    .getByRole("switch", { name: "Liczby ujemne", exact: true })
+    .click();
+  for (const op of ["dodawanie", "odejmowanie", "dzielenie"]) {
+    await page
+      .getByRole("switch", { name: "Włącz " + op, exact: true })
+      .click();
+  }
+  await page.reload();
+  const input = await ready(page);
+  const value = Number(await answer(page));
+  expect(value).toBeLessThan(0);
+  await expect(input).toHaveAttribute("inputmode", "numeric");
+  const sign = page.getByRole("button", { name: "Zmień znak odpowiedzi" });
+  await sign.click();
+  await expect(input).toBeFocused();
+  await expect(input).toHaveValue("-");
+  await sign.click();
+  await expect(input).toHaveValue("");
+  await input.fill(String(-value));
+  await sign.click();
+  await expect(input).toHaveValue("");
+  expect((await readProgress(page)).history[0].solved).toBe(1);
+});

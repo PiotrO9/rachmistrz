@@ -10,7 +10,10 @@ export interface ProgressRepository {
   transact: (
     mutate: (saved: SavedProgress) => SavedProgress,
     recover?: boolean,
+    receipt?: string,
   ) => Promise<SavedProgress>;
+  hasReceipt: (key: string) => Promise<boolean>;
+  forgetReceipt: (key: string) => Promise<void>;
   close: () => void;
 }
 interface Options {
@@ -34,6 +37,7 @@ export function createProgressRepository(
   async function transact(
     mutate: (saved: SavedProgress) => SavedProgress,
     recover = false,
+    receipt?: string,
   ): Promise<SavedProgress> {
     const db = await connection.open();
     return new Promise((resolve, reject) => {
@@ -56,6 +60,7 @@ export function createProgressRepository(
             revision: current.revision + 1,
           });
           store.put(result, "state");
+          if (receipt) store.put(true, ["quick-answer-v1", receipt]);
         } catch (cause) {
           error = cause;
           tx.abort();
@@ -91,6 +96,26 @@ export function createProgressRepository(
   return {
     read,
     transact,
+    async hasReceipt(key) {
+      const db = await connection.open();
+      return new Promise((resolve, reject) => {
+        const req = db
+          .transaction("progress")
+          .objectStore("progress")
+          .get(["quick-answer-v1", key]);
+        req.onsuccess = () => resolve(req.result === true);
+        req.onerror = () => reject(req.error);
+      });
+    },
+    async forgetReceipt(key) {
+      const db = await connection.open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction("progress", "readwrite");
+        tx.objectStore("progress").delete(["quick-answer-v1", key]);
+        tx.oncomplete = () => resolve();
+        tx.onabort = () => reject(tx.error);
+      });
+    },
     close: connection.close,
   };
 }

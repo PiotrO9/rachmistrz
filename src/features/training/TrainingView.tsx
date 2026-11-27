@@ -191,7 +191,7 @@ export function TrainingView({
             value={state.input}
             placeholder="?"
             type="text"
-            inputMode={state.task.signedInput ? "text" : "numeric"}
+            inputMode="numeric"
             pattern={
               fraction
                 ? undefined
@@ -212,10 +212,30 @@ export function TrainingView({
           <span className="inputLine" />
         </div>
       </div>
+      {state.task.signedInput && !state.revealed && (
+        <button
+          type="button"
+          className="answerKey signKey"
+          aria-label="Zmień znak odpowiedzi"
+          aria-pressed={state.input.startsWith("-")}
+          disabled={!canInteract || busy}
+          onPointerDown={(event) => event.preventDefault()}
+          onClick={() => {
+            const negative = state.input.startsWith("-");
+            answerInput.input.current?.focus({ preventScroll: true });
+            void onInput(
+              negative ? state.input.slice(1) : "-" + state.input,
+              "toggleSign",
+            );
+          }}
+        >
+          ±
+        </button>
+      )}
       {fraction && !state.revealed && (
         <button
           type="button"
-          className="fractionSlash"
+          className="answerKey"
           aria-label="Wstaw kreskę ułamkową"
           disabled={!canInteract || busy}
           onPointerDown={(e) => e.preventDefault()}

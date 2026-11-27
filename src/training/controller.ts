@@ -1,3 +1,4 @@
+import type { QuickDraft, QuickResume } from "../persistence/quick-resume";
 import type { SavedProgress } from "../domain";
 import {
   createState,
@@ -16,12 +17,15 @@ export interface TrainingPort {
   transact: (
     mutate: (saved: SavedProgress) => SavedProgress,
     recover?: boolean,
+    receipt?: string,
   ) => Promise<SavedProgress>;
   listen: (callback: () => void) => () => void;
   notify: (revision: number) => void;
+  resume?: QuickResume;
 }
 export type Status = "loading" | "ready" | "saving" | "error";
 interface PendingWrite {
+  receipt?: string;
   command: Command;
   preview: TrainingState;
 }
@@ -62,12 +66,22 @@ export function createTrainingController(
   };
   const message = (error: unknown) =>
     error instanceof Error ? error.message : "Nie udało się zapisać postępu.";
-  function acceptSaved(saved: SavedProgress, initialRead: boolean) {
+  function forgetReceipt(key?: string) {
+    if (key) void port.resume?.forgetReceipt(key).catch(() => {});
+  }
+  function acceptSaved(
+    saved: SavedProgress,
+    initialRead: boolean,
+    draft?: QuickDraft,
+    committed = false,
+  ) {
     const operation = pendingSettlement;
     let state: TrainingState;
     if (operation) {
       try {
         state = settle(operation.preview, saved, operation.command, env);
+        if (operation.preview.quick || state.quick) port.resume?.save(state);
+        forgetReceipt(operation.receipt);
       } catch {
         emit({
           state: { ...operation.preview, saved },
@@ -79,6 +93,18 @@ export function createTrainingController(
         return false;
       }
       pendingSettlement = undefined;
+    } else if (draft) {
+      state = reconcile(
+        { ...snapshot.state, ...draft.regular, quick: draft.quick },
+        saved,
+        { task: "preserve" },
+        env,
+      );
+      if (draft.pending) {
+        if (committed) state = settle(state, saved, draft.pending.command, env);
+        port.resume?.save(state);
+        forgetReceipt(draft.pending.key);
+      }
     } else {
       state = reconcile(
         snapshot.state,
@@ -106,7 +132,11 @@ export function createTrainingController(
     const writesAtRead = completedWrites;
     refreshing = true;
     try {
+      const draft =
+        initialRead && !pendingSettlement ? port.resume?.load() : undefined;
       const saved = await port.read();
+      const committed =
+        draft?.pending && (await port.resume?.hasReceipt(draft.pending.key));
       if (!active || token !== generation) return false;
       // A recovered record may legitimately have a lower or equal revision.
       if (completedWrites !== writesAtRead) return false;
@@ -115,7 +145,7 @@ export function createTrainingController(
         refreshRequested = true;
         return false;
       }
-      return acceptSaved(saved, initialRead);
+      return acceptSaved(saved, initialRead, draft, committed);
     } catch (error) {
       if (
         active &&
@@ -151,9 +181,21 @@ export function createTrainingController(
     try {
       let saved: SavedProgress;
       try {
+        if (
+          port.resume &&
+          operation.command.type === "complete" &&
+          operation.command.quick
+        ) {
+          operation.receipt ??= crypto.randomUUID();
+          port.resume.save(previous.state, {
+            key: operation.receipt,
+            command: operation.command,
+          });
+        }
         saved = await port.transact(
           (latest) => applyCommand(latest, operation.command),
           importing,
+          operation.receipt,
         );
       } catch (error) {
         if (importing) {
@@ -217,8 +259,17 @@ export function createTrainingController(
       return false;
     const transition = interpret(snapshot.state, action, env);
     if (transition.kind === "local") {
-      if (transition.state !== snapshot.state)
+      if (transition.state !== snapshot.state) {
+        if (transition.state.quick !== snapshot.state.quick) {
+          try {
+            port.resume?.save(transition.state);
+          } catch (error) {
+            emit({ status: "error", error: message(error) });
+            return false;
+          }
+        }
         emit({ state: transition.state });
+      }
       return true;
     }
     return commit({ command: transition.command, preview: transition.preview });

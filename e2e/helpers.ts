@@ -70,3 +70,18 @@ export async function upload(page: Page, saved: SavedProgress) {
     buffer: Buffer.from(JSON.stringify(saved)),
   });
 }
+
+export async function failNextWrite(page: Page) {
+  await page.evaluate(() => {
+    const transaction = IDBDatabase.prototype.transaction;
+    IDBDatabase.prototype.transaction = function (
+      ...args: Parameters<typeof transaction>
+    ) {
+      if (args[1] === "readwrite") {
+        IDBDatabase.prototype.transaction = transaction;
+        throw new DOMException("Test quota", "QuotaExceededError");
+      }
+      return transaction.apply(this, args);
+    };
+  });
+}

@@ -26,7 +26,7 @@ import {
   type SessionPreset,
 } from "../domain/session";
 
-type Exercise = Pick<
+export type Exercise = Pick<
   TrainingState,
   | "task"
   | "input"

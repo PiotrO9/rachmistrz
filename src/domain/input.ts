@@ -5,6 +5,8 @@ export function correction(
   inputType = "",
 ) {
   if (next === previous) return { increment: 0, editing };
+  if (inputType === "toggleSign" && !previous.startsWith("-"))
+    return { increment: 0, editing: false };
   const removal =
     next.length < previous.length || inputType.startsWith("delete");
   const replacement =

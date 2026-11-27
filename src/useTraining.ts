@@ -1,10 +1,24 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { readSaved, transact, broadcast, subscribe } from "./storage";
+import { loadQuickDraft, saveQuickDraft } from "./persistence/quick-resume";
+import {
+  readSaved,
+  transact,
+  broadcast,
+  subscribe,
+  hasReceipt,
+  forgetReceipt,
+} from "./storage";
 import { createTrainingController } from "./training/controller";
 export function useTraining() {
   const [controller] = useState(() =>
     createTrainingController({
       read: readSaved,
+      resume: {
+        load: loadQuickDraft,
+        save: saveQuickDraft,
+        hasReceipt,
+        forgetReceipt,
+      },
       transact,
       notify: broadcast,
       listen: subscribe,

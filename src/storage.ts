@@ -9,3 +9,5 @@ export { broadcast, subscribe } from "./persistence/sync";
 const repository = createProgressRepository();
 export const readSaved = repository.read;
 export const transact = repository.transact;
+
+export const { hasReceipt, forgetReceipt } = repository;

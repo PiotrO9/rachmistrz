@@ -49,7 +49,7 @@ const isOutcome = (x: unknown): x is Outcome =>
   isRecord(x) &&
   isNonNegativeInteger(x.corrections) &&
   typeof x.skipped === "boolean";
-const isOperationProgress = (x: unknown): x is OperationProgress =>
+export const isOperationProgress = (x: unknown): x is OperationProgress =>
   isRecord(x) &&
   typeof x.enabled === "boolean" &&
   typeof x.adaptive === "boolean" &&
