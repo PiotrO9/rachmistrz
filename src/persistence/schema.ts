@@ -13,7 +13,7 @@ import {
 import { defaults } from "../domain/defaults";
 import { LOG_SETS, ADAPTATION } from "../domain/config";
 export type PreviousSaved = Omit<SavedProgress, "version"> & {
-  version: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+  version: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 };
 export interface LegacySaved {
   version: 1;
@@ -93,15 +93,14 @@ export function validateStored(
 ): SavedProgress | PreviousSaved | LegacySaved {
   if (
     isRecord(x) &&
-    (x.version === 1 ||
-      x.version === 2 ||
-      x.version === 3 ||
-      x.version === 4 ||
-      x.version === 5 ||
-      x.version === 6)
+    typeof x.version === "number" &&
+    Number.isInteger(x.version) &&
+    x.version >= 1 &&
+    x.version <= 11
   ) {
     const initial = defaults();
-    const added: Operation[] = ["fraction"];
+    const added: Operation[] = ["polynomial"];
+    if (x.version <= 6) added.push("fraction");
     if (x.version <= 4) added.push("percent");
     if (x.version <= 3) added.push("power", "root");
     const newModules = Object.fromEntries(
@@ -154,6 +153,7 @@ export function validateStored(
       x.version !== 8 &&
       x.version !== 9 &&
       x.version !== 10 &&
+      x.version !== 11 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");

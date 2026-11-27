@@ -30,7 +30,7 @@ export function OperationSettings({
         <Switch
           checked={m.enabled}
           disabled={last || controlsDisabled}
-          label={`Włącz ${labels[op].toLowerCase()}`}
+          label={`Włącz ${op === "polynomial" ? "resztę z dzielenia wielomianu" : labels[op].toLowerCase()}`}
           onChange={() =>
             void dispatch({
               type: "module",

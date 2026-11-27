@@ -47,6 +47,7 @@ export function record(
         root: 0,
         percent: 0,
         fraction: 0,
+        polynomial: 0,
       },
     };
     history.unshift(day);

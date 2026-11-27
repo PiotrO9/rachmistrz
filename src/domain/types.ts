@@ -7,6 +7,7 @@ export const operations = [
   "root",
   "percent",
   "fraction",
+  "polynomial",
 ] as const;
 export type Operation = (typeof operations)[number];
 export type Level = 1 | 2 | 3 | 4 | 5;
@@ -29,6 +30,11 @@ export type FractionTask = TaskValues & {
   denominatorB: number;
   answerDenominator: number;
 };
+// a is the root of the divisor, b is the constant term.
+export type PolynomialTask = TaskValues & {
+  operation: "polynomial";
+  coefficients: number[]; // Descending powers, excluding the constant term.
+};
 export type BasicOperation = "add" | "subtract" | "multiply" | "divide";
 export type MissingNumberTask = TaskValues & {
   operation: BasicOperation;
@@ -38,7 +44,10 @@ export type Task =
   | MissingNumberTask
   | ((
       | FractionTask
-      | (TaskValues & { operation: Exclude<Operation, "fraction"> })
+      | PolynomialTask
+      | (TaskValues & {
+          operation: Exclude<Operation, "fraction" | "polynomial">;
+        })
     ) & { missingOperand?: never });
 export interface Outcome {
   corrections: number;
@@ -73,7 +82,7 @@ export interface Day {
   modules: Record<Operation, number>;
   details?: Record<Operation, Stats>;
 }
-export const CURRENT_PROGRESS_VERSION = 11 as const;
+export const CURRENT_PROGRESS_VERSION = 12 as const;
 export interface SavedProgress {
   version: typeof CURRENT_PROGRESS_VERSION;
   revision: number;

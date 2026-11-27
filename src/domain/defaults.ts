@@ -30,6 +30,7 @@ export function defaults(): SavedProgress {
       root: { ...module(), enabled: false },
       percent: { ...module(), enabled: false },
       fraction: { ...module(), enabled: false },
+      polynomial: { ...module(), enabled: false },
     },
     history: [],
   };

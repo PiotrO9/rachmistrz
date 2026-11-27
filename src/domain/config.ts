@@ -49,6 +49,13 @@ export type Family = { id: string; weight: number } & (
       operators: readonly FractionTask["operator"][];
       improper: boolean;
     }
+  | {
+      kind: "polynomial";
+      degree: number;
+      points: readonly number[];
+      coefficientMax: number;
+      signedTerms: boolean;
+    }
   | { kind: "nearHundred" }
   | {
       kind: "percent";
@@ -108,6 +115,28 @@ function fractionLevel(
   return {
     description,
     families: [{ id, kind: "fraction", weight: 1, pairs, operators, improper }],
+  };
+}
+function polynomialLevel(
+  description: string,
+  degree: number,
+  points: number[],
+  coefficientMax: number,
+  signedTerms = false,
+): CurriculumLevel {
+  return {
+    description,
+    families: [
+      {
+        id: "polynomial-" + description,
+        weight: 1,
+        kind: "polynomial",
+        degree,
+        points,
+        coefficientMax,
+        signedTerms,
+      },
+    ],
   };
 }
 export const CURRICULUM: Record<
@@ -314,6 +343,31 @@ export const CURRICULUM: Record<
       ],
     },
   ],
+  polynomial: [
+    polynomialLevel("Wielomian liniowy · podstaw 1–3", 1, [1, 2, 3], 3),
+    polynomialLevel("Wielomian kwadratowy · podstaw 1–4", 2, [1, 2, 3, 4], 1),
+    polynomialLevel(
+      "Wielomian kwadratowy · współczynniki ze znakiem",
+      2,
+      [-3, -2, -1, 1, 2, 3],
+      3,
+      true,
+    ),
+    polynomialLevel(
+      "Wielomian sześcienny · podstaw 1–3",
+      3,
+      [1, 2, 3],
+      2,
+      true,
+    ),
+    polynomialLevel(
+      "Wielomian sześcienny · podstaw także liczby ujemne",
+      3,
+      [-4, -3, -2, -1, 1, 2, 3, 4],
+      4,
+      true,
+    ),
+  ],
   fraction: [
     fractionLevel(
       "same-add",
@@ -515,6 +569,7 @@ export const labels: Record<Operation, string> = {
   power: "Potęgowanie",
   root: "Pierwiastkowanie",
   percent: "Procenty",
+  polynomial: "Reszta z dzielenia wielomianu",
   fraction: "Ułamki",
 };
 export const symbols: Record<Operation, string> = {
@@ -525,6 +580,7 @@ export const symbols: Record<Operation, string> = {
   power: "xⁿ",
   root: "√",
   percent: "%",
+  polynomial: "W(x)",
   fraction: "½",
 };
 export const PRESETS: { name: string; active: Operation[] }[] = [

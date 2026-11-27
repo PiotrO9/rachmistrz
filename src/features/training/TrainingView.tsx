@@ -1,4 +1,8 @@
 import { useAnswerInput } from "./useAnswerInput";
+import {
+  polynomialExpression,
+  polynomialDivisor,
+} from "../../domain/polynomial";
 import { formatAnswer, formatRatio } from "../../domain/fractions";
 import { symbols, type Task } from "../../domain";
 import type { TrainingState } from "../../training/engine";
@@ -22,6 +26,8 @@ function spokenEquation(task: Task) {
       "równa się",
       task.answer,
     ].join(" ");
+  if (task.operation === "polynomial")
+    return `Reszta z dzielenia ${polynomialExpression(task)} przez ${polynomialDivisor(task.a)}`;
   if (task.operation === "fraction") {
     const sign = {
       "+": spoken.add,
@@ -82,7 +88,13 @@ export function TrainingView({
     onSkip,
   });
   const missing = state.task.missingOperand;
-  const instruction = missing ? "Wpisz brakującą liczbę" : "Wpisz wynik";
+  const polynomial =
+    state.task.operation === "polynomial" ? state.task : undefined;
+  const instruction = polynomial
+    ? "Wpisz resztę"
+    : missing
+      ? "Wpisz brakującą liczbę"
+      : "Wpisz wynik";
   const fraction = state.task.operation === "fraction" ? state.task : undefined;
   const fractionLabel =
     fraction &&
@@ -105,13 +117,20 @@ export function TrainingView({
         <div
           className={`equation ${state.task.operation === "power" || state.task.operation === "root" ? "unaryEquation" : ""}`}
           aria-label={
-            missing
+            missing || polynomial
               ? spokenEquation(state.task)
               : (fractionLabel ??
                 `${state.task.a} ${state.task.operation === "power" ? "^" : state.task.operation === "percent" ? spoken.percent : symbols[state.task.operation]} ${state.task.b}`)
           }
         >
-          {missing ? (
+          {polynomial ? (
+            <div className="polynomialPrompt">
+              <small>Reszta z dzielenia</small>
+              <span>{polynomialExpression(polynomial)}</span>
+              <small>przez</small>
+              <span>{polynomialDivisor(polynomial.a)}</span>
+            </div>
+          ) : missing ? (
             <>
               <span className="firstOperand">
                 {missing === "a" ? "□" : state.task.a}

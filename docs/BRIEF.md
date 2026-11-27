@@ -41,10 +41,6 @@ Późniejsze ustalenie — 12 listopada 2026: cyfry wpisane poza polem w widoku 
   - **Standardowy** (domyślny) — obecny wygląd treningu i dotychczasowe podpowiedzi.
   - **Zabawowy (gamifikacja)** — po każdej poprawnej odpowiedzi, również po korekcie, obok pola pojawia się krótki efekt wizualny. Gracz może od razu wpisywać kolejny wynik. Przy ograniczonym ruchu animację zastępuje statyczny akcent. Do rozważenia później: odblokowanie nowego efektu po pierwszym awansie poziomu.
 
-- **Reszta z dzielenia wielomianu** — gracz oblicza resztę z dzielenia `W(x)` przez `x − a`, podstawiając `a` do wielomianu. Na przykład przy dzieleniu `x³ + 2x + 5` przez `x − 2` reszta wynosi `W(2) = 17`.
-
-**Pomysł odłożony na później:** „Ostatnia cyfra potęgi”. Ustalenie, którą cyfrą kończy się np. 7²⁰²⁶, wymaga rozpoznania cyklu i wskazania miejsca w tym cyklu. To zagadka do spokojnego namysłu poza szybkim treningiem rachunkowym.
-
 Poza zakresem pierwszej wersji: konta, ranking publiczny, backend, płatności.
 
 ## Późniejsza zmiana: balans poziomów — 12 listopada 2026
@@ -84,3 +80,7 @@ Opcjonalna minigra uruchamiana po włączeniu w ustawieniach. Gracz rozwiązuje 
 ## Zapałki — 27 listopada 2026
 
 Włącz **Zapałki** w ustawieniach i wybierz je w menu. Przeciągnij zapałkę lub wybierz kolejno zapałkę i wolne miejsce. Poziom pierwszy wymaga jednego ruchu, drugi dwóch. Możesz zmieniać cyfry i znak działania. Podpowiedź wskazuje zapałkę i oznacza rozwiązanie jako ukończone z pomocą. Przycisk Cofnij pozwala ponowić próbę.
+
+## Reszta z dzielenia wielomianu — 27 listopada 2026
+
+W ustawieniach włącz **Resztę z dzielenia wielomianu**, aby dodać te zadania do treningu. Wpisz wartość wielomianu w miejscu zerowym dzielnika. Dla `x³ + 2x + 5` i dzielnika `x − 2` odpowiedzią jest `17`. Moduł ma pięć poziomów i własną adaptację.

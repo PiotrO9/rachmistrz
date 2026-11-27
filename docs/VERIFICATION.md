@@ -232,3 +232,9 @@ Cloudflare Wrangler sprawdzony: brak zalogowanego konta. Wdrożenie publiczne ni
 - Node 24.22.3. `npm run check` przeszło, w tym 173 testy i build produkcyjny. Sprawdzono wartości wyników i kroki rozwiązania na pięciu poziomach.
 - Po buildzie `npm run test:e2e -- --workers=4` przeszło w Chromium headless (26/26). Dwa nowe scenariusze sprawdzają równoważne odpowiedzi przy mnożeniu i dzieleniu, sposób liczenia po pominięciu i wspólny zapis wyników w historii ułamków.
 - Nie wykonywano prób na fizycznym telefonie, w Safari ani z czytnikiem ekranu.
+
+## Reszta z dzielenia wielomianu — 27 listopada 2026
+
+- Node 24.22.3. `npm run check` przeszło wraz ze 184 testami i produkcyjnym buildem PWA. Sprawdzono wartości reszt na pięciu poziomach oraz migrację historii z v11.
+- Po buildzie `npm run test:e2e -- --workers=4` przeszło w Chromium headless (27/27). Scenariusz wielomianów obejmuje włączenie modułu, przeładowanie, ujemną odpowiedź, pominięcie i wyjaśnienie przy szerokości 320 px.
+- Nie sprawdzano Safari, fizycznego telefonu ani czytnika ekranu.

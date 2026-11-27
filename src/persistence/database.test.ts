@@ -36,7 +36,7 @@ describe("repozytorium postępu", () => {
       ),
     );
     const current = await repo.read();
-    expect(current.version).toBe(11);
+    expect(current.version).toBe(12);
     expect(current.modules.add.epoch).toBe(5);
     expect(current.modules.add.block).toHaveLength(2);
     expect(current.modules.add.trend).toBe(0);
@@ -123,7 +123,7 @@ describe("repozytorium postępu", () => {
     const rejected = expect(first).rejects.toMatchObject({ code: "blocked" });
     request.onblocked?.(new Event("blocked") as IDBVersionChangeEvent);
     await rejected;
-    expect((await repo.read()).version).toBe(11);
+    expect((await repo.read()).version).toBe(12);
     expect(open).toHaveBeenCalledTimes(2);
     const close = vi.fn();
     Object.defineProperty(request, "result", { value: { close } });
@@ -164,7 +164,7 @@ describe("repozytorium postępu", () => {
     });
     expect(raw).toEqual({ version: 999 });
     await repo.transact(() => defaults(), true);
-    expect((await repo.read()).version).toBe(11);
+    expect((await repo.read()).version).toBe(12);
     repo.close();
     db.close();
   });

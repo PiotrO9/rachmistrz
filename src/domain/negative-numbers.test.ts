@@ -9,9 +9,14 @@ it("generates signed integer results at every basic operation level", () => {
   for (const op of operations) {
     for (const level of [1, 2, 3, 4, 5] as Level[]) {
       const random = seed(27);
+      const comparisonRandom = seed(27);
       let negatives = 0;
       for (let i = 0; i < 500; i++) {
         const task = generate(op, level, random, true);
+        if (op === "polynomial") {
+          expect(task).toEqual(generate(op, level, comparisonRandom, false));
+          continue;
+        }
         const { a, b, answer } = task;
         if (answer >= 0) continue;
         negatives++;

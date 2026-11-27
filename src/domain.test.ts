@@ -18,7 +18,14 @@ describe("generatory", () => {
         for (let i = 0; i < 500; i++) {
           const t = generate(op, level, random);
           expect(Number.isInteger(t.answer)).toBe(true);
-          expect(t.answer).toBeGreaterThanOrEqual(0);
+          if (t.operation === "polynomial") {
+            const value = t.coefficients.reduce(
+              (sum, c, i) => sum + c * t.a ** (t.coefficients.length - i),
+              t.b,
+            );
+            expect(t.answer).toBe(value);
+            if (value < 0) expect(t.signedInput).toBe(true);
+          } else expect(t.answer).toBeGreaterThanOrEqual(0);
           if (op === "add" || op === "subtract") {
             expect(t.a).toBeLessThanOrEqual(
               level === 1 ? 20 : level === 2 ? 99 : 999,

@@ -1,5 +1,6 @@
 import { explainMissingNumber } from "./missing-number";
 import { explainFraction } from "./fractions";
+import { polynomialExpression, polynomialDivisor } from "./polynomial";
 import type { Task, Operation } from "./types";
 import type { Solution } from "./solutions/types";
 import { explainAddition, explainSubtraction } from "./solutions/additive";
@@ -7,7 +8,7 @@ import { explainDivision } from "./solutions/division";
 import { explainMultiplication } from "./solutions/multiplication";
 export type { Solution } from "./solutions/types";
 const strategies: Record<
-  Exclude<Operation, "fraction">,
+  Exclude<Operation, "fraction" | "polynomial">,
   (task: Task) => Solution
 > = {
   percent: ({ a, b, answer }) => ({
@@ -34,6 +35,15 @@ const strategies: Record<
 export function explainSolution(task: Task): Solution {
   if (task.missingOperand) return explainMissingNumber(task);
   if (task.operation === "fraction") return explainFraction(task);
+  if (task.operation === "polynomial")
+    return {
+      explanation:
+        "Resztę otrzymasz, obliczając wartość wielomianu w miejscu zerowym dzielnika.",
+      steps: [
+        `${polynomialDivisor(task.a)} = 0 ⇒ x = ${task.a}`,
+        `W(${task.a}) = ${polynomialExpression(task, true)} = ${task.answer}`,
+      ],
+    };
   if (task.operation === "multiply" && task.a < 0) {
     const positive = explainMultiplication({
       ...task,

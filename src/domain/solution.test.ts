@@ -25,6 +25,11 @@ describe("sposób liczenia", () => {
           const task = generate(operation, level, random);
           const solution = explainSolution(task);
           expect(solution.steps.length).toBeGreaterThan(0);
+          if (task.operation === "polynomial") {
+            expect(solution.steps[0]).toMatch(new RegExp(`⇒ x = ${task.a}$`));
+            expect(solution.steps[1]).toMatch(new RegExp(`= ${task.answer}$`));
+            continue;
+          }
           for (const step of solution.steps) {
             if (step.includes("?")) continue;
             const [expression, result] = step.split(" = ");

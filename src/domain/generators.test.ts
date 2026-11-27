@@ -21,14 +21,17 @@ describe("balans rodzin zadań", () => {
                 ? [t.a, t.denominatorA, t.operator, t.b, t.denominatorB].join(
                     ":",
                   )
-                : t.a + ":" + t.b,
+                : t.operation === "polynomial"
+                  ? [t.a, t.b, ...t.coefficients].join(":")
+                  : t.a + ":" + t.b,
             );
             expect(t.level).toBe(level);
             if (t.materialLevel !== level) {
               reviews++;
               expect(t.materialLevel).toBe(level - 1);
             } else counts.set(t.familyId!, (counts.get(t.familyId!) ?? 0) + 1);
-            expect(t.answer).toBeGreaterThan(0);
+            if (t.operation !== "polynomial")
+              expect(t.answer).toBeGreaterThan(0);
             expect(Number.isInteger(t.answer)).toBe(true);
             if (op === "add" || op === "subtract") {
               expect(Math.max(t.a, t.b)).toBeLessThanOrEqual(
@@ -96,7 +99,8 @@ describe("balans rodzin zadań", () => {
         for (const { value: level } of LEVELS) {
           const task = generate(op, level, () => value);
           expect(Number.isSafeInteger(task.answer)).toBe(true);
-          expect(task.answer).toBeGreaterThan(0);
+          if (task.operation !== "polynomial")
+            expect(task.answer).toBeGreaterThan(0);
         }
   });
   it("unika kolejnego identycznego działania i zachowuje epokę", () => {

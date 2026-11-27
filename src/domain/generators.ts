@@ -9,6 +9,7 @@ import { withMissingOperand } from "./missing-number";
 import { CURRICULUM, REVIEW_SHARE } from "./config";
 
 import { generateFraction } from "./fractions";
+import { generatePolynomial } from "./polynomial";
 import { digitPair } from "./generation/additive";
 import { productPool } from "./generation/product";
 export { regroupCount, hasCarry, hasBorrow } from "./generation/additive";
@@ -34,6 +35,18 @@ export function generate(
   const family =
     families.find((item) => (weight -= item.weight) < 0) ??
     families[families.length - 1];
+  if (operation === "polynomial") {
+    if (family.kind !== "polynomial")
+      throw new Error("Invalid polynomial curriculum");
+    return {
+      ...generatePolynomial(family, pick, int),
+      level,
+      materialLevel,
+      familyId: family.id,
+    };
+  }
+  if (family.kind === "polynomial")
+    throw new Error("Unexpected polynomial family");
   if (operation === "fraction") {
     if (family.kind !== "fraction")
       throw new Error("Invalid fraction curriculum");
@@ -121,6 +134,9 @@ export function nextTask(
     task.operation === previous.operation &&
     task.a === previous.a &&
     task.b === previous.b &&
+    (task.operation !== "polynomial" ||
+      previous.operation !== "polynomial" ||
+      task.coefficients.join(",") === previous.coefficients.join(",")) &&
     (task.operation !== "fraction" ||
       previous.operation !== "fraction" ||
       (task.operator === previous.operator &&
