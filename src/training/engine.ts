@@ -1,3 +1,4 @@
+import { adapt } from "../domain/adaptation";
 import { formatAnswer, matchesFraction } from "../domain/fractions";
 import { HISTORY_LIMITS } from "../domain/config";
 import {
@@ -22,10 +23,13 @@ export interface TrainingState {
   corrections: number;
   editing: boolean;
   sequence: number;
+  settledMatch?: string;
   revealed?: boolean;
   announcement?: string;
 }
 export type SettingsAction =
+  | { type: "matches"; enabled: boolean }
+  | { type: "matchResult"; id: string; epoch: number; outcome: Outcome }
   | { type: "preset"; active: Operation[] }
   | { type: "negativeNumbers"; enabled: boolean }
   | { type: "solution"; enabled: boolean }
@@ -75,6 +79,34 @@ export function configure(
   date: string,
 ): SavedProgress {
   if (action.type === "import") return importProgress(saved, action.saved);
+  if (action.type === "matches")
+    return { ...saved, matches: { ...saved.matches, enabled: action.enabled } };
+  if (action.type === "matchResult") {
+    const current = saved.matches;
+    const day = {
+      ...(current.history.find((d) => d.date === date) ?? {
+        date,
+        clean: 0,
+        helped: 0,
+        skipped: 0,
+      }),
+    };
+    day[
+      action.outcome.skipped
+        ? "skipped"
+        : action.outcome.corrections
+          ? "helped"
+          : "clean"
+    ]++;
+    const history = [day, ...current.history.filter((d) => d.date !== date)]
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, HISTORY_LIMITS.days);
+    const progress =
+      (current.epoch ?? 0) === action.epoch
+        ? adapt(current, action.outcome, 2)
+        : current;
+    return { ...saved, matches: { ...progress, history } };
+  }
   if (action.type === "negativeNumbers")
     return { ...saved, negativeNumbers: action.enabled };
   if (action.type === "solution")
@@ -237,6 +269,8 @@ export function settle(
   command: Command,
   env = environment,
 ): TrainingState {
+  if (command.type === "configure" && command.action.type === "matchResult")
+    return { ...preview, saved, settledMatch: command.action.id };
   if (command.type === "configure")
     return reconcile(
       preview,
@@ -286,5 +320,14 @@ function importProgress(
       ...modules[op],
       epoch: Math.max(saved.modules[op].epoch ?? 0, modules[op].epoch ?? 0) + 1,
     };
-  return { ...imported, modules, revision: saved.revision };
+  return {
+    ...imported,
+    matches: {
+      ...imported.matches,
+      epoch:
+        Math.max(saved.matches.epoch ?? 0, imported.matches.epoch ?? 0) + 1,
+    },
+    modules,
+    revision: saved.revision,
+  };
 }

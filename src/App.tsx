@@ -1,3 +1,4 @@
+import { Matches } from "./features/Matches";
 import { useState } from "react";
 import type { AppView } from "./app-view";
 import { useTraining } from "./useTraining";
@@ -11,7 +12,11 @@ export default function App() {
   const training = useTraining();
   const { storageOK, error } = training;
   useTheme(training.state.saved.theme ?? "system", training.ready);
-  const [view, setView] = useState<AppView>("game");
+  const [requestedView, setView] = useState<AppView>("game");
+  const view =
+    requestedView === "matches" && !training.state.saved.matches.enabled
+      ? "game"
+      : requestedView;
   const {
     notice,
     setNotice,
@@ -23,6 +28,7 @@ export default function App() {
   return (
     <div className="app">
       <AppNavigation
+        matches={training.state.saved.matches.enabled}
         view={view}
         onNavigate={(next) => {
           setView(next);
@@ -67,6 +73,13 @@ export default function App() {
             }
             onSkip={() => training.dispatch({ type: "skip" })}
           />
+        ) : view === "matches" ? (
+          <Matches
+            saved={training.state.saved}
+            settled={training.state.settledMatch}
+            disabled={!training.canInteract || training.busy}
+            dispatch={training.dispatch}
+          />
         ) : view === "settings" ? (
           <SettingsView
             saved={training.state.saved}
@@ -77,10 +90,24 @@ export default function App() {
             onConfigure={training.dispatch}
           />
         ) : (
-          <HistoryView
-            saved={training.state.saved}
-            onTrain={() => setView("game")}
-          />
+          <>
+            {" "}
+            <HistoryView
+              saved={training.state.saved}
+              onTrain={() => setView("game")}
+            />
+            {training.state.saved.matches.history.length > 0 && (
+              <section>
+                <h2>Zapałki</h2>
+                {training.state.saved.matches.history.map((d) => (
+                  <p key={d.date}>
+                    {d.date} · Samodzielnie {d.clean} · Z pomocą {d.helped} ·
+                    Pominięte {d.skipped}
+                  </p>
+                ))}
+              </section>
+            )}
+          </>
         )}
       </main>
     </div>

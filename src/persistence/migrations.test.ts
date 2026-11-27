@@ -15,7 +15,7 @@ describe("format danych", () => {
     previous.theme = "dark";
     const raw = JSON.stringify({ ...previous, version: 2 });
     const migrated = parseSaved(raw);
-    expect(migrated.version).toBe(7);
+    expect(migrated.version).toBe(8);
     expect(migrated.history).toEqual(previous.history);
     expect(migrated.changes).toEqual(previous.changes);
     expect(migrated.theme).toBe("dark");
@@ -70,7 +70,7 @@ describe("format danych", () => {
       ],
     };
     const saved = parseSaved(JSON.stringify(old));
-    expect(saved.version).toBe(7);
+    expect(saved.version).toBe(8);
     expect(saved.history[0].solved).toBe(7);
     expect(saved.history[0].details).toBeUndefined();
     expect(saved.changes).toEqual([]);

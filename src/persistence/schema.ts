@@ -13,7 +13,7 @@ import {
 import { defaults } from "../domain/defaults";
 import { ADAPTATION } from "../domain/config";
 export type PreviousSaved = Omit<SavedProgress, "version"> & {
-  version: 2 | 3 | 4 | 5 | 6;
+  version: 2 | 3 | 4 | 5 | 6 | 7;
 };
 export interface LegacySaved {
   version: 1;
@@ -64,6 +64,14 @@ const isStats = (x: unknown): x is Stats =>
   isNonNegativeInteger(x.corrections) &&
   isNonNegativeInteger(x.clean) &&
   x.clean <= x.solved;
+const isMatchDay = (
+  x: unknown,
+): x is SavedProgress["matches"]["history"][number] =>
+  isRecord(x) &&
+  isDate(x.date) &&
+  isNonNegativeInteger(x.clean) &&
+  isNonNegativeInteger(x.helped) &&
+  isNonNegativeInteger(x.skipped);
 const isSavedDay = (x: unknown): x is Day =>
   isRecord(x) &&
   isDate(x.date) &&
@@ -142,6 +150,7 @@ export function validateStored(
       x.version !== 4 &&
       x.version !== 5 &&
       x.version !== 6 &&
+      x.version !== 7 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");
@@ -158,6 +167,14 @@ export function validateStored(
     throw new SavedDataError("Szczegóły historii nie zgadzają się z sumami.");
   if (x.version === 1)
     return { version: 1, modules: x.modules, history: x.history };
+  const matches = x.version < 8 ? defaults().matches : x.matches;
+  if (
+    !isOperationProgress(matches) ||
+    matches.level > 2 ||
+    !("history" in matches) ||
+    !isList(matches.history, isMatchDay)
+  )
+    throw new SavedDataError("Niepoprawny postęp zapałek.");
   const negativeNumbers = x.version >= 6 ? x.negativeNumbers : false;
   if (
     typeof negativeNumbers !== "boolean" ||
@@ -175,6 +192,7 @@ export function validateStored(
     revision: x.revision,
     modules: x.modules,
     history: x.history,
+    matches: { ...matches, history: matches.history },
     negativeNumbers,
     showSolution: x.showSolution,
     theme: x.theme ?? "system",

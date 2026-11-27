@@ -202,3 +202,9 @@ Cloudflare Wrangler sprawdzony: brak zalogowanego konta. Wdrożenie publiczne ni
 - `npm run check` na Node 24.22.3: formatowanie, lint, 152/152 testów, TypeScript i build PWA przeszły. Sprawdzono rachunek na pięciu poziomach, rozwiązania i migrację v6 z zachowaniem historii oraz ustawienia liczb ujemnych.
 - `npm run test:e2e -- --workers=4`: 19/19 scenariuszy Chromium headless na produkcyjnym buildzie. Włączenie ułamków zachowało bieżące zadanie. W scenariuszu dotykowym przy szerokości 320 px wpisano kreskę przyciskiem, poprawiono zerowy mianownik, zaliczono 4/6 dla wyniku 2/3 i sprawdzono skrócone rozwiązanie po pominięciu oraz historię po odświeżeniu.
 - Klawiatura ekranowa na fizycznym telefonie i Safari pozostają niesprawdzone.
+
+## Zapałki — 27 listopada 2026
+
+- Node 24.22.3, `npm run check`: formatowanie, lint, 157/157 testów, typy i build produkcyjny. Testy objęły minimalną liczbę ruchów, zmianę operatora, adaptację po pomocy i migrację v7.
+- `npm run test:e2e -- --workers=4`: 21/21 scenariuszy Chromium headless. Sprawdzono przeciąganie offline, podpowiedź, historię po ruchu, przeładowanie, dwa ruchy przy szerokości 320 px, dotyk, klawiaturę i rozwiązanie krok po kroku.
+- Nie wykonano prób na fizycznym telefonie, w Safari ani z czytnikiem ekranu.

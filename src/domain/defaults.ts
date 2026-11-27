@@ -12,6 +12,7 @@ export function defaults(): SavedProgress {
   });
   return {
     version: CURRENT_PROGRESS_VERSION,
+    matches: { ...module(), enabled: false, history: [] },
     revision: 0,
     negativeNumbers: false,
     showSolution: false,

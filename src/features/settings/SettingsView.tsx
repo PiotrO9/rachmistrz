@@ -104,6 +104,23 @@ export function SettingsView({
           />
         ))}{" "}
       </div>
+      <div className="solutionSetting">
+        <div>
+          <h2>Zapałki</h2>
+          <p>Udostępnij osobny tryb łamigłówek w menu.</p>
+        </div>
+        <Switch
+          label="Zapałki"
+          disabled={controlsDisabled}
+          checked={saved.matches.enabled}
+          onChange={() =>
+            void onConfigure({
+              type: "matches",
+              enabled: !saved.matches.enabled,
+            })
+          }
+        />
+      </div>
       <AdaptationExplanation />
       <p className="smallNote">
         Co najmniej jedno działanie pozostaje włączone. Zmiany zapisujemy

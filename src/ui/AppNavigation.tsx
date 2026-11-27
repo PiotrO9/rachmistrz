@@ -4,8 +4,10 @@ import { Icon } from "./Icon";
 
 export function AppNavigation({
   view,
+  matches,
   onNavigate,
 }: {
+  matches: boolean;
   view: AppView;
   onNavigate: (view: AppView) => void;
 }) {
@@ -19,6 +21,7 @@ export function AppNavigation({
   const tabs = (
     [
       { id: "game", name: "Trening" },
+      ...(matches ? [{ id: "matches", name: "Zapałki" } as const] : []),
       { id: "settings", name: "Ustawienia" },
       { id: "history", name: "Historia" },
     ] as const

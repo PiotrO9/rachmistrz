@@ -1,0 +1,95 @@
+.matches {
+  text-align: center;
+}
+.matchBoard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2%;
+  width: min(100%, 600px);
+  margin: 3rem auto;
+  font-size: clamp(24px, 6vw, 56px);
+}
+.matchDigit {
+  position: relative;
+  width: 19%;
+  aspect-ratio: 3/5;
+}
+.matchDigit.operator {
+  width: 13%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+.matchSlot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  color: inherit;
+}
+.matchSlot.horizontal {
+  width: 69%;
+  height: 17%;
+}
+.matchSlot.vertical {
+  width: 27%;
+  height: 41%;
+}
+.operator .vertical {
+  height: 70%;
+}
+.matchSlot i {
+  display: block;
+  pointer-events: none;
+  border-radius: 5px;
+  background: linear-gradient(to right, #a64127 18%, #c88c4c 18%);
+  width: 98%;
+  height: 38%;
+}
+.vertical i {
+  height: 98%;
+  width: 44%;
+  background: linear-gradient(#a64127 18%, #c88c4c 18%);
+}
+.empty i {
+  background: none;
+  border: 1px dashed currentColor;
+  opacity: 0.45;
+}
+.empty:disabled i {
+  visibility: hidden;
+}
+.marked i,
+.over i {
+  outline: 3px solid currentColor;
+}
+.matchSlot:disabled {
+  opacity: 1;
+}
+.matchActions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+.matches [role="status"] {
+  min-height: 1.5em;
+}
+.matchBoard span {
+  pointer-events: none;
+}
+.draggedMatch {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10;
+  width: clamp(22px, 5vw, 52px);
+  height: 6px;
+  translate: -50% -50%;
+  border-radius: 4px;
+  background: linear-gradient(to right, #a64127 18%, #c88c4c 18%);
+}

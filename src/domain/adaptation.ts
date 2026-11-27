@@ -3,6 +3,7 @@ import { ADAPTATION, LEVELS } from "./config";
 export function adapt(
   module: OperationProgress,
   outcome: Outcome,
+  maxLevel: Level = LEVELS[LEVELS.length - 1].value,
 ): OperationProgress {
   if (!module.adaptive) return { ...module, block: [], trend: 0 };
   const block = [...module.block, outcome];
@@ -29,7 +30,7 @@ export function adapt(
   const delta = Math.abs(trend) >= ADAPTATION.consecutiveBlocks ? direction : 0;
   const level = Math.max(
     LEVELS[0].value,
-    Math.min(LEVELS[LEVELS.length - 1].value, module.level + delta),
+    Math.min(maxLevel, module.level + delta),
   ) as Level;
   return {
     ...module,

@@ -64,10 +64,13 @@ export interface Day {
   modules: Record<Operation, number>;
   details?: Record<Operation, Stats>;
 }
-export const CURRENT_PROGRESS_VERSION = 7 as const;
+export const CURRENT_PROGRESS_VERSION = 8 as const;
 export interface SavedProgress {
   version: typeof CURRENT_PROGRESS_VERSION;
   revision: number;
+  matches: OperationProgress & {
+    history: { date: string; clean: number; helped: number; skipped: number }[];
+  };
   negativeNumbers: boolean;
   showSolution: boolean;
   theme?: Theme;
