@@ -96,7 +96,7 @@ Migracja dodaje wyłączoną preferencję `negativeNumbers`. Generator czterech 
 
 ## Ułamki i zapis v7 — 27 listopada 2026
 
-Generator dobiera dwa dodatnie ułamki właściwe oraz znak działania z rodziny poziomu. W zadaniu przechowuje liczniki i mianowniki obu składników oraz skrócony wynik. Pole przyjmuje zapis a/b lub liczbę całkowitą. Silnik sprawdza równość przez mnożenie krzyżowe na liczbach całkowitych. Częściowy wpis i mianownik zero nie kończą zadania. Zapis v7 dodaje wyłączony moduł i zerowe liczniki do starszych rekordów, zachowując istniejące ustawienia, historię i zasady migracji adaptacji.
+Generator dobiera dwa dodatnie ułamki właściwe oraz znak działania z rodziny poziomu. W zadaniu przechowuje liczniki i mianowniki obu składników oraz skrócony wynik. Przy mnożeniu generator mnoży liczniki i mianowniki, a przy dzieleniu mnoży przez odwrotność drugiego ułamka. Wszystkie cztery działania współdzielą poziom, adaptację i historię modułu. Pole przyjmuje zapis a/b lub liczbę całkowitą. Silnik sprawdza równość przez mnożenie krzyżowe na liczbach całkowitych. Częściowy wpis i mianownik zero nie kończą zadania. Zapis v7 dodaje wyłączony moduł i zerowe liczniki do starszych rekordów, zachowując istniejące ustawienia, historię i zasady migracji adaptacji.
 
 ## Wzory Viète’a i zapis v9
 

@@ -226,3 +226,9 @@ Cloudflare Wrangler sprawdzony: brak zalogowanego konta. Wdrożenie publiczne ni
 - Node 24.22.3, `npm run check` przeszło. 173 testy, kontrola typów i produkcyjny build PWA. Sprawdzono rodziny zadań, migrację v10 do v11, walidację kopii oraz pojedyncze naliczenie po nieudanej transakcji i ponowieniu.
 - Po buildzie `npm run test:e2e -- --workers=4` przeszło w Chromium headless (24/24). Sprawdzono zachowanie wpisu podczas zmiany zestawu, automatyczną odpowiedź, pominięcie ze wskazówką i dalszy trening po przeładowaniu offline przy szerokości 320 px.
 - Nie sprawdzano Safari, fizycznej klawiatury ekranowej ani odczytu przez czytnik ekranu.
+
+## Mnożenie i dzielenie ułamków — 27 listopada 2026
+
+- Node 24.22.3. `npm run check` przeszło, w tym 173 testy i build produkcyjny. Sprawdzono wartości wyników i kroki rozwiązania na pięciu poziomach.
+- Po buildzie `npm run test:e2e -- --workers=4` przeszło w Chromium headless (26/26). Dwa nowe scenariusze sprawdzają równoważne odpowiedzi przy mnożeniu i dzieleniu, sposób liczenia po pominięciu i wspólny zapis wyników w historii ułamków.
+- Nie wykonywano prób na fizycznym telefonie, w Safari ani z czytnikiem ekranu.

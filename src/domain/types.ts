@@ -23,7 +23,7 @@ interface TaskValues {
 }
 export type FractionTask = TaskValues & {
   operation: "fraction";
-  operator: "+" | "−";
+  operator: "+" | "−" | "×" | "÷";
   // a, b and answer hold the numerators for these denominators.
   denominatorA: number;
   denominatorB: number;

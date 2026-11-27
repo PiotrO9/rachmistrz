@@ -23,7 +23,12 @@ function spokenEquation(task: Task) {
       task.answer,
     ].join(" ");
   if (task.operation === "fraction") {
-    const sign = task.operator === "+" ? "plus" : "minus";
+    const sign = {
+      "+": spoken.add,
+      "−": spoken.subtract,
+      "×": spoken.multiply,
+      "÷": spoken.divide,
+    }[task.operator];
     return [
       task.a,
       "przez",

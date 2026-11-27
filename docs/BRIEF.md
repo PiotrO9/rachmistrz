@@ -32,17 +32,20 @@ Lokalny, transakcyjny zapis IndexedDB z migracją starych danych i synchronizacj
 
 Jasny, minimalistyczny interfejs, dużo pustej przestrzeni, duże cyfry. Robocza nazwa: Rachmistrz. Responsywność, lokalne fonty i instalowalna PWA z offline po pierwszym pobraniu zasobów.
 
-## Później
-
-- [x] **Logarytmy** — gracz oblicza wartość wyrażenia w pamięci, np. `log₃ 45 − log₃ 5 = log₃ 9 = 2`. Trudniejsze zadania wykorzystują zmianę podstawy logarytmu.
-
-- [x] **Brakująca liczba** — wdrożona 27 listopada 2026. Opcja w ustawieniach dodaje równania z luką do czterech działań podstawowych. Poziom i adaptacja zależą od działania widocznego w równaniu.
-
 Późniejsze ustalenie — 12 listopada 2026: cyfry wpisane poza polem w widoku treningu automatycznie kierują fokus i wpis do odpowiedzi. Pole jest pomijane przez Tab i nie fokusuje się kliknięciem myszy; dotyk nadal otwiera klawiaturę. Enter/Spacja pomijają zadanie tylko w polu odpowiedzi.
 
-- **Mnożenie i dzielenie ułamków zwykłych** — rozszerzenie modułu ułamków o kolejne dwa działania.
+## Później
 
-Potęgi. Poza zakresem pierwszej wersji: konta, ranking publiczny, backend, płatności.
+- [ ] **Styl treningu** — pomysł z 27 listopada 2026. W ustawieniach gracz wybiera jeden z trzech stylów:
+  - **Skupienie** — na ekranie dominują działanie i pole odpowiedzi. Nawigacja jest zwinięta, a po rozwiązaniu od razu pojawia się kolejne zadanie. Na telefonie przycisk „Pomiń” pozostaje pod ręką.
+  - **Standardowy** (domyślny) — obecny wygląd treningu i dotychczasowe podpowiedzi.
+  - **Zabawowy (gamifikacja)** — po każdej poprawnej odpowiedzi, również po korekcie, obok pola pojawia się krótki efekt wizualny. Gracz może od razu wpisywać kolejny wynik. Przy ograniczonym ruchu animację zastępuje statyczny akcent. Do rozważenia później: odblokowanie nowego efektu po pierwszym awansie poziomu.
+
+- **Reszta z dzielenia wielomianu** — gracz oblicza resztę z dzielenia `W(x)` przez `x − a`, podstawiając `a` do wielomianu. Na przykład przy dzieleniu `x³ + 2x + 5` przez `x − 2` reszta wynosi `W(2) = 17`.
+
+**Pomysł odłożony na później:** „Ostatnia cyfra potęgi”. Ustalenie, którą cyfrą kończy się np. 7²⁰²⁶, wymaga rozpoznania cyklu i wskazania miejsca w tym cyklu. To zagadka do spokojnego namysłu poza szybkim treningiem rachunkowym.
+
+Poza zakresem pierwszej wersji: konta, ranking publiczny, backend, płatności.
 
 ## Późniejsza zmiana: balans poziomów — 12 listopada 2026
 
@@ -72,7 +75,7 @@ Opcja „Liczby ujemne”, domyślnie wyłączona, dopuszcza ujemne wyniki w czt
 
 ## Ułamki zwykłe — 27 listopada 2026
 
-**Ułamki** włączysz w ustawieniach. Moduł jest domyślnie wyłączony i ma pięć poziomów dodawania i odejmowania. Wpisz odpowiedź jako ułamek (np. 2/4) lub liczbę całkowitą. Aplikacja uznaje równoważne wyniki i pokazuje rozwiązanie w postaci skróconej. Przycisk / pozwala wpisać kreskę ułamkową również na telefonie.
+**Ułamki** włączysz w ustawieniach. Moduł jest domyślnie wyłączony i ma pięć wspólnych poziomów. Na pierwszym ćwiczysz dodawanie i mnożenie, na drugim dochodzą odejmowanie i dzielenie. Od trzeciego poziomu losowane są wszystkie cztery działania. Wpisz odpowiedź jako ułamek (np. 2/4) lub liczbę całkowitą. Aplikacja uznaje równoważne wyniki i pokazuje rozwiązanie w postaci skróconej. Przycisk / pozwala wpisać kreskę ułamkową również na telefonie.
 
 ## Wzory Viète’a — 27 listopada 2026
 

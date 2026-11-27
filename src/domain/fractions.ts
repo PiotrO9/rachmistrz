@@ -14,17 +14,21 @@ export function generateFraction(
   const [denominatorA, denominatorB] = pick(family.pairs);
   const operator = pick(family.operators);
   // Enumerate a small, bounded pool so even a constant RNG always terminates.
-  const candidates: [number, number, number][] = [];
-  const denominator = denominatorA * denominatorB;
+  const candidates: [number, number, number, number][] = [];
   for (let a = 1; a < denominatorA; a++) {
     for (let b = 1; b < denominatorB; b++) {
-      const numerator =
-        a * denominatorB + (operator === "+" ? b : -b) * denominatorA;
+      const [numerator, denominator] = result(
+        a,
+        denominatorA,
+        operator,
+        b,
+        denominatorB,
+      );
       if (numerator > 0 && (family.improper || numerator < denominator))
-        candidates.push([a, b, numerator]);
+        candidates.push([a, b, numerator, denominator]);
     }
   }
-  const [a, b, numerator] = pick(candidates);
+  const [a, b, numerator, denominator] = pick(candidates);
   const divisor = gcd(numerator, denominator);
   return {
     operation: "fraction",
@@ -40,6 +44,25 @@ export function generateFraction(
 
 export const formatRatio = (n: number, d: number) =>
   d === 1 ? String(n) : n + "/" + d;
+
+function result(
+  a: number,
+  da: number,
+  operator: FractionTask["operator"],
+  b: number,
+  db: number,
+): [number, number] {
+  switch (operator) {
+    case "×":
+      return [a * b, da * db];
+    case "÷":
+      return [a * db, da * b];
+    case "+":
+      return [a * db + b * da, da * db];
+    case "−":
+      return [a * db - b * da, da * db];
+  }
+}
 
 export const formatAnswer = (task: Task) =>
   task.operation === "fraction"
@@ -58,6 +81,26 @@ export function matchesFraction(value: string, task: FractionTask) {
 
 export function explainFraction(task: FractionTask) {
   const { a, b, denominatorA, denominatorB, operator } = task;
+  if (operator === "×" || operator === "÷") {
+    const [n, d] = result(a, denominatorA, operator, b, denominatorB);
+    const factor =
+      operator === "÷"
+        ? formatRatio(denominatorB, b)
+        : formatRatio(b, denominatorB);
+    const product = formatRatio(n, d);
+    const steps = [
+      formatRatio(a, denominatorA) + " × " + factor + " = " + product,
+    ];
+    if (d !== task.answerDenominator)
+      steps.push(product + " = " + formatAnswer(task));
+    return {
+      explanation:
+        operator === "÷"
+          ? "Odwróć drugi ułamek i pomnóż. Skróć wynik, jeśli to możliwe."
+          : "Pomnóż liczniki przez siebie i mianowniki przez siebie. Skróć wynik, jeśli to możliwe.",
+      steps,
+    };
+  }
   const d = (denominatorA / gcd(denominatorA, denominatorB)) * denominatorB;
   const left = a * (d / denominatorA),
     right = b * (d / denominatorB);

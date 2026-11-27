@@ -1,4 +1,9 @@
-import { operations, type Level, type Operation } from "./types";
+import {
+  operations,
+  type FractionTask,
+  type Level,
+  type Operation,
+} from "./types";
 export const LOG_SETS = [
   { value: "basic", label: "Podstawy" },
   { value: "combine", label: "Suma i różnica" },
@@ -41,7 +46,7 @@ export type Family = { id: string; weight: number } & (
   | {
       kind: "fraction";
       pairs: readonly Interval[];
-      operators: readonly ("+" | "−")[];
+      operators: readonly FractionTask["operator"][];
       improper: boolean;
     }
   | { kind: "nearHundred" }
@@ -97,7 +102,7 @@ function fractionLevel(
   id: string,
   description: string,
   pairs: readonly Interval[],
-  operators: readonly ("+" | "−")[],
+  operators: readonly FractionTask["operator"][],
   improper = false,
 ): CurriculumLevel {
   return {
@@ -312,7 +317,7 @@ export const CURRICULUM: Record<
   fraction: [
     fractionLevel(
       "same-add",
-      "Dodawanie · jednakowe mianowniki",
+      "Dodawanie i mnożenie · jednakowe mianowniki",
       [
         [3, 3],
         [4, 4],
@@ -321,11 +326,11 @@ export const CURRICULUM: Record<
         [8, 8],
         [10, 10],
       ],
-      ["+"],
+      ["+", "×"],
     ),
     fractionLevel(
       "same-subtract",
-      "Odejmowanie i skracanie · jednakowe mianowniki",
+      "Odejmowanie i dzielenie · jednakowe mianowniki",
       [
         [4, 4],
         [6, 6],
@@ -333,7 +338,7 @@ export const CURRICULUM: Record<
         [10, 10],
         [12, 12],
       ],
-      ["−"],
+      ["−", "÷"],
     ),
     fractionLevel(
       "multiple",
@@ -346,7 +351,7 @@ export const CURRICULUM: Record<
         [5, 10],
         [4, 12],
       ],
-      ["+", "−"],
+      ["+", "−", "×", "÷"],
     ),
     fractionLevel(
       "common",
@@ -358,7 +363,7 @@ export const CURRICULUM: Record<
         [4, 5],
         [4, 6],
       ],
-      ["+", "−"],
+      ["+", "−", "×", "÷"],
     ),
     fractionLevel(
       "improper",
@@ -371,7 +376,7 @@ export const CURRICULUM: Record<
         [8, 12],
         [9, 12],
       ],
-      ["+", "−"],
+      ["+", "−", "×", "÷"],
       true,
     ),
   ],

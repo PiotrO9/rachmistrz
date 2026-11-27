@@ -34,6 +34,12 @@ Historia dzienna (maks. 365 dni aktywności), ustawienia i adaptacja zapisują s
 
 Historia pokazuje wyniki według działań, udział rozwiązań bez poprawek, pominięcia i zmiany poziomów (maks. 500). Szczegóły są liczone dopiero od v2; starsze sumy pozostają zachowane bez szacowania brakujących danych. Zmiana ustawień nie usuwa bieżącego zadania, dopóki jego działanie jest włączone. Zakończenie zadania rozpoczętego przed ręczną zmianą poziomu trafia do historii, lecz nie ocenia nowego modelu adaptacji. Aktualnego zadania i wpisu nie zachowujemy po przeładowaniu. Nieudana transakcja zachowuje wpis w otwartej karcie i udostępnia przycisk ponowienia. Kopię można zaimportować również po błędzie odczytu; uszkodzone dane nie są automatycznie zerowane.
 
+### Sposób liczenia i postęp adaptacji
+
+Po włączeniu rozwiązania po pominięciu można rozwinąć „Pokaż sposób liczenia”. Dodawanie i odejmowanie rozbijamy według wartości pozycyjnych, mnożenie wykorzystuje rozkład lub zaokrąglenie do dziesiątki, a dzielenie sprawdzamy mnożeniem. Rozwinięcie nie nalicza kolejnego pominięcia. Następne zadanie zamyka wskazówkę.
+
+Ustawienia pokazują postęp bieżącego bloku i kierunek poprzedniej oceny. Progi adaptacji pozostają bez zmian i wymagają dalszej oceny podczas rzeczywistego treningu. Historię wykonanych sprawdzeń zawiera `docs/VERIFICATION.md`.
+
 ## Motyw
 
 Ustawienia → Motyw: jasny, ciemny lub zgodny z systemem (domyślnie). Wybór zapisuje się razem z postępem, jest uwzględniany w eksporcie/importach i synchronizuje się między kartami. Tryb systemowy reaguje na zmianę ustawień systemu bez przeładowania. Oba motywy działają offline.
@@ -53,25 +59,17 @@ Utwórz repozytorium z zawartości tego katalogu i połącz je z Cloudflare Page
 
 Nie wymaga sekretów ani bazy danych. Hosting dostarcza HTTPS potrzebne do PWA. Po wdrożeniu sprawdź instalację i ponowne uruchomienie offline na docelowym urządzeniu.
 
-## Następne moduły
-
-### Usprawnienia treningu
-
-Po włączeniu rozwiązania po pominięciu można rozwinąć „Pokaż sposób liczenia”. Dodawanie i odejmowanie rozbijamy według wartości pozycyjnych, mnożenie wykorzystuje rozkład lub zaokrąglenie do dziesiątki, a dzielenie sprawdzamy mnożeniem. Rozwinięcie nie nalicza kolejnego pominięcia. Następne zadanie zamyka wskazówkę.
-
-Ustawienia pokazują postęp bieżącego bloku i kierunek poprzedniej oceny. Progi adaptacji pozostają bez zmian i wymagają dalszej oceny podczas rzeczywistego treningu. Historię wykonanych sprawdzeń zawiera `docs/VERIFICATION.md`.
-
 ## Dalszy rozwój
 
-- [x] **Brakująca liczba** — włącz ją w ustawieniach, aby średnio w co trzecim zadaniu podstawowym znaleźć brakującą liczbę, np. `7 × □ = 56`. Oba warianty ćwiczą wspólny poziom danego działania.
+- **Reszta z dzielenia wielomianu** — gracz oblicza resztę z dzielenia `W(x)` przez `x − a`, podstawiając `a` do wielomianu. Na przykład przy dzieleniu `x³ + 2x + 5` przez `x − 2` reszta wynosi `W(2) = 17`.
 
-- **Mnożenie i dzielenie ułamków zwykłych** — rozszerzenie modułu ułamków o kolejne dwa działania.
+**Pomysł odłożony na później:** „Ostatnia cyfra potęgi”. Ustalenie, którą cyfrą kończy się np. 7²⁰²⁶, wymaga rozpoznania cyklu i wskazania miejsca w tym cyklu. To zagadka do spokojnego namysłu poza szybkim treningiem rachunkowym.
 
 Generator oraz reguły poziomów dodawaj niezależnie od widoku gry. Reguły adaptacji są punktem wyjścia do oceny w praktyce.
 
 ## Opcjonalne działania
 
-**Ułamki** włączysz w ustawieniach. Moduł jest domyślnie wyłączony i ma pięć poziomów dodawania i odejmowania. Wpisz odpowiedź jako ułamek (np. 2/4) lub liczbę całkowitą. Aplikacja uznaje równoważne wyniki i pokazuje rozwiązanie w postaci skróconej. Przycisk / pozwala wpisać kreskę ułamkową również na telefonie.
+**Ułamki** włączysz w ustawieniach. Moduł jest domyślnie wyłączony i ma pięć wspólnych poziomów. Na pierwszym ćwiczysz dodawanie i mnożenie, na drugim dochodzą odejmowanie i dzielenie. Od trzeciego poziomu losowane są wszystkie cztery działania. Wpisz odpowiedź jako ułamek (np. 2/4) lub liczbę całkowitą. Aplikacja uznaje równoważne wyniki i pokazuje rozwiązanie w postaci skróconej. Przycisk / pozwala wpisać kreskę ułamkową również na telefonie.
 
 W ustawieniach można włączyć **Procenty**. Gracz oblicza procent danej liczby (np. 15% z 80) i wpisuje wynik całkowity. Moduł startuje wyłączony, również po migracji. Ma pięć poziomów i własną adaptację: od połowy i dziesiątej części liczby przez ćwiartki i wielokrotności 5% po mniej typowe stawki, np. 28% z 175.
 

@@ -1,7 +1,62 @@
 import { test, expect } from "@playwright/test";
-import { ready, readProgress, settings } from "./helpers";
+import { defaults } from "../src/domain";
+import { ready, readProgress, settings, upload } from "./helpers";
 
 test.use({ hasTouch: true });
+
+for (const example of [
+  {
+    level: 1,
+    equation: "9/10 × 9/10",
+    answer: "162/200",
+    step: "9/10 × 9/10 = 81/100",
+  },
+  {
+    level: 2,
+    equation: "10/12 ÷ 11/12",
+    answer: "20/22",
+    step: "10/12 × 12/11 = 120/132",
+  },
+] as const) {
+  test(
+    example.equation +
+      " accepts equivalent answers and explains the calculation",
+    async ({ page }) => {
+      await page.addInitScript(() => {
+        Math.random = () => 0.9999;
+      });
+      await page.goto("/");
+      await ready(page);
+      await settings(page);
+      const saved = defaults();
+      for (const module of Object.values(saved.modules)) module.enabled = false;
+      saved.modules.fraction.enabled = true;
+      saved.modules.fraction.level = example.level;
+      saved.showSolution = true;
+      await upload(page, saved);
+      await page.getByRole("button", { name: "Zastąp obecny postęp" }).click();
+      await expect(
+        page.getByText("Postęp został zaimportowany."),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "Trening", exact: true }).click();
+      const field = await ready(page);
+      await expect(page.locator(".equation")).toHaveAttribute(
+        "aria-label",
+        example.equation,
+      );
+      await field.fill(example.answer);
+      await expect(field).toHaveValue("");
+      await field.press("Enter");
+      await page.getByText("Pokaż sposób liczenia").click();
+      await expect(page.locator(".solutionMethod ol")).toContainText(
+        example.step,
+      );
+      expect(
+        (await readProgress(page)).history[0].details?.fraction,
+      ).toMatchObject({ solved: 1, skipped: 1 });
+    },
+  );
+}
 
 test("optional fractions accept equivalent answers and keep progress across reloads", async ({
   page,
