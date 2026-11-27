@@ -1,5 +1,6 @@
 import { Matches } from "./features/Matches";
 import { useState } from "react";
+import { Logarithms } from "./features/Logarithms";
 import { Viete } from "./features/Viete";
 import type { AppView } from "./app-view";
 import { useTraining } from "./useTraining";
@@ -16,6 +17,7 @@ export default function App() {
   const [requestedView, setView] = useState<AppView>("game");
   const saved = training.state.saved;
   const view =
+    (requestedView === "logarithms" && !saved.logarithms.enabled) ||
     (requestedView === "matches" && !saved.matches.enabled) ||
     (requestedView === "viete" && !saved.viete.enabled)
       ? "game"
@@ -34,8 +36,15 @@ export default function App() {
       <AppNavigation
         matches={training.state.saved.matches.enabled}
         view={view}
+        logarithms={saved.logarithms.enabled}
         viete={saved.viete.enabled}
-        onNavigate={(next) => {
+        onNavigate={async (next) => {
+          if (
+            next === "logarithms" &&
+            !training.state.logPractice &&
+            !(await training.dispatch({ type: "logStart" }))
+          )
+            return;
           setView(next);
           setNotice("");
         }}
@@ -67,7 +76,9 @@ export default function App() {
       )}
       <main
         className={
-          view === "game" || view === "viete" ? "gameMain" : "panelMain"
+          view === "logarithms" || view === "game" || view === "viete"
+            ? "gameMain"
+            : "panelMain"
         }
       >
         {view === "game" ? (
@@ -86,6 +97,12 @@ export default function App() {
           <Matches
             saved={training.state.saved}
             settled={training.state.settledMatch}
+            disabled={!training.canInteract || training.busy}
+            dispatch={training.dispatch}
+          />
+        ) : view === "logarithms" && training.state.logPractice ? (
+          <Logarithms
+            practice={training.state.logPractice}
             disabled={!training.canInteract || training.busy}
             dispatch={training.dispatch}
           />
@@ -122,6 +139,15 @@ export default function App() {
                     Pominięte {d.skipped}
                   </p>
                 ))}
+              </section>
+            )}
+            {saved.logarithms.solved + saved.logarithms.skipped > 0 && (
+              <section>
+                <h2>Logarytmy</h2>
+                <p>
+                  Rozwiązane: {saved.logarithms.solved} · Pominięte:{" "}
+                  {saved.logarithms.skipped}
+                </p>
               </section>
             )}
             {saved.viete.solved + saved.viete.skipped > 0 && (

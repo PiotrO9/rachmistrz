@@ -16,6 +16,7 @@ export function defaults(): SavedProgress {
     revision: 0,
     missingNumber: false,
     negativeNumbers: false,
+    logarithms: { enabled: false, set: "basic", solved: 0, skipped: 0 },
     viete: { enabled: false, solved: 0, skipped: 0 },
     showSolution: false,
     theme: "system",

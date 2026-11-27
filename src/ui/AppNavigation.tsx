@@ -6,10 +6,12 @@ export function AppNavigation({
   view,
   matches,
   onNavigate,
+  logarithms,
   viete,
 }: {
   matches: boolean;
   view: AppView;
+  logarithms: boolean;
   viete: boolean;
   onNavigate: (view: AppView) => void;
 }) {
@@ -26,6 +28,7 @@ export function AppNavigation({
       ...(matches ? [{ id: "matches", name: "Zapałki" } as const] : []),
       { id: "settings", name: "Ustawienia" },
       { id: "history", name: "Historia" },
+      ...(logarithms ? [{ id: "logarithms", name: "Logarytmy" } as const] : []),
       ...(viete ? [{ id: "viete", name: "Wzory Viète’a" } as const] : []),
     ] as const
   ).map((tab) => (

@@ -1,6 +1,6 @@
 # Plan techniczny i wdrożenie
 
-React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, precache zasobów, aktualizacja po decyzji gracza. Aktualny format danych: v10, z migracją v1–v9.
+React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, precache zasobów, aktualizacja po decyzji gracza. Aktualny format danych: v11, z migracją v1–v10.
 
 Aktualizacja zależności z 11 listopada 2026: React/React DOM 19.3.1, Vite 8.3.8, TypeScript 6.0.3 i Prettier 3.10.0. Jawny `build.target` zachowuje poprzedni zakres transformacji Vite 7: Chrome/Edge 107, Firefox 104 i Safari 16; nie oznacza to testów na każdej z tych przeglądarek. Plugin React 5.2.0 deklaruje zgodność z Vite 8. Wersja 6.3.0 powodowała konflikt opcjonalnych zależności Babel podczas instalacji, dlatego nie wymuszono jej użycia. TypeScript 7 pozostaje poza zakresem wspieranym przez typescript-eslint (`>=4.8.4 <6.1.0`). Typy Node pozostają w linii 22, zgodnie ze środowiskiem CI.
 
@@ -109,3 +109,7 @@ Preferencja `missingNumber` startuje wyłączona. Po losowaniu działania, rodzi
 ## Zapałki i zapis v8
 
 Plansza zapisuje zajęte segmenty trzech cyfr oraz pionową zapałkę operatora w masce bitowej. Generator porównuje błędne równania z poprawnymi układami o tej samej liczbie zapałek. Liczba brakujących segmentów wyznacza minimalną liczbę przełożeń do danego celu. Wynik trafia przez kontroler treningu do transakcji IndexedDB. Osobny postęp przechowuje blok adaptacji, epokę i historię dzienną z podziałem na samodzielne rozwiązania, pomoc oraz pominięcia.
+
+## Logarytmy i zapis v11
+
+Generator w `domain/logarithms.ts` buduje pule z dokładnych potęg i czynników. Silnik przechowuje bieżące wyrażenie, wpis i stan odsłonięcia w pamięci karty. Zmiana zestawu obowiązuje przy następnym losowaniu. Komenda wyniku modyfikuje licznik w najnowszym rekordzie, a zatwierdzenie transakcji odsłania wskazówkę lub losuje zadanie. Migracja v10 dodaje wyłączony tryb z zestawem „Podstawy” i zerowymi licznikami.

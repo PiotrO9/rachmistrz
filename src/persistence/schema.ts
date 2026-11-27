@@ -11,9 +11,9 @@ import {
   type Level,
 } from "../domain/types";
 import { defaults } from "../domain/defaults";
-import { ADAPTATION } from "../domain/config";
+import { LOG_SETS, ADAPTATION } from "../domain/config";
 export type PreviousSaved = Omit<SavedProgress, "version"> & {
-  version: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+  version: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 };
 export interface LegacySaved {
   version: 1;
@@ -153,6 +153,7 @@ export function validateStored(
       x.version !== 7 &&
       x.version !== 8 &&
       x.version !== 9 &&
+      x.version !== 10 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");
@@ -191,6 +192,17 @@ export function validateStored(
     !isList(x.changes, isLevelChange)
   )
     throw new SavedDataError("Niepoprawne dane postępu.");
+  const log = x.version >= 11 ? x.logarithms : defaults().logarithms;
+  const set =
+    isRecord(log) && LOG_SETS.find((option) => option.value === log.set)?.value;
+  if (
+    !set ||
+    !isRecord(log) ||
+    typeof log.enabled !== "boolean" ||
+    !isNonNegativeInteger(log.solved) ||
+    !isNonNegativeInteger(log.skipped)
+  )
+    throw new SavedDataError("Niepoprawny postęp logarytmów.");
   const viete = x.version >= 9 ? x.viete : defaults().viete;
   if (
     !isRecord(viete) ||
@@ -200,6 +212,12 @@ export function validateStored(
   )
     throw new SavedDataError("Niepoprawny postęp gry Wzory Viète’a.");
   return {
+    logarithms: {
+      set,
+      enabled: log.enabled,
+      solved: log.solved,
+      skipped: log.skipped,
+    },
     viete: {
       enabled: viete.enabled,
       solved: viete.solved,

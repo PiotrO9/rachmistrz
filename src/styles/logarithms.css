@@ -1,0 +1,27 @@
+.logarithms {
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+}
+.logarithms h2 {
+  font-size: clamp(1.65rem, 5vw, 3.8rem);
+  margin: 1.5rem 0;
+}
+.logarithms label {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+}
+.logarithms input {
+  width: 5ch;
+  text-align: center;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--rule);
+  font: inherit;
+  font-size: 2rem;
+}
+.logarithms .skip {
+  margin-top: 1rem;
+}

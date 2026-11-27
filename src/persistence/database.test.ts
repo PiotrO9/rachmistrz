@@ -36,7 +36,7 @@ describe("repozytorium postępu", () => {
       ),
     );
     const current = await repo.read();
-    expect(current.version).toBe(10);
+    expect(current.version).toBe(11);
     expect(current.modules.add.epoch).toBe(5);
     expect(current.modules.add.block).toHaveLength(2);
     expect(current.modules.add.trend).toBe(0);
@@ -53,6 +53,37 @@ describe("repozytorium postępu", () => {
     repo.close();
     second.close();
     db.close();
+  });
+  it("migrates a v10 record without changing its existing counters", async () => {
+    const { factory, repository } = createTestRepository(() => null);
+    await repository.read();
+    const previous = defaults();
+    previous.viete.solved = 12;
+    previous.missingNumber = true;
+    await new Promise<void>((resolve, reject) => {
+      const open = factory.open("rachmistrz", 1);
+      open.onerror = () => reject(open.error);
+      open.onsuccess = () => {
+        const db = open.result;
+        const tx = db.transaction("progress", "readwrite");
+        tx.objectStore("progress").put(
+          { ...previous, version: 10, logarithms: undefined },
+          "state",
+        );
+        tx.oncomplete = () => {
+          db.close();
+          resolve();
+        };
+        tx.onabort = () => {
+          db.close();
+          reject(tx.error);
+        };
+      };
+    });
+    const migrated = await repository.read();
+    expect(migrated).toEqual({ ...previous, revision: migrated.revision });
+    expect(await repository.read()).toEqual(migrated);
+    repository.close();
   });
   it.each([null, false, 0, ""])(
     "nie traktuje uszkodzonej wartości %j jako braku zapisu",
@@ -92,7 +123,7 @@ describe("repozytorium postępu", () => {
     const rejected = expect(first).rejects.toMatchObject({ code: "blocked" });
     request.onblocked?.(new Event("blocked") as IDBVersionChangeEvent);
     await rejected;
-    expect((await repo.read()).version).toBe(10);
+    expect((await repo.read()).version).toBe(11);
     expect(open).toHaveBeenCalledTimes(2);
     const close = vi.fn();
     Object.defineProperty(request, "result", { value: { close } });
@@ -133,7 +164,7 @@ describe("repozytorium postępu", () => {
     });
     expect(raw).toEqual({ version: 999 });
     await repo.transact(() => defaults(), true);
-    expect((await repo.read()).version).toBe(10);
+    expect((await repo.read()).version).toBe(11);
     repo.close();
     db.close();
   });

@@ -2,6 +2,32 @@ import { describe, it, expect } from "vitest";
 import { defaults, record, operations } from "../domain";
 import { parseSaved } from "./migrations";
 describe("format danych", () => {
+  it("preserves v10 progress and validates logarithm backups", () => {
+    const saved = defaults();
+    saved.missingNumber = true;
+    saved.viete.solved = 7;
+    expect(
+      parseSaved(
+        JSON.stringify({ ...saved, version: 10, logarithms: undefined }),
+      ),
+    ).toEqual(saved);
+    saved.logarithms = { enabled: true, set: "combine", solved: 2, skipped: 1 };
+    expect(parseSaved(JSON.stringify(saved))).toEqual(saved);
+    for (const invalid of [
+      { set: "unknown" },
+      { enabled: 1 },
+      { solved: -1 },
+      { skipped: 0.5 },
+    ])
+      expect(() =>
+        parseSaved(
+          JSON.stringify({
+            ...saved,
+            logarithms: { ...saved.logarithms, ...invalid },
+          }),
+        ),
+      ).toThrow();
+  });
   it("preserves v9 progress and round-trips the missing-number preference", () => {
     const saved = record(
       defaults(),
@@ -31,7 +57,7 @@ describe("format danych", () => {
     previous.theme = "dark";
     const raw = JSON.stringify({ ...previous, version: 2 });
     const migrated = parseSaved(raw);
-    expect(migrated.version).toBe(10);
+    expect(migrated.version).toBe(11);
     expect(migrated.history).toEqual(previous.history);
     expect(migrated.changes).toEqual(previous.changes);
     expect(migrated.theme).toBe("dark");
@@ -86,7 +112,7 @@ describe("format danych", () => {
       ],
     };
     const saved = parseSaved(JSON.stringify(old));
-    expect(saved.version).toBe(10);
+    expect(saved.version).toBe(11);
     expect(saved.history[0].solved).toBe(7);
     expect(saved.history[0].details).toBeUndefined();
     expect(saved.changes).toEqual([]);

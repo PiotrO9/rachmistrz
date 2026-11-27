@@ -1,3 +1,5 @@
+import { nextLog, type LogTask } from "../domain/logarithms";
+import type { LogSet } from "../domain/config";
 import { expectedAnswer } from "../domain/missing-number";
 import { adapt } from "../domain/adaptation";
 import { formatAnswer, matchesFraction } from "../domain/fractions";
@@ -25,6 +27,7 @@ export interface TrainingState {
   editing: boolean;
   sequence: number;
   settledMatch?: string;
+  logPractice?: { task: LogTask; input: string; revealed: boolean };
   vieteSequence?: number;
   revealed?: boolean;
   announcement?: string;
@@ -36,6 +39,8 @@ export type SettingsAction =
   | { type: "missingNumber"; enabled: boolean }
   | { type: "negativeNumbers"; enabled: boolean }
   | { type: "solution"; enabled: boolean }
+  | { type: "logEnabled"; enabled: boolean }
+  | { type: "logSet"; set: LogSet }
   | { type: "viete"; enabled: boolean }
   | { type: "vieteResult"; skipped: boolean }
   | { type: "theme"; theme: Theme }
@@ -47,6 +52,10 @@ export type SettingsAction =
     };
 export type Action =
   | SettingsAction
+  | { type: "logInput"; value: string }
+  | { type: "logStart" }
+  | { type: "logSkip" }
+  | { type: "logContinue" }
   | { type: "input"; value: string; inputType: string }
   | { type: "skip" }
   | { type: "continue" };
@@ -59,12 +68,20 @@ export const environment: Environment = {
   date: localDate,
 };
 export type Command =
+  | { type: "logResult"; skipped: boolean }
   | { type: "complete"; task: Task; outcome: Outcome; date: string }
   | { type: "configure"; action: SettingsAction; date: string };
 export type Transition =
   | { kind: "local"; state: TrainingState }
   | { kind: "commit"; preview: TrainingState; command: Command };
 
+function newLog(saved: SavedProgress, env: Environment, previous?: LogTask) {
+  return {
+    task: nextLog(saved.logarithms.set, env.random, previous),
+    input: "",
+    revealed: false,
+  };
+}
 export function createState(
   saved = defaults(),
   env = environment,
@@ -122,6 +139,13 @@ export function configure(
     return { ...saved, missingNumber: action.enabled };
   if (action.type === "negativeNumbers")
     return { ...saved, negativeNumbers: action.enabled };
+  if (action.type === "logEnabled")
+    return {
+      ...saved,
+      logarithms: { ...saved.logarithms, enabled: action.enabled },
+    };
+  if (action.type === "logSet")
+    return { ...saved, logarithms: { ...saved.logarithms, set: action.set } };
   if (action.type === "viete")
     return { ...saved, viete: { ...saved.viete, enabled: action.enabled } };
   if (action.type === "vieteResult") {
@@ -183,6 +207,8 @@ export function reconcile(
   options: { task: "preserve" | "replace" } = { task: "preserve" },
   env = environment,
 ): TrainingState {
+  if (!saved.logarithms.enabled && state.logPractice)
+    state = { ...state, logPractice: undefined };
   if (
     options.task === "preserve" &&
     saved.modules[state.task.operation].enabled
@@ -211,6 +237,49 @@ export function interpret(
   action: Action,
   env = environment,
 ): Transition {
+  if (action.type === "logStart")
+    return {
+      kind: "local",
+      state:
+        state.saved.logarithms.enabled && !state.logPractice
+          ? { ...state, logPractice: newLog(state.saved, env) }
+          : state,
+    };
+  if (
+    action.type === "logInput" ||
+    action.type === "logSkip" ||
+    action.type === "logContinue"
+  ) {
+    const practice = state.logPractice;
+    if (!practice) return { kind: "local", state };
+    if (practice.revealed)
+      return {
+        kind: "local",
+        state:
+          action.type === "logContinue"
+            ? { ...state, logPractice: newLog(state.saved, env, practice.task) }
+            : state,
+      };
+    if (action.type === "logContinue") return { kind: "local", state };
+    if (action.type === "logSkip")
+      return {
+        kind: "commit",
+        preview: state,
+        command: { type: "logResult", skipped: true },
+      };
+    if (!/^\d{0,9}$/.test(action.value)) return { kind: "local", state };
+    const preview = {
+      ...state,
+      logPractice: { ...practice, input: action.value },
+    };
+    return action.value !== "" && Number(action.value) === practice.task.answer
+      ? {
+          kind: "commit",
+          preview,
+          command: { type: "logResult", skipped: false },
+        }
+      : { kind: "local", state: preview };
+  }
   if (action.type === "continue" || (action.type === "skip" && state.revealed))
     return {
       kind: "local",
@@ -277,6 +346,17 @@ export function applyCommand(
   latest: SavedProgress,
   command: Command,
 ): SavedProgress {
+  if (command.type === "logResult") {
+    if (!latest.logarithms.enabled) return latest;
+    const counter = command.skipped ? "skipped" : "solved";
+    return {
+      ...latest,
+      logarithms: {
+        ...latest.logarithms,
+        [counter]: latest.logarithms[counter] + 1,
+      },
+    };
+  }
   return command.type === "complete"
     ? record(
         latest,
@@ -293,6 +373,15 @@ export function settle(
   command: Command,
   env = environment,
 ): TrainingState {
+  if (command.type === "logResult") {
+    const next = reconcile(preview, saved, { task: "preserve" }, env);
+    if (!next.logPractice) return next;
+    next.logPractice =
+      command.skipped && saved.showSolution
+        ? { ...next.logPractice, revealed: true }
+        : newLog(saved, env, next.logPractice.task);
+    return next;
+  }
   if (command.type === "configure" && command.action.type === "matchResult")
     return { ...preview, saved, settledMatch: command.action.id };
   if (command.type === "configure" && command.action.type === "vieteResult")

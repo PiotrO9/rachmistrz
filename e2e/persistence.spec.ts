@@ -43,7 +43,7 @@ test("migracja v2 zachowuje postęp i pozwala trenować po przeładowaniu", asyn
   }, previous);
   await page.reload();
   const input = await ready(page);
-  expect(await readRawProgress(page)).toMatchObject({ version: 10 });
+  expect(await readRawProgress(page)).toMatchObject({ version: 11 });
   const migrated = await readProgress(page);
   expect(migrated.modules.multiply).toMatchObject({
     level: 5,
@@ -124,6 +124,7 @@ test("migracja, dwie karty oraz eksport i import", async ({
     JSON.parse(Buffer.concat(chunks).toString()) as unknown,
   );
   expect(backup.theme).toBe("dark");
+  backup.logarithms = { enabled: true, set: "combine", solved: 4, skipped: 2 };
   backup.modules.divide.level = 5;
   backup.theme = "light";
   const oldRevision = (await readProgress(page)).revision;
@@ -132,6 +133,7 @@ test("migracja, dwie karty oraz eksport i import", async ({
   await page.getByRole("button", { name: "Zastąp obecny postęp" }).click();
   await expect(page.getByText("Postęp został zaimportowany.")).toBeVisible();
   expect((await readProgress(page)).revision).toBeGreaterThan(oldRevision);
+  expect((await readProgress(page)).logarithms).toEqual(backup.logarithms);
   expect((await readProgress(page)).modules.divide.level).toBe(5);
   await expect(other.locator("html")).toHaveAttribute("data-theme", "light");
   expect(

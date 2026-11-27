@@ -220,3 +220,9 @@ Cloudflare Wrangler sprawdzony: brak zalogowanego konta. Wdrożenie publiczne ni
 - Node 24.22.3, `npm run check` przeszło wraz ze 167 testami, kontrolą typów i produkcyjnym buildem PWA. Sprawdzono obie pozycje luki na pięciu poziomach czterech działań, jednoznaczność przy zerze, wspólny awans i spadek oraz migrację v9 do v10.
 - `npm run test:e2e -- --workers=4`: 23/23 w Chromium headless. Nowy scenariusz włącza wariant, otwiera nową kartę offline przy szerokości 320 px, zachowuje wpis po wyłączeniu opcji w drugiej karcie i zapisuje odpowiedź do historii dodawania.
 - Safari, fizyczna klawiatura ekranowa i odczyt przez czytnik ekranu pozostają niesprawdzone.
+
+## Logarytmy — 27 listopada 2026
+
+- Node 24.22.3, `npm run check` przeszło. 173 testy, kontrola typów i produkcyjny build PWA. Sprawdzono rodziny zadań, migrację v10 do v11, walidację kopii oraz pojedyncze naliczenie po nieudanej transakcji i ponowieniu.
+- Po buildzie `npm run test:e2e -- --workers=4` przeszło w Chromium headless (24/24). Sprawdzono zachowanie wpisu podczas zmiany zestawu, automatyczną odpowiedź, pominięcie ze wskazówką i dalszy trening po przeładowaniu offline przy szerokości 320 px.
+- Nie sprawdzano Safari, fizycznej klawiatury ekranowej ani odczytu przez czytnik ekranu.

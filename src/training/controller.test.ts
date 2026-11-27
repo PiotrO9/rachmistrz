@@ -24,6 +24,36 @@ async function setup() {
   };
 }
 describe("trening i asynchroniczny zapis", () => {
+  it("retries a logarithm once and uses the newly selected set for the following task", async () => {
+    const { controller, port, random, stop } = await setup();
+    await controller.dispatch({ type: "logEnabled", enabled: true });
+    await controller.dispatch({ type: "logStart" });
+    const task = controller.getSnapshot().state.logPractice!.task;
+    await controller.dispatch({ type: "logSet", set: "base" });
+    const transact = port.transact;
+    port.transact = vi
+      .fn()
+      .mockRejectedValueOnce(Error("Brak miejsca"))
+      .mockImplementation(transact);
+    random.mockClear();
+    expect(
+      await controller.dispatch({
+        type: "logInput",
+        value: String(task.answer),
+      }),
+    ).toBe(false);
+    expect(controller.getSnapshot().state.logPractice).toMatchObject({
+      task,
+      input: String(task.answer),
+    });
+    expect(random).not.toHaveBeenCalled();
+    expect(await controller.retry()).toBe(true);
+    expect(controller.getSnapshot().state.logPractice?.task.kind).toBe(
+      "quotient",
+    );
+    expect(controller.getSnapshot().state.saved.logarithms.solved).toBe(1);
+    stop();
+  });
   it("czeka na zapis, generuje zadanie raz i ignoruje dodatkowy Enter", async () => {
     const { controller, port, random, answer } = await setup();
     const gate = deferred<void>();

@@ -73,7 +73,7 @@ export interface Day {
   modules: Record<Operation, number>;
   details?: Record<Operation, Stats>;
 }
-export const CURRENT_PROGRESS_VERSION = 10 as const;
+export const CURRENT_PROGRESS_VERSION = 11 as const;
 export interface SavedProgress {
   version: typeof CURRENT_PROGRESS_VERSION;
   revision: number;
@@ -82,6 +82,12 @@ export interface SavedProgress {
   };
   missingNumber: boolean;
   negativeNumbers: boolean;
+  logarithms: {
+    enabled: boolean;
+    set: import("./config").LogSet;
+    solved: number;
+    skipped: number;
+  };
   viete: { enabled: boolean; solved: number; skipped: number };
   showSolution: boolean;
   theme?: Theme;

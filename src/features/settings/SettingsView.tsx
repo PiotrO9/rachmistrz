@@ -1,3 +1,4 @@
+import { LOG_SETS } from "../../domain/config";
 import { operations, labels, PRESETS, type Theme } from "../../domain";
 import type { SavedProgress } from "../../domain";
 import type { SettingsAction } from "../../training/engine";
@@ -193,6 +194,35 @@ export function SettingsView({
           }
         />
       </div>
+      <div className="solutionSetting">
+        <div>
+          <h2>Logarytmy</h2>
+          <p>Obliczaj logarytmy w osobnym trybie treningu.</p>
+        </div>
+        <Switch
+          label="Logarytmy"
+          checked={saved.logarithms.enabled}
+          disabled={controlsDisabled}
+          onChange={() =>
+            void onConfigure({
+              type: "logEnabled",
+              enabled: !saved.logarithms.enabled,
+            })
+          }
+        />
+      </div>
+      {saved.logarithms.enabled && (
+        <div className="preset">
+          <label htmlFor="log-set">Zestaw logarytmów</label>
+          <Select
+            id="log-set"
+            value={saved.logarithms.set}
+            options={[...LOG_SETS]}
+            disabled={controlsDisabled}
+            onChange={(set) => void onConfigure({ type: "logSet", set })}
+          />
+        </div>
+      )}
       <DataTools
         saved={saved}
         disabled={dataToolsDisabled}

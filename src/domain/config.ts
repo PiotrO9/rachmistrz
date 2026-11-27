@@ -1,4 +1,11 @@
 import { operations, type Level, type Operation } from "./types";
+export const LOG_SETS = [
+  { value: "basic", label: "Podstawy" },
+  { value: "combine", label: "Suma i różnica" },
+  { value: "base", label: "Zmiana podstawy" },
+] as const;
+export type LogSet = (typeof LOG_SETS)[number]["value"];
+
 // Persisted blocks and trends use these limits in schemas v2 and v3.
 export const ADAPTATION = {
   blockSize: 8,
