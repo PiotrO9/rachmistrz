@@ -57,7 +57,6 @@ export function AppNavigation({
           <span className="brandMark">
             r<span>·</span>
           </span>
-          <span>rachmistrz</span>
         </a>
         <nav
           className="segmentedControl desktopNavigation"

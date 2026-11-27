@@ -34,10 +34,6 @@
   height: 0.875rem;
   flex-shrink: 0;
   color: var(--muted);
-  transition: transform 120ms ease;
-}
-.selectTrigger[data-state="open"] .selectChevron {
-  transform: rotate(180deg);
 }
 .selectCompact {
   min-width: 10rem;
@@ -104,9 +100,6 @@
 .selectMenuCompact .levelMeter {
   margin-inline: 0.3rem;
 }
-.selectMenuCompact .selectCheck {
-  display: none;
-}
 .selectMenuCompact .selectOption[data-state="checked"] .levelOptionNumber {
   color: var(--ink);
 }
@@ -147,6 +140,38 @@
   -webkit-user-select: none;
   outline: none;
 }
+.selectOption[data-state="checked"]::before {
+  content: "";
+  position: absolute;
+  inset-block: 0.55rem;
+  inset-inline-start: 0;
+  width: 3px;
+  border-inline-start: 3px solid var(--focus);
+  border-radius: 2px;
+}
+.selectIconValue {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.selectIconValue > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.selectOptionIcon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.65rem;
+  height: 1.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  color: var(--action-text);
+  background: var(--background);
+}
+.selectOptionIcon + .selectOptionText {
+  flex: 1;
+}
 .selectOption[data-state="checked"] {
   background: var(--hover);
 }
@@ -161,15 +186,6 @@
   font-size: 0.8125rem;
   line-height: 1.5;
   color: var(--muted);
-}
-.selectCheck {
-  display: flex;
-  color: var(--action-text);
-  flex-shrink: 0;
-}
-.selectCheck svg {
-  width: 1rem;
-  height: 1rem;
 }
 .selectScroll {
   display: flex;
@@ -194,6 +210,81 @@
     min-height: 44px;
   }
   .selectTrigger {
+    min-height: 44px;
+  }
+}
+
+.selectField {
+  min-width: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+.selectField .selectTrigger {
+  min-width: 0;
+  width: 100%;
+}
+.fieldLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.fieldLabel label,
+.sessionDialog .fieldLabel label {
+  margin: 0;
+}
+button.fieldHelp {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  color: var(--action-text);
+}
+.fieldHelp > svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+}
+button.fieldHelp:focus-visible {
+  outline: none;
+}
+.fieldHelp:focus-visible > svg {
+  outline: 2px solid var(--focus);
+}
+.fieldHelp:hover,
+.fieldHelp[data-state="open"] {
+  color: var(--focus);
+}
+.fieldHelpPanel {
+  z-index: 110;
+  max-width: min(20rem, calc(100vw - 24px));
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 6px 24px #0002;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.fieldHelpPanel p {
+  margin: 0.3rem 0 0;
+}
+.fieldHelpArrow {
+  fill: var(--control-border);
+}
+.sessionRow:has(.selectField) {
+  align-items: end;
+}
+.sessionRule details .selectField {
+  margin-top: 0.6rem;
+}
+.selectTrigger {
+  border-color: var(--control-border);
+}
+@media (pointer: coarse) {
+  button.fieldHelp {
+    min-width: 44px;
     min-height: 44px;
   }
 }

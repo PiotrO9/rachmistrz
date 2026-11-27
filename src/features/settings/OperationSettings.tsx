@@ -1,3 +1,4 @@
+import { FieldLabel } from "../../ui/FieldLabel";
 import {
   labels,
   symbols,
@@ -42,7 +43,14 @@ export function OperationSettings({
       </div>
       <div className="levelRow">
         <div>
-          <label htmlFor={`level-${op}`}>Poziom trudności</label>
+          <FieldLabel
+            htmlFor={`level-${op}`}
+            label="Poziom trudności"
+            help={
+              labels[op] +
+              ": ręczna zmiana poziomu rozpoczyna nowy blok adaptacji. Opisy na liście pokazują zakres zadań."
+            }
+          />
           <p>{levelDescription(op, m.level)}</p>
         </div>
         <LevelSelect

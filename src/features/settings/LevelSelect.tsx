@@ -29,6 +29,7 @@ export function LevelSelect({
   onChange: (value: Level) => void;
   disabled?: boolean;
   label: string;
+  fieldHelp?: string;
 }) {
   return (
     <Select<Level>

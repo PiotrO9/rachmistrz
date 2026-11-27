@@ -9,14 +9,63 @@ for (const width of [320, 1280])
     await page.getByRole("button", { name: "Szybka sesja" }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
+    const operationBox = await dialog
+      .getByRole("combobox", { name: "Działanie", exact: true })
+      .boundingBox();
+    const modeBox = await dialog
+      .getByRole("combobox", { name: "Trudność", exact: true })
+      .boundingBox();
+    expect(Math.abs(operationBox!.width - modeBox!.width)).toBeLessThan(1);
+    expect(operationBox!.height).toBe(modeBox!.height);
+    if (width > 600) expect(operationBox!.y).toBe(modeBox!.y);
+    else expect(operationBox!.x).toBe(modeBox!.x);
+    await dialog.getByRole("combobox", { name: "Działanie" }).click();
     await dialog
-      .getByLabel("Działanie", { exact: true })
-      .selectOption("divide");
-    await dialog.getByLabel("Trudność").selectOption("fixed");
-    await dialog.getByLabel("Poziom", { exact: true }).selectOption("5");
-    await dialog
-      .getByLabel("Liczba zadań", { exact: true })
-      .selectOption("custom");
+      .getByRole("option", { name: "Dzielenie", exact: true })
+      .click();
+    await dialog.getByRole("combobox", { name: "Trudność" }).click();
+    await dialog.getByRole("option", { name: /Stały poziom/ }).click();
+    const level = dialog.getByRole("combobox", { name: "Poziom", exact: true });
+    await level.press("Enter");
+    await expect(
+      dialog.getByRole("option", { name: /Ekspercki/ }),
+    ).toBeVisible();
+    await expect(
+      dialog.getByRole("option", { name: /Podstawowy/ }),
+    ).toBeFocused();
+    await page.keyboard.press("End");
+    await expect(
+      dialog.getByRole("option", { name: /Ekspercki/ }),
+    ).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(level).toContainText("Ekspercki");
+    await expect(level).toBeFocused();
+    const mode = dialog.getByRole("combobox", {
+      name: "Trudność",
+      exact: true,
+    });
+    await expect(mode).toHaveText("Stały poziom · 5");
+    const info = dialog.getByRole("button", {
+      name: "Pomoc: Trudność",
+      exact: true,
+    });
+    const help = page.getByRole("dialog", { name: "Trudność", exact: true });
+    await info.hover();
+    await expect(help).toBeVisible();
+    await expect(level).toBeFocused();
+    await help.hover();
+    await expect(help).toBeVisible();
+    await page.mouse.move(0, 0);
+    await expect(help).toBeHidden();
+    await expect(level).toBeFocused();
+    await info.press("Enter");
+    await expect(help).toContainText("na poziomie 5");
+    await expect(page.getByRole("listbox")).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    await expect(help).toBeHidden();
+    await expect(info).toBeFocused();
+    await dialog.getByRole("combobox", { name: "Liczba zadań" }).click();
+    await dialog.getByRole("option", { name: "Inna", exact: true }).click();
     await dialog.getByLabel("Własna liczba zadań").fill("1");
     await dialog.getByRole("button", { name: "Zapisz jako zestaw" }).click();
     await dialog.getByLabel("Nazwa zestawu").fill("Dzielenie na 5");

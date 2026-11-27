@@ -1,10 +1,14 @@
+import { Icon, type IconName } from "./Icon";
+import { FieldLabel } from "./FieldLabel";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export interface Option<T extends string | number> {
   value: T;
   label: string;
   description?: string;
+  shortLabel?: string;
+  icon?: IconName;
   leading?: ReactNode;
   trailing?: ReactNode;
 }
@@ -16,6 +20,7 @@ interface Props<T extends string | number> {
   renderValue?: (value: T) => ReactNode;
   disabled?: boolean;
   label?: string;
+  fieldHelp?: string;
   compact?: boolean;
 }
 export function Select<T extends string | number>({
@@ -25,9 +30,11 @@ export function Select<T extends string | number>({
   options,
   disabled = false,
   label,
+  fieldHelp,
   compact = false,
   renderValue,
 }: Props<T>) {
+  const [dialog, setDialog] = useState<HTMLDialogElement | null>(null);
   const trigger = useRef<HTMLButtonElement>(null),
     restoreFocus = useRef(false),
     ignoreDismissClick = useRef(false);
@@ -44,9 +51,13 @@ export function Select<T extends string | number>({
     });
     return () => cancelAnimationFrame(frame);
   }, [disabled, value]);
-  return (
+  const selected = options.find((option) => option.value === value);
+  const control = (
     <SelectPrimitive.Root
       value={String(value)}
+      onOpenChange={(open) => {
+        if (open) setDialog(trigger.current?.closest("dialog") ?? null);
+      }}
       disabled={disabled}
       onValueChange={(next) => {
         restoreFocus.current = true;
@@ -74,7 +85,19 @@ export function Select<T extends string | number>({
           }
         }}
       >
-        <SelectPrimitive.Value>{renderValue?.(value)}</SelectPrimitive.Value>
+        <SelectPrimitive.Value>
+          {renderValue?.(value) ??
+            (selected?.icon ? (
+              <span className="selectIconValue">
+                <span className="selectOptionIcon">
+                  <Icon name={selected.icon} />
+                </span>
+                <span>{selected.shortLabel ?? selected.label}</span>
+              </span>
+            ) : (
+              selected?.shortLabel
+            ))}
+        </SelectPrimitive.Value>
         <SelectPrimitive.Icon asChild>
           <svg
             className="selectChevron"
@@ -90,7 +113,7 @@ export function Select<T extends string | number>({
           </svg>
         </SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
-      <SelectPrimitive.Portal>
+      <SelectPrimitive.Portal container={dialog}>
         <SelectPrimitive.Content
           position="popper"
           align="end"
@@ -116,32 +139,32 @@ export function Select<T extends string | number>({
                 value={String(option.value)}
                 className="selectOption"
                 textValue={option.label}
+                aria-describedby={
+                  option.description
+                    ? id + "-description-" + option.value
+                    : undefined
+                }
               >
+                {option.icon && (
+                  <span className="selectOptionIcon">
+                    <Icon name={option.icon} />
+                  </span>
+                )}
                 {option.leading}
                 <span className="selectOptionText">
                   <SelectPrimitive.ItemText>
                     {option.label}
                   </SelectPrimitive.ItemText>
                   {option.description && (
-                    <span className="selectDescription">
+                    <span
+                      id={id + "-description-" + option.value}
+                      className="selectDescription"
+                    >
                       {option.description}
                     </span>
                   )}
                 </span>
                 {option.trailing}
-                <SelectPrimitive.ItemIndicator className="selectCheck">
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.7"
-                    aria-hidden="true"
-                  >
-                    <path d="m4 10 4 4 8-8" />
-                  </svg>
-                </SelectPrimitive.ItemIndicator>
               </SelectPrimitive.Item>
             ))}
           </SelectPrimitive.Viewport>
@@ -154,5 +177,13 @@ export function Select<T extends string | number>({
         </SelectPrimitive.Content>
       </SelectPrimitive.Portal>
     </SelectPrimitive.Root>
+  );
+  return fieldHelp && label ? (
+    <div className="selectField">
+      <FieldLabel htmlFor={id} label={label} help={fieldHelp} />
+      {control}
+    </div>
+  ) : (
+    control
   );
 }

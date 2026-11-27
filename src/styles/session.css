@@ -66,7 +66,6 @@
   border-radius: 0.7rem;
   background: var(--background);
 }
-.sessionDialog select,
 .sessionDialog input:not([type="checkbox"]) {
   font: inherit;
   max-width: 100%;
@@ -77,8 +76,16 @@
   border-radius: 0.4rem;
   background: var(--surface);
 }
-.sessionRow select:first-child {
-  flex: 1;
+.sessionRow .selectField {
+  min-width: 0;
+  flex: 1 1 10rem;
+}
+.sessionDialog > .sessionRow .selectField:first-child {
+  flex-grow: 2;
+}
+.sessionRule .sessionRow .selectTrigger {
+  height: 3.2rem;
+  padding-block: 0.4rem;
 }
 .sessionRow input[type="number"] {
   width: 6rem;
@@ -151,7 +158,7 @@
     border: 0;
     border-radius: 0;
   }
-  .sessionRule .sessionRow select:first-child {
+  .sessionRule .sessionRow .selectField {
     flex-basis: 100%;
   }
   .sessionDialog footer {

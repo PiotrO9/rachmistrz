@@ -1,3 +1,4 @@
+import { FieldLabel } from "../../ui/FieldLabel";
 import { LOG_SETS } from "../../domain/config";
 import { operations, labels, PRESETS, type Theme } from "../../domain";
 import type { SavedProgress } from "../../domain";
@@ -37,7 +38,11 @@ export function SettingsView({
         opcjonalne — włącz je poniżej. Zmiany zapisują się od razu.
       </SectionTitle>
       <div className="preset themeSetting">
-        <label htmlFor="theme">Motyw</label>
+        <FieldLabel
+          htmlFor="theme"
+          label="Motyw"
+          help="Wybierz jasny lub ciemny wygląd. Opcja „Zgodny z systemem” reaguje na zmianę motywu urządzenia."
+        />
         <Select<Theme>
           id="theme"
           disabled={controlsDisabled}
@@ -49,14 +54,22 @@ export function SettingsView({
             })
           }
           options={[
-            { value: "system", label: "Zgodny z systemem" },
+            {
+              value: "system",
+              label: "Zgodny z systemem",
+              description: "Używa jasnego lub ciemnego motywu urządzenia.",
+            },
             { value: "light", label: "Jasny" },
             { value: "dark", label: "Ciemny" },
           ]}
         />
       </div>
       <div className="preset">
-        <label htmlFor="preset">Zestaw treningowy</label>
+        <FieldLabel
+          htmlFor="preset"
+          label="Zestaw treningowy"
+          help="Zestaw określa, które działania pojawiają się w zwykłym treningu. Poziom każdego działania ustawisz osobno."
+        />
         <Select
           id="preset"
           disabled={controlsDisabled}
@@ -69,7 +82,14 @@ export function SettingsView({
             ...(selected === "Własny zestaw"
               ? [{ value: "Własny zestaw", label: "Własny zestaw" }]
               : []),
-            ...PRESETS.map((p) => ({ value: p.name, label: p.name })),
+            ...PRESETS.map((p) => ({
+              value: p.name,
+              label: p.name,
+              description:
+                p.active.length > 1
+                  ? p.active.map((op) => labels[op]).join(", ")
+                  : undefined,
+            })),
           ]}
         />
       </div>
@@ -213,11 +233,22 @@ export function SettingsView({
       </div>
       {saved.logarithms.enabled && (
         <div className="preset">
-          <label htmlFor="log-set">Zestaw logarytmów</label>
+          <FieldLabel
+            htmlFor="log-set"
+            label="Zestaw logarytmów"
+            help="Wybierz rodzaj ćwiczeń w widoku Logarytmy. Nowy zestaw obowiązuje od kolejnego losowania."
+          />
           <Select
             id="log-set"
             value={saved.logarithms.set}
-            options={[...LOG_SETS]}
+            options={LOG_SETS.map((option) => ({
+              ...option,
+              description: {
+                basic: "Wyznacz wartość logarytmu.",
+                combine: "Oblicz sumę lub różnicę logarytmów.",
+                base: "Skorzystaj ze wzoru na zmianę podstawy.",
+              }[option.value],
+            }))}
             disabled={controlsDisabled}
             onChange={(set) => void onConfigure({ type: "logSet", set })}
           />

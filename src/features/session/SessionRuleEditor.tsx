@@ -1,10 +1,10 @@
+import { Select } from "../../ui/Select";
+import { LevelSelect } from "../settings/LevelSelect";
 import {
   labels,
   operations,
-  LEVELS,
   symbols,
   type SavedProgress,
-  type Level,
   type Operation,
 } from "../../domain";
 import {
@@ -77,53 +77,81 @@ export function SessionRuleEditor({
     <fieldset className="sessionRule">
       <legend className="srOnly">{labels[rule.operation]}</legend>
       <div className="sessionRow">
-        <select
-          aria-label="Działanie"
+        <Select<Operation>
+          id={"session-op-" + rule.operation}
+          label="Działanie"
+          fieldHelp="Każde dodane działanie ma własną regułę trudności. Możesz połączyć kilka działań w jednej sesji."
           value={rule.operation}
-          onChange={(e) =>
+          onChange={(op) =>
             update({
-              ...newRule(e.target.value as Operation),
+              ...newRule(op),
               mode: rule.mode,
               level: rule.level,
               frequent: rule.frequent,
             })
           }
-        >
-          {operations
+          options={operations
             .filter((op) => op === rule.operation || available.includes(op))
-            .map((op) => (
-              <option key={op} value={op}>
-                {labels[op]}
-              </option>
-            ))}
-        </select>
-        <select
-          aria-label="Trudność"
-          value={rule.mode}
-          onChange={(e) =>
-            update({ ...rule, mode: e.target.value as SessionRule["mode"] })
+            .map((op) => ({ value: op, label: labels[op] }))}
+        />
+        <Select<SessionRule["mode"]>
+          id={"session-mode-" + rule.operation}
+          label="Trudność"
+          fieldHelp={
+            {
+              current:
+                "Zaczynasz od swojego aktualnego poziomu (" +
+                saved.modules[rule.operation].level +
+                "). Trudność dostosowuje się do odpowiedzi tylko w tej sesji.",
+              start:
+                "Zaczynasz od poziomu " +
+                rule.level +
+                ". Kolejne zadania mogą być łatwiejsze lub trudniejsze, zależnie od Twoich odpowiedzi.",
+              fixed:
+                "Każde zadanie z tego działania będzie na poziomie " +
+                rule.level +
+                ". Odpowiedzi nie zmienią trudności w tej sesji.",
+            }[rule.mode]
           }
-        >
-          <option value="current">
-            Mój poziom ({saved.modules[rule.operation].level}) · adaptacyjnie
-          </option>
-          <option value="start">Zacznij od poziomu…</option>
-          <option value="fixed">Trzymaj poziom…</option>
-        </select>
+          value={rule.mode}
+          onChange={(mode) => update({ ...rule, mode })}
+          options={[
+            {
+              value: "current",
+              icon: "trend",
+              label: "Mój poziom",
+              shortLabel: "Mój poziom · " + saved.modules[rule.operation].level,
+              description: "Start od Twojego poziomu, z adaptacją.",
+            },
+            {
+              value: "start",
+              icon: "flag",
+              label: "Własny start",
+              shortLabel: "Własny start · " + rule.level,
+              description: "Trudność dostosuje się do odpowiedzi.",
+            },
+            {
+              value: "fixed",
+              icon: "equal",
+              label: "Stały poziom",
+              shortLabel: "Stały poziom · " + rule.level,
+              description: "Każde zadanie będzie na wybranym poziomie.",
+            },
+          ]}
+        />
         {rule.mode !== "current" && (
-          <select
-            aria-label="Poziom"
-            value={rule.level}
-            onChange={(e) =>
-              update({ ...rule, level: Number(e.target.value) as Level })
+          <LevelSelect
+            id={"session-level-" + rule.operation}
+            label="Poziom"
+            fieldHelp={
+              rule.mode === "fixed"
+                ? "Zadania z tego działania pozostaną na wybranym poziomie przez całą sesję."
+                : "Pierwsze zadanie ma wybrany poziom startowy. Kolejne mogą zmieniać trudność."
             }
-          >
-            {LEVELS.map((l) => (
-              <option key={l.value} value={l.value}>
-                {l.value}
-              </option>
-            ))}
-          </select>
+            operation={rule.operation}
+            value={rule.level}
+            onChange={(level) => update({ ...rule, level })}
+          />
         )}
         {multiple && (
           <button
@@ -141,39 +169,36 @@ export function SessionRuleEditor({
           <summary>Więcej opcji</summary>
           {basic && (
             <>
-              <label>
-                Forma zadania
-                <select
-                  value={rule.form}
-                  onChange={(e) =>
-                    update({
-                      ...rule,
-                      form: e.target.value as SessionRule["form"],
-                    })
-                  }
-                >
-                  <option value="inherit">Jak w ustawieniach</option>
-                  <option value="result">Oblicz wynik</option>
-                  <option value="mixed">Wymieszaj z brakującą liczbą</option>
-                  <option value="missing">Tylko brakująca liczba</option>
-                </select>
-              </label>
-              <label>
-                Ujemne wyniki
-                <select
-                  value={rule.negatives}
-                  onChange={(e) =>
-                    update({
-                      ...rule,
-                      negatives: e.target.value as SessionRule["negatives"],
-                    })
-                  }
-                >
-                  <option value="inherit">Jak w ustawieniach</option>
-                  <option value="on">Dopuść</option>
-                  <option value="off">Wyłącz</option>
-                </select>
-              </label>
+              <Select<SessionRule["form"]>
+                id={"session-form-" + rule.operation}
+                label="Forma zadania"
+                fieldHelp="Wybierz, czy wpisujesz wynik działania, czy brakującą liczbę, np. 7 × □ = 56."
+                value={rule.form}
+                onChange={(form) => update({ ...rule, form })}
+                options={[
+                  { value: "inherit", label: "Jak w ustawieniach" },
+                  { value: "result", label: "Oblicz wynik" },
+                  {
+                    value: "mixed",
+                    label: "Wymieszaj z brakującą liczbą",
+                    shortLabel: "Forma mieszana",
+                  },
+                  { value: "missing", label: "Tylko brakująca liczba" },
+                ]}
+              />
+
+              <Select<SessionRule["negatives"]>
+                id={"session-negatives-" + rule.operation}
+                label="Ujemne wyniki"
+                fieldHelp="Opcja „Dopuść” pozwala losować także zadania z wynikiem poniżej zera. Wybór dotyczy tego działania w tej sesji."
+                value={rule.negatives}
+                onChange={(negatives) => update({ ...rule, negatives })}
+                options={[
+                  { value: "inherit", label: "Jak w ustawieniach" },
+                  { value: "on", label: "Dopuść" },
+                  { value: "off", label: "Wyłącz" },
+                ]}
+              />
             </>
           )}
           {multiple && (

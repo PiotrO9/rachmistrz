@@ -327,3 +327,30 @@ Przeszły `npm run check` (196 testów, typy, lint i build) oraz produkcyjne E2E
 ## Sprawdzenie przed pushem na develop — 27 listopada 2026
 
 Przeszły `npm run check`, 196 testów i build PWA. Dwa pełne przebiegi E2E w Chromium zakończyły się wynikiem 30/31. Przy czterech workerach limit czasu przekroczył test dwóch zapałek, a przy dwóch workerach test wielomianu czekający na „Pokaż sposób liczenia”. Każdy z nich przeszedł w drugim z tych przebiegów.
+
+## Selektory szybkiej sesji — 27 listopada 2026
+
+- Na Node 24.22.3 przeszło `npm run check` z 196 testami i produkcyjnym buildem PWA. Końcowe `npm run test:e2e -- --workers=4` zakończyło się wynikiem 31/31. Przy 320 i 1280 px sprawdzono wybór działania, trudności, poziomu i liczby zadań w oknie kreatora, w tym wybór poziomu klawiaturą i powrót fokusu. Test czeka na przeniesienie fokusu przed zatwierdzeniem opcji. Nie testowano na fizycznym telefonie ani w Safari.
+
+## Wspólna pomoc przy selektorach — 27 listopada 2026
+
+- Node 24.22.3, `npm run check` — formatowanie, lint, 199 testów, typy i produkcyjny build PWA przeszły.
+- Po buildzie `npm run test:e2e -- --workers=4` — 31/31 w Chromium headless. Przy 320 i 1280 px sprawdzono skróconą wartość trudności, treść pomocy dla poziomu 5, otwarcie pomocy klawiaturą, zamknięcie klawiszem Escape i powrót fokusu. Nie testowano na fizycznym telefonie ani z czytnikiem ekranu.
+
+## Wariant selektora z ikonami — 27 listopada 2026
+
+- Na Node 24.22.3 przeszły `npm run check` (199 testów, typy i build produkcyjny) oraz `npm run test:e2e -- --workers=4` (31/31 w Chromium). Scenariusze szybkiej sesji objęły zmianę poziomu i powrót fokusu przy 320 i 1280 px. Nie sprawdzano na fizycznym telefonie.
+
+## Podpowiedzi po najechaniu — 27 listopada 2026
+
+- `npm run check` przeszedł na Node 24.22.3, w tym 199 testów i build produkcyjny. Po buildzie przeszło 31/31 testów E2E w Chromium headless.
+- Przy szerokościach 320 i 1280 px sprawdzono otwarcie pomocy myszą bez zmiany fokusu, przejście na panel, zamknięcie po odsunięciu kursora oraz obsługę Enter i Escape. Bez próby na fizycznym ekranie dotykowym.
+
+## Fokus ikony pomocy — 27 listopada 2026
+
+- Po przejściu klawiszem Tab na pomoc przy „Działaniu” Chromium pokazał obwódkę 2 px na okrągłej ikonie przy szerokościach 320 i 1280 px. Przy emulacji dotyku ikona miała 24 px, a przycisk 44 × 44 px. Bez próby na fizycznym telefonie.
+- Przeszły `npm run check` (199 testów i build) oraz `npm run test:e2e -- --workers=4` (31/31).
+
+## Wymiary pól szybkiej sesji — 27 listopada 2026
+
+- Przy 320 i 1280 px test Chromium porównał szerokość i wysokość pól „Działanie” i „Trudność” oraz wyrównanie ich krawędzi. Na Node 24.22.3 przeszły `npm run check` (199 testów i build PWA) oraz `npm run test:e2e -- --workers=4` (33/33). Nie sprawdzano na fizycznym telefonie.

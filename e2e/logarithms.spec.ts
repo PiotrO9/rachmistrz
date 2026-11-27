@@ -21,7 +21,9 @@ test("logarithm practice preserves the current answer across settings and runs o
   const input = page.getByRole("textbox", { name: "Twój wynik" });
   await input.fill("99");
   await settings(page);
-  await page.getByLabel("Zestaw logarytmów").click();
+  await page
+    .getByRole("combobox", { name: "Zestaw logarytmów", exact: true })
+    .click();
   await page.getByRole("option", { name: "Zmiana podstawy" }).click();
   await tab.click();
   await expect(prompt).toHaveAttribute("aria-label", label!);

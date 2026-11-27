@@ -1,3 +1,4 @@
+import { Select } from "../../ui/Select";
 import { useEffect, useRef, useState } from "react";
 import { operations, type SavedProgress } from "../../domain";
 import {
@@ -68,7 +69,7 @@ export function SessionCreator({
       <h2>Co chcesz ćwiczyć?</h2>
       {rules.map((rule, i) => (
         <SessionRuleEditor
-          key={rule.operation}
+          key={i}
           rule={rule}
           saved={saved}
           available={available}
@@ -89,27 +90,45 @@ export function SessionCreator({
       )}
       <h2>Kiedy kończymy?</h2>
       <div className="sessionRow">
-        <select
-          aria-label="Cel sesji"
+        <Select<SessionConfig["goal"]>
+          id="session-goal"
+          label="Cel sesji"
+          fieldHelp={
+            goal === "tasks"
+              ? "Każde rozwiązane lub pominięte zadanie przybliża Cię do celu."
+              : "Sesja kończy się po wskazanej liczbie poprawnych odpowiedzi. Pominięcia nie zwiększają licznika celu."
+          }
           value={goal}
-          onChange={(e) => setGoal(e.target.value as SessionConfig["goal"])}
-        >
-          <option value="tasks">Po określonej liczbie zadań</option>
-          <option value="solved">Po poprawnych rozwiązaniach</option>
-        </select>
-        <select
-          aria-label="Liczba zadań"
+          onChange={setGoal}
+          options={[
+            {
+              value: "tasks",
+              label: "Po określonej liczbie zadań",
+              shortLabel: "Ukończone zadania",
+              description: "Liczą się rozwiązane i pominięte zadania.",
+            },
+            {
+              value: "solved",
+              label: "Po poprawnych rozwiązaniach",
+              shortLabel: "Poprawne odpowiedzi",
+              description: "Liczą się tylko rozwiązane zadania.",
+            },
+          ]}
+        />
+        <Select
+          id="session-count"
+          label="Liczba zadań"
+          fieldHelp="Wybierz liczbę dla całej sesji. Opcja „Inna” pozwala wpisać własny cel."
           value={custom ? "custom" : count}
-          onChange={(e) => {
-            setCustom(e.target.value === "custom");
-            if (e.target.value !== "custom") setCount(e.target.value);
+          onChange={(value) => {
+            setCustom(value === "custom");
+            if (value !== "custom") setCount(value);
           }}
-        >
-          {[10, 25, 50].map((n) => (
-            <option key={n}>{n}</option>
-          ))}
-          <option value="custom">Inna</option>
-        </select>
+          options={[
+            ...["10", "25", "50"].map((n) => ({ value: n, label: n })),
+            { value: "custom", label: "Inna" },
+          ]}
+        />
         {custom && (
           <input
             aria-label="Własna liczba zadań"

@@ -1,3 +1,4 @@
+import { FieldLabel } from "../../ui/FieldLabel";
 import { summarizeDay } from "./summary";
 import { recentActivity, type ActivityPeriod } from "./activity";
 import { ActivityRankings, ActivityTrend } from "./ActivityCharts";
@@ -34,7 +35,11 @@ export function ProgressHistory({ saved }: { saved: SavedProgress }) {
         onSelect={setOperation}
       />
       <div className="preset">
-        <label htmlFor="history-operation">Działanie</label>
+        <FieldLabel
+          htmlFor="history-operation"
+          label="Działanie"
+          help="Wybierz działanie, aby zobaczyć jego wyniki w historii. Opcja „Wszystkie działania” pokazuje wspólne podsumowanie."
+        />
         <Select<Operation | "all">
           id="history-operation"
           value={operation}
