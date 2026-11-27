@@ -1,10 +1,14 @@
+import { explainFraction } from "./fractions";
 import type { Task, Operation } from "./types";
 import type { Solution } from "./solutions/types";
 import { explainAddition, explainSubtraction } from "./solutions/additive";
 import { explainDivision } from "./solutions/division";
 import { explainMultiplication } from "./solutions/multiplication";
 export type { Solution } from "./solutions/types";
-const strategies: Record<Operation, (task: Task) => Solution> = {
+const strategies: Record<
+  Exclude<Operation, "fraction">,
+  (task: Task) => Solution
+> = {
   percent: ({ a, b, answer }) => ({
     explanation:
       "Procent to jedna setna. Pomnóż liczbę przez podaną stawkę procentową i podziel wynik przez 100.",
@@ -27,6 +31,7 @@ const strategies: Record<Operation, (task: Task) => Solution> = {
   }),
 };
 export function explainSolution(task: Task): Solution {
+  if (task.operation === "fraction") return explainFraction(task);
   if (task.operation === "multiply" && task.a < 0) {
     const positive = explainMultiplication({
       ...task,

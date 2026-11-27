@@ -6,21 +6,31 @@ export const operations = [
   "power",
   "root",
   "percent",
+  "fraction",
 ] as const;
 export type Operation = (typeof operations)[number];
 export type Level = 1 | 2 | 3 | 4 | 5;
 export type Theme = "system" | "light" | "dark";
-export interface Task {
+interface TaskValues {
   signedInput?: boolean;
   materialLevel?: Level;
   familyId?: string;
-  operation: Operation;
   a: number;
   b: number;
   answer: number;
   level?: Level;
   epoch?: number;
 }
+export type FractionTask = TaskValues & {
+  operation: "fraction";
+  operator: "+" | "−";
+  // a, b and answer hold the numerators for these denominators.
+  denominatorA: number;
+  denominatorB: number;
+  answerDenominator: number;
+};
+export type Task =
+  FractionTask | (TaskValues & { operation: Exclude<Operation, "fraction"> });
 export interface Outcome {
   corrections: number;
   skipped: boolean;
@@ -54,7 +64,7 @@ export interface Day {
   modules: Record<Operation, number>;
   details?: Record<Operation, Stats>;
 }
-export const CURRENT_PROGRESS_VERSION = 6 as const;
+export const CURRENT_PROGRESS_VERSION = 7 as const;
 export interface SavedProgress {
   version: typeof CURRENT_PROGRESS_VERSION;
   revision: number;

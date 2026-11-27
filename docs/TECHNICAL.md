@@ -1,6 +1,6 @@
 # Plan techniczny i wdrożenie
 
-React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, precache zasobów, aktualizacja po decyzji gracza. Aktualny format danych: v6, z migracją v1–v5.
+React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, precache zasobów, aktualizacja po decyzji gracza. Aktualny format danych: v7, z migracją v1–v6.
 
 Aktualizacja zależności z 11 listopada 2026: React/React DOM 19.3.1, Vite 8.3.8, TypeScript 6.0.3 i Prettier 3.10.0. Jawny `build.target` zachowuje poprzedni zakres transformacji Vite 7: Chrome/Edge 107, Firefox 104 i Safari 16; nie oznacza to testów na każdej z tych przeglądarek. Plugin React 5.2.0 deklaruje zgodność z Vite 8. Wersja 6.3.0 powodowała konflikt opcjonalnych zależności Babel podczas instalacji, dlatego nie wymuszono jej użycia. TypeScript 7 pozostaje poza zakresem wspieranym przez typescript-eslint (`>=4.8.4 <6.1.0`). Typy Node pozostają w linii 22, zgodnie ze środowiskiem CI.
 
@@ -93,3 +93,7 @@ Rodzina `power` w `CURRICULUM` określa zakres podstaw i wykładnik. Pierwiastki
 ## Liczby ujemne i zapis v6 — 27 listopada 2026
 
 Migracja dodaje wyłączoną preferencję `negativeNumbers`. Generator czterech podstawowych działań po dobraniu rodziny i operandów losuje wariant ze zmianą znaku z prawdopodobieństwem 25%. Rozpoczęte zadanie pamięta, czy dopuszcza wpis z minusem. Zmiana preferencji zachowuje wpis, epokę i blok adaptacji.
+
+## Ułamki i zapis v7 — 27 listopada 2026
+
+Generator dobiera dwa dodatnie ułamki właściwe oraz znak działania z rodziny poziomu. W zadaniu przechowuje liczniki i mianowniki obu składników oraz skrócony wynik. Pole przyjmuje zapis a/b lub liczbę całkowitą. Silnik sprawdza równość przez mnożenie krzyżowe na liczbach całkowitych. Częściowy wpis i mianownik zero nie kończą zadania. Zapis v7 dodaje wyłączony moduł i zerowe liczniki do starszych rekordów, zachowując istniejące ustawienia, historię i zasady migracji adaptacji.

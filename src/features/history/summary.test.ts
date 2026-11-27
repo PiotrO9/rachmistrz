@@ -15,6 +15,7 @@ const legacyDay: Day = {
     power: 0,
     root: 0,
     percent: 0,
+    fraction: 0,
   },
 };
 
@@ -39,6 +40,7 @@ it("liczy jakość tylko z dostępnych szczegółów i filtruje działania", () 
       power: { solved: 0, skipped: 0, clean: 0, corrections: 0 },
       root: { solved: 0, skipped: 0, clean: 0, corrections: 0 },
       percent: { solved: 0, skipped: 0, clean: 0, corrections: 0 },
+      fraction: { solved: 0, skipped: 0, clean: 0, corrections: 0 },
       divide: { solved: 0, skipped: 0, clean: 0, corrections: 0 },
     },
   };

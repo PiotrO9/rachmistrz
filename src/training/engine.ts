@@ -1,3 +1,4 @@
+import { formatAnswer, matchesFraction } from "../domain/fractions";
 import { HISTORY_LIMITS } from "../domain/config";
 import {
   defaults,
@@ -163,7 +164,12 @@ export function interpret(
     };
   if (action.type === "input") {
     const value = action.value.replace(/^−/, "-");
-    const valid = state.task.signedInput ? /^-?\d{0,9}$/ : /^\d{0,9}$/;
+    const valid =
+      state.task.operation === "fraction"
+        ? /^(?:\d{1,9}(?:\/\d{0,9})?)?$/
+        : state.task.signedInput
+          ? /^-?\d{0,9}$/
+          : /^\d{0,9}$/;
     if (state.revealed || !valid.test(value)) return { kind: "local", state };
     const change = correction(
       state.input,
@@ -177,7 +183,11 @@ export function interpret(
       corrections: state.corrections + change.increment,
       editing: change.editing,
     };
-    if (value !== "" && Number(value) === state.task.answer)
+    if (
+      state.task.operation === "fraction"
+        ? matchesFraction(value, state.task)
+        : value !== "" && Number(value) === state.task.answer
+    )
       return {
         kind: "commit",
         preview,
@@ -239,8 +249,8 @@ export function settle(
       ...preview,
       saved,
       revealed: true,
-      input: String(command.task.answer),
-      announcement: `Pominięto. Poprawny wynik: ${command.task.answer}.`,
+      input: formatAnswer(command.task),
+      announcement: `Pominięto. Poprawny wynik: ${formatAnswer(command.task)}.`,
     };
   return {
     ...reconcile(preview, saved, { task: "replace" }, env),

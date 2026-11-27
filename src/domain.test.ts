@@ -37,6 +37,17 @@ describe("generatory", () => {
           }
           if (op === "power") expect(t.answer).toBe(t.a ** t.b);
           if (op === "root") expect(t.answer ** t.b).toBe(t.a);
+          if (t.operation === "fraction") {
+            const numerator =
+              t.a * t.denominatorB +
+              (t.operator === "+" ? t.b : -t.b) * t.denominatorA;
+            expect(t.answer * t.denominatorA * t.denominatorB).toBe(
+              numerator * t.answerDenominator,
+            );
+            expect(t.answerDenominator).toBeGreaterThan(0);
+            if (t.materialLevel! < 5)
+              expect(t.answer).toBeLessThan(t.answerDenominator);
+          }
           if (op === "percent") expect(t.answer * 100).toBe(t.a * t.b);
           if (op === "divide") {
             expect(t.b).toBeGreaterThan(0);

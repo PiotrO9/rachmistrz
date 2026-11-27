@@ -7,7 +7,7 @@ it("nie losuje opcjonalnych działań bez włączenia", () => {
   const saved = defaults();
   const random = seed(42);
   for (let i = 0; i < 500; i++) {
-    expect(["power", "root", "percent"]).not.toContain(
+    expect(["power", "root", "percent", "fraction"]).not.toContain(
       nextTask(saved.modules, undefined, random).operation,
     );
   }
@@ -22,7 +22,7 @@ it("migruje prawdziwy rekord v3 bez zmiany starej adaptacji i historii", () => {
   );
   saved.modules.add.epoch = 12;
   const old = JSON.parse(JSON.stringify({ ...saved, version: 3 }));
-  for (const op of ["power", "root", "percent"]) {
+  for (const op of ["power", "root", "percent", "fraction"]) {
     delete old.modules[op];
     delete old.history[0].modules[op];
     delete old.history[0].details[op];
@@ -59,4 +59,22 @@ it("wymaga kompletu modułów w aktualnym zapisie", () => {
   const { root: _root, ...modules } = saved.modules;
   expect(_root.enabled).toBe(false);
   expect(() => parseSaved(JSON.stringify({ ...saved, modules }))).toThrow();
+});
+
+it("adds disabled fractions to v6 while preserving signed input, history and adaptation", () => {
+  const saved = record(
+    defaults(),
+    "percent",
+    { skipped: false, corrections: 1 },
+    "2026-11-27",
+  );
+  saved.negativeNumbers = true;
+  saved.modules.percent.enabled = true;
+  const old = JSON.parse(JSON.stringify(saved));
+  delete old.modules.fraction;
+  delete old.history[0].modules.fraction;
+  delete old.history[0].details.fraction;
+  expect(() => parseSaved(JSON.stringify(old))).toThrow();
+  old.version = 6;
+  expect(parseSaved(JSON.stringify(old))).toEqual(saved);
 });

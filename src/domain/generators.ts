@@ -7,6 +7,7 @@ import {
 } from "./types";
 import { CURRICULUM, REVIEW_SHARE } from "./config";
 
+import { generateFraction } from "./fractions";
 import { digitPair } from "./generation/additive";
 import { productPool } from "./generation/product";
 export { regroupCount, hasCarry, hasBorrow } from "./generation/additive";
@@ -32,6 +33,17 @@ export function generate(
   const family =
     families.find((item) => (weight -= item.weight) < 0) ??
     families[families.length - 1];
+  if (operation === "fraction") {
+    if (family.kind !== "fraction")
+      throw new Error("Invalid fraction curriculum");
+    return {
+      ...generateFraction(family, pick),
+      level,
+      materialLevel,
+      familyId: family.id,
+    };
+  }
+  if (family.kind === "fraction") throw new Error("Unexpected fraction family");
   let a: number, b: number;
   if (family.kind === "percent") {
     a = pick(family.rates);
@@ -106,7 +118,12 @@ export function nextTask(
     previous &&
     task.operation === previous.operation &&
     task.a === previous.a &&
-    task.b === previous.b;
+    task.b === previous.b &&
+    (task.operation !== "fraction" ||
+      previous.operation !== "fraction" ||
+      (task.operator === previous.operator &&
+        task.denominatorA === previous.denominatorA &&
+        task.denominatorB === previous.denominatorB));
     i++
   )
     task = generate(op, modules[op].level, random, negativeNumbers);

@@ -43,7 +43,7 @@ test("migracja v2 zachowuje postęp i pozwala trenować po przeładowaniu", asyn
   }, previous);
   await page.reload();
   const input = await ready(page);
-  expect(await readRawProgress(page)).toMatchObject({ version: 6 });
+  expect(await readRawProgress(page)).toMatchObject({ version: 7 });
   const migrated = await readProgress(page);
   expect(migrated.modules.multiply).toMatchObject({
     level: 5,

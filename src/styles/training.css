@@ -200,3 +200,22 @@ kbd {
 .radical > span {
   border-top: 0.025em solid currentColor;
 }
+
+.stackedFraction {
+  display: inline-grid;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 0.58em;
+  line-height: 1.1;
+}
+.stackedFraction > :first-child {
+  border-bottom: 0.045em solid currentColor;
+}
+.fractionSlash {
+  min-width: 44px;
+  min-height: 44px;
+  margin-top: 0.5rem;
+  border: 1px solid var(--key-border);
+  border-radius: 4px;
+  color: var(--ink);
+}

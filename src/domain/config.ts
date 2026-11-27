@@ -30,6 +30,12 @@ export type Family = { id: string; weight: number } & (
       bridgeToTwenty?: boolean;
       zeroAt?: number;
     }
+  | {
+      kind: "fraction";
+      pairs: readonly Interval[];
+      operators: readonly ("+" | "−")[];
+      improper: boolean;
+    }
   | { kind: "nearHundred" }
   | {
       kind: "percent";
@@ -79,6 +85,18 @@ const product = (
     "excludeMultiplesOfTen" | "excludeSquares"
   > = {},
 ): Family => ({ id, weight, kind: "product", left, right, ...constraints });
+function fractionLevel(
+  id: string,
+  description: string,
+  pairs: readonly Interval[],
+  operators: readonly ("+" | "−")[],
+  improper = false,
+): CurriculumLevel {
+  return {
+    description,
+    families: [{ id, kind: "fraction", weight: 1, pairs, operators, improper }],
+  };
+}
 export const CURRICULUM: Record<
   Operation,
   readonly [
@@ -283,6 +301,72 @@ export const CURRICULUM: Record<
       ],
     },
   ],
+  fraction: [
+    fractionLevel(
+      "same-add",
+      "Dodawanie · jednakowe mianowniki",
+      [
+        [3, 3],
+        [4, 4],
+        [5, 5],
+        [6, 6],
+        [8, 8],
+        [10, 10],
+      ],
+      ["+"],
+    ),
+    fractionLevel(
+      "same-subtract",
+      "Odejmowanie i skracanie · jednakowe mianowniki",
+      [
+        [4, 4],
+        [6, 6],
+        [8, 8],
+        [10, 10],
+        [12, 12],
+      ],
+      ["−"],
+    ),
+    fractionLevel(
+      "multiple",
+      "Jeden mianownik jest wielokrotnością drugiego",
+      [
+        [2, 4],
+        [3, 6],
+        [4, 8],
+        [3, 9],
+        [5, 10],
+        [4, 12],
+      ],
+      ["+", "−"],
+    ),
+    fractionLevel(
+      "common",
+      "Wspólny mianownik · małe liczby",
+      [
+        [2, 3],
+        [3, 4],
+        [3, 5],
+        [4, 5],
+        [4, 6],
+      ],
+      ["+", "−"],
+    ),
+    fractionLevel(
+      "improper",
+      "Różne mianowniki · także wyniki większe od 1",
+      [
+        [4, 6],
+        [6, 8],
+        [5, 8],
+        [6, 10],
+        [8, 12],
+        [9, 12],
+      ],
+      ["+", "−"],
+      true,
+    ),
+  ],
   percent: [
     {
       description: "Połowa i dziesiąta część · np. 50% z 80",
@@ -418,6 +502,7 @@ export const labels: Record<Operation, string> = {
   power: "Potęgowanie",
   root: "Pierwiastkowanie",
   percent: "Procenty",
+  fraction: "Ułamki",
 };
 export const symbols: Record<Operation, string> = {
   add: "+",
@@ -427,6 +512,7 @@ export const symbols: Record<Operation, string> = {
   power: "xⁿ",
   root: "√",
   percent: "%",
+  fraction: "½",
 };
 export const PRESETS: { name: string; active: Operation[] }[] = [
   {

@@ -16,7 +16,13 @@ describe("balans rodzin zadań", () => {
           let reviews = 0;
           for (let i = 0; i < 2000; i++) {
             const t = generate(op, level, rng);
-            unique.add(t.a + ":" + t.b);
+            unique.add(
+              t.operation === "fraction"
+                ? [t.a, t.denominatorA, t.operator, t.b, t.denominatorB].join(
+                    ":",
+                  )
+                : t.a + ":" + t.b,
+            );
             expect(t.level).toBe(level);
             if (t.materialLevel !== level) {
               reviews++;
@@ -66,7 +72,7 @@ describe("balans rodzin zadań", () => {
               1,
             );
           expect(unique.size).toBeGreaterThan(
-            op === "power" || op === "root"
+            op === "power" || op === "root" || op === "fraction"
               ? 4
               : level === 1
                 ? 20

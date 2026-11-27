@@ -36,7 +36,9 @@ Jasny, minimalistyczny interfejs, dużo pustej przestrzeni, duże cyfry. Robocza
 
 Późniejsze ustalenie — 12 listopada 2026: cyfry wpisane poza polem w widoku treningu automatycznie kierują fokus i wpis do odpowiedzi. Pole jest pomijane przez Tab i nie fokusuje się kliknięciem myszy; dotyk nadal otwiera klawiaturę. Enter/Spacja pomijają zadanie tylko w polu odpowiedzi.
 
-Ułamki i potęgi. Poza zakresem pierwszej wersji: konta, ranking publiczny, backend, płatności.
+- **Mnożenie i dzielenie ułamków zwykłych** — rozszerzenie modułu ułamków o kolejne dwa działania.
+
+Potęgi. Poza zakresem pierwszej wersji: konta, ranking publiczny, backend, płatności.
 
 ## Późniejsza zmiana: balans poziomów — 12 listopada 2026
 
@@ -63,3 +65,7 @@ Potęgowanie i pierwiastkowanie wchodzą do zakresu jako osobno włączane dzia�
 ## Późniejsza zmiana — 27 listopada 2026
 
 Opcja „Liczby ujemne”, domyślnie wyłączona, dopuszcza ujemne wyniki w czterech podstawowych działaniach. Zachowujemy osobny poziom i adaptację każdego działania. Przełączenie opcji dotyczy kolejnych zadań.
+
+## Ułamki zwykłe — 27 listopada 2026
+
+**Ułamki** włączysz w ustawieniach. Moduł jest domyślnie wyłączony i ma pięć poziomów dodawania i odejmowania. Wpisz odpowiedź jako ułamek (np. 2/4) lub liczbę całkowitą. Aplikacja uznaje równoważne wyniki i pokazuje rozwiązanie w postaci skróconej. Przycisk / pozwala wpisać kreskę ułamkową również na telefonie.

@@ -25,6 +25,7 @@ export function defaults(): SavedProgress {
       power: { ...module(), enabled: false },
       root: { ...module(), enabled: false },
       percent: { ...module(), enabled: false },
+      fraction: { ...module(), enabled: false },
     },
     history: [],
   };

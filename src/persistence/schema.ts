@@ -2,6 +2,7 @@ import {
   CURRENT_PROGRESS_VERSION,
   operations,
   type SavedProgress,
+  type Operation,
   type OperationProgress,
   type Outcome,
   type Day,
@@ -12,7 +13,7 @@ import {
 import { defaults } from "../domain/defaults";
 import { ADAPTATION } from "../domain/config";
 export type PreviousSaved = Omit<SavedProgress, "version"> & {
-  version: 2 | 3 | 4 | 5;
+  version: 2 | 3 | 4 | 5 | 6;
 };
 export interface LegacySaved {
   version: 1;
@@ -84,13 +85,17 @@ export function validateStored(
 ): SavedProgress | PreviousSaved | LegacySaved {
   if (
     isRecord(x) &&
-    (x.version === 1 || x.version === 2 || x.version === 3 || x.version === 4)
+    (x.version === 1 ||
+      x.version === 2 ||
+      x.version === 3 ||
+      x.version === 4 ||
+      x.version === 5 ||
+      x.version === 6)
   ) {
     const initial = defaults();
-    const added =
-      x.version === 4
-        ? (["percent"] as const)
-        : (["power", "root", "percent"] as const);
+    const added: Operation[] = ["fraction"];
+    if (x.version <= 4) added.push("percent");
+    if (x.version <= 3) added.push("power", "root");
     const newModules = Object.fromEntries(
       added.map((op) => [op, initial.modules[op]]),
     );
@@ -136,6 +141,7 @@ export function validateStored(
       x.version !== 3 &&
       x.version !== 4 &&
       x.version !== 5 &&
+      x.version !== 6 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");
@@ -152,8 +158,7 @@ export function validateStored(
     throw new SavedDataError("Szczegóły historii nie zgadzają się z sumami.");
   if (x.version === 1)
     return { version: 1, modules: x.modules, history: x.history };
-  const negativeNumbers =
-    x.version === CURRENT_PROGRESS_VERSION ? x.negativeNumbers : false;
+  const negativeNumbers = x.version >= 6 ? x.negativeNumbers : false;
   if (
     typeof negativeNumbers !== "boolean" ||
     !isNonNegativeInteger(x.revision) ||

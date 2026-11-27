@@ -1,9 +1,14 @@
 import { describe, expect, it } from "vitest";
+import { formatAnswer } from "./fractions";
 import { explainSolution } from "./solution";
 import { generate } from "./generators";
 import { operations, type Level } from "./types";
 import { seed } from "../testing/seed";
 
+function valueOf(term: string) {
+  const [n, d = "1"] = term.split("/");
+  return Number(n) / Number(d);
+}
 describe("sposób liczenia", () => {
   it("pokazuje skrót dla mnożenia blisko dziesiątki", () => {
     expect(
@@ -29,9 +34,9 @@ describe("sposób liczenia", () => {
               continue;
             }
             const terms = expression.split(" ");
-            let value = Number(terms[0]);
+            let value = valueOf(terms[0]);
             for (let j = 1; j < terms.length; j += 2) {
-              const right = Number(terms[j + 1]);
+              const right = valueOf(terms[j + 1]);
               value =
                 terms[j] === "+"
                   ? value + right
@@ -41,10 +46,10 @@ describe("sposób liczenia", () => {
                       ? value * right
                       : value / right;
             }
-            expect(value, step).toBe(Number(result));
+            expect(value, step).toBeCloseTo(valueOf(result), 10);
           }
           expect(solution.steps.at(-1)).toMatch(
-            new RegExp(`= ${task.answer}$`),
+            new RegExp(`= ${formatAnswer(task)}$`),
           );
         }
       }
