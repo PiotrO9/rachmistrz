@@ -1,6 +1,6 @@
 # Plan techniczny i wdrożenie
 
-React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, precache zasobów, aktualizacja po decyzji gracza. Aktualny format danych: v8, z migracją v1–v7.
+React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, precache zasobów, aktualizacja po decyzji gracza. Aktualny format danych: v9, z migracją v1–v8.
 
 Aktualizacja zależności z 11 listopada 2026: React/React DOM 19.3.1, Vite 8.3.8, TypeScript 6.0.3 i Prettier 3.10.0. Jawny `build.target` zachowuje poprzedni zakres transformacji Vite 7: Chrome/Edge 107, Firefox 104 i Safari 16; nie oznacza to testów na każdej z tych przeglądarek. Plugin React 5.2.0 deklaruje zgodność z Vite 8. Wersja 6.3.0 powodowała konflikt opcjonalnych zależności Babel podczas instalacji, dlatego nie wymuszono jej użycia. TypeScript 7 pozostaje poza zakresem wspieranym przez typescript-eslint (`>=4.8.4 <6.1.0`). Typy Node pozostają w linii 22, zgodnie ze środowiskiem CI.
 
@@ -97,6 +97,10 @@ Migracja dodaje wyłączoną preferencję `negativeNumbers`. Generator czterech 
 ## Ułamki i zapis v7 — 27 listopada 2026
 
 Generator dobiera dwa dodatnie ułamki właściwe oraz znak działania z rodziny poziomu. W zadaniu przechowuje liczniki i mianowniki obu składników oraz skrócony wynik. Pole przyjmuje zapis a/b lub liczbę całkowitą. Silnik sprawdza równość przez mnożenie krzyżowe na liczbach całkowitych. Częściowy wpis i mianownik zero nie kończą zadania. Zapis v7 dodaje wyłączony moduł i zerowe liczniki do starszych rekordów, zachowując istniejące ustawienia, historię i zasady migracji adaptacji.
+
+## Wzory Viète’a i zapis v9
+
+Generator wybiera dwa różne pierwiastki całkowite od −9 do 9. Obie kolejności odpowiedzi sprawdzamy przez sumę i iloczyn. Komenda wyniku aktualizuje liczniki Viète’a w transakcji. Dopiero zatwierdzenie zapisu lub udane ponowienie zmienia zadanie. Migracja v8 zachowuje Zapałki i dodaje wyłączoną minigrę z zerowymi licznikami.
 
 ## Zapałki i zapis v8
 

@@ -70,6 +70,10 @@ Opcja „Liczby ujemne”, domyślnie wyłączona, dopuszcza ujemne wyniki w czt
 
 **Ułamki** włączysz w ustawieniach. Moduł jest domyślnie wyłączony i ma pięć poziomów dodawania i odejmowania. Wpisz odpowiedź jako ułamek (np. 2/4) lub liczbę całkowitą. Aplikacja uznaje równoważne wyniki i pokazuje rozwiązanie w postaci skróconej. Przycisk / pozwala wpisać kreskę ułamkową również na telefonie.
 
+## Wzory Viète’a — 27 listopada 2026
+
+Opcjonalna minigra uruchamiana po włączeniu w ustawieniach. Gracz rozwiązuje równania kwadratowe z dwoma różnymi pierwiastkami całkowitymi. Historia gry jest niezależna od adaptacji treningu.
+
 ## Zapałki — 27 listopada 2026
 
 Włącz **Zapałki** w ustawieniach i wybierz je w menu. Przeciągnij zapałkę lub wybierz kolejno zapałkę i wolne miejsce. Poziom pierwszy wymaga jednego ruchu, drugi dwóch. Możesz zmieniać cyfry i znak działania. Podpowiedź wskazuje zapałkę i oznacza rozwiązanie jako ukończone z pomocą. Przycisk Cofnij pozwala ponowić próbę.

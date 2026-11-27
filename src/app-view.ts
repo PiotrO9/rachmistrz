@@ -1,1 +1,1 @@
-export type AppView = "game" | "settings" | "history" | "matches";
+export type AppView = "game" | "settings" | "history" | "matches" | "viete";

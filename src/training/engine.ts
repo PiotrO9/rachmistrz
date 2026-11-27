@@ -24,6 +24,7 @@ export interface TrainingState {
   editing: boolean;
   sequence: number;
   settledMatch?: string;
+  vieteSequence?: number;
   revealed?: boolean;
   announcement?: string;
 }
@@ -33,6 +34,8 @@ export type SettingsAction =
   | { type: "preset"; active: Operation[] }
   | { type: "negativeNumbers"; enabled: boolean }
   | { type: "solution"; enabled: boolean }
+  | { type: "viete"; enabled: boolean }
+  | { type: "vieteResult"; skipped: boolean }
   | { type: "theme"; theme: Theme }
   | { type: "import"; saved: SavedProgress }
   | {
@@ -109,6 +112,16 @@ export function configure(
   }
   if (action.type === "negativeNumbers")
     return { ...saved, negativeNumbers: action.enabled };
+  if (action.type === "viete")
+    return { ...saved, viete: { ...saved.viete, enabled: action.enabled } };
+  if (action.type === "vieteResult") {
+    if (!saved.viete.enabled) return saved;
+    const counter = action.skipped ? "skipped" : "solved";
+    return {
+      ...saved,
+      viete: { ...saved.viete, [counter]: saved.viete[counter] + 1 },
+    };
+  }
   if (action.type === "solution")
     return { ...saved, showSolution: action.enabled };
   if (action.type === "theme") return { ...saved, theme: action.theme };
@@ -271,6 +284,11 @@ export function settle(
 ): TrainingState {
   if (command.type === "configure" && command.action.type === "matchResult")
     return { ...preview, saved, settledMatch: command.action.id };
+  if (command.type === "configure" && command.action.type === "vieteResult")
+    return {
+      ...reconcile(preview, saved, { task: "preserve" }, env),
+      vieteSequence: (preview.vieteSequence ?? 0) + 1,
+    };
   if (command.type === "configure")
     return reconcile(
       preview,

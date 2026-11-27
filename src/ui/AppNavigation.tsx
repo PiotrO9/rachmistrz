@@ -6,9 +6,11 @@ export function AppNavigation({
   view,
   matches,
   onNavigate,
+  viete,
 }: {
   matches: boolean;
   view: AppView;
+  viete: boolean;
   onNavigate: (view: AppView) => void;
 }) {
   const { open, setOpen, drawer, toggle, ...drawerEvents } =
@@ -24,6 +26,7 @@ export function AppNavigation({
       ...(matches ? [{ id: "matches", name: "Zapałki" } as const] : []),
       { id: "settings", name: "Ustawienia" },
       { id: "history", name: "Historia" },
+      ...(viete ? [{ id: "viete", name: "Wzory Viète’a" } as const] : []),
     ] as const
   ).map((tab) => (
     <button

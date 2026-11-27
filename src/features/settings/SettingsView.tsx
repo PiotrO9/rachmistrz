@@ -159,6 +159,20 @@ export function SettingsView({
           ).
         </p>
       )}
+      <div className="solutionSetting">
+        <div>
+          <h2>Minigry</h2>
+          <p>Wzory Viète’a — znajdź dwa pierwiastki równania kwadratowego.</p>
+        </div>
+        <Switch
+          label="Wzory Viète’a"
+          checked={saved.viete.enabled}
+          disabled={controlsDisabled}
+          onChange={() =>
+            void onConfigure({ type: "viete", enabled: !saved.viete.enabled })
+          }
+        />
+      </div>
       <DataTools
         saved={saved}
         disabled={dataToolsDisabled}

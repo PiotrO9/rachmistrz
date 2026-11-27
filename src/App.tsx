@@ -1,5 +1,6 @@
 import { Matches } from "./features/Matches";
 import { useState } from "react";
+import { Viete } from "./features/Viete";
 import type { AppView } from "./app-view";
 import { useTraining } from "./useTraining";
 import { useTheme } from "./theme";
@@ -13,10 +14,13 @@ export default function App() {
   const { storageOK, error } = training;
   useTheme(training.state.saved.theme ?? "system", training.ready);
   const [requestedView, setView] = useState<AppView>("game");
+  const saved = training.state.saved;
   const view =
-    requestedView === "matches" && !training.state.saved.matches.enabled
+    (requestedView === "matches" && !saved.matches.enabled) ||
+    (requestedView === "viete" && !saved.viete.enabled)
       ? "game"
       : requestedView;
+  if (requestedView !== view) setView(view);
   const {
     notice,
     setNotice,
@@ -30,6 +34,7 @@ export default function App() {
       <AppNavigation
         matches={training.state.saved.matches.enabled}
         view={view}
+        viete={saved.viete.enabled}
         onNavigate={(next) => {
           setView(next);
           setNotice("");
@@ -60,7 +65,11 @@ export default function App() {
           <button onClick={() => setNeedRefresh(false)}>Później</button>
         </div>
       )}
-      <main className={view === "game" ? "gameMain" : "panelMain"}>
+      <main
+        className={
+          view === "game" || view === "viete" ? "gameMain" : "panelMain"
+        }
+      >
         {view === "game" ? (
           <TrainingView
             state={training.state}
@@ -79,6 +88,14 @@ export default function App() {
             settled={training.state.settledMatch}
             disabled={!training.canInteract || training.busy}
             dispatch={training.dispatch}
+          />
+        ) : view === "viete" ? (
+          <Viete
+            sequence={training.state.vieteSequence ?? 0}
+            disabled={!training.canInteract || training.busy}
+            finish={(skipped) =>
+              void training.dispatch({ type: "vieteResult", skipped })
+            }
           />
         ) : view === "settings" ? (
           <SettingsView
@@ -105,6 +122,15 @@ export default function App() {
                     Pominięte {d.skipped}
                   </p>
                 ))}
+              </section>
+            )}
+            {saved.viete.solved + saved.viete.skipped > 0 && (
+              <section>
+                <h2>Wzory Viète’a</h2>
+                <p>
+                  Rozwiązane: {saved.viete.solved} · Pominięte:{" "}
+                  {saved.viete.skipped}
+                </p>
               </section>
             )}
           </>

@@ -13,7 +13,7 @@ import {
 import { defaults } from "../domain/defaults";
 import { ADAPTATION } from "../domain/config";
 export type PreviousSaved = Omit<SavedProgress, "version"> & {
-  version: 2 | 3 | 4 | 5 | 6 | 7;
+  version: 2 | 3 | 4 | 5 | 6 | 7 | 8;
 };
 export interface LegacySaved {
   version: 1;
@@ -151,6 +151,7 @@ export function validateStored(
       x.version !== 5 &&
       x.version !== 6 &&
       x.version !== 7 &&
+      x.version !== 8 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");
@@ -187,7 +188,21 @@ export function validateStored(
     !isList(x.changes, isLevelChange)
   )
     throw new SavedDataError("Niepoprawne dane postępu.");
+  const viete =
+    x.version === CURRENT_PROGRESS_VERSION ? x.viete : defaults().viete;
+  if (
+    !isRecord(viete) ||
+    typeof viete.enabled !== "boolean" ||
+    !isNonNegativeInteger(viete.solved) ||
+    !isNonNegativeInteger(viete.skipped)
+  )
+    throw new SavedDataError("Niepoprawny postęp gry Wzory Viète’a.");
   return {
+    viete: {
+      enabled: viete.enabled,
+      solved: viete.solved,
+      skipped: viete.skipped,
+    },
     version: x.version,
     revision: x.revision,
     modules: x.modules,

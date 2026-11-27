@@ -208,3 +208,9 @@ Cloudflare Wrangler sprawdzony: brak zalogowanego konta. Wdrożenie publiczne ni
 - Node 24.22.3, `npm run check`: formatowanie, lint, 157/157 testów, typy i build produkcyjny. Testy objęły minimalną liczbę ruchów, zmianę operatora, adaptację po pomocy i migrację v7.
 - `npm run test:e2e -- --workers=4`: 21/21 scenariuszy Chromium headless. Sprawdzono przeciąganie offline, podpowiedź, historię po ruchu, przeładowanie, dwa ruchy przy szerokości 320 px, dotyk, klawiaturę i rozwiązanie krok po kroku.
 - Nie wykonano prób na fizycznym telefonie, w Safari ani z czytnikiem ekranu.
+
+## Wzory Viète’a — 27 listopada 2026
+
+- Node 22.23.5. `npm run check` zakończone powodzeniem, 159 testów i produkcyjny build PWA.
+- Po buildzie `npm run test:e2e -- --workers=4`: 22/22 w Chromium headless. Sprawdzono włączenie minigry, odwrotną kolejność pierwiastków, błędną parę, pomijanie, osobne liczniki oraz wyłączenie z drugiej karty.
+- Nie sprawdzano minigry na fizycznym telefonie ani w Safari.

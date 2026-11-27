@@ -64,6 +64,7 @@ export function migrateStored(value: unknown): {
     case 5:
     case 6:
     case 7:
+    case 8:
       current = { ...checked, version: CURRENT_PROGRESS_VERSION };
       break;
     case CURRENT_PROGRESS_VERSION:

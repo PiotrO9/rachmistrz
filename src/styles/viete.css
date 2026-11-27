@@ -1,0 +1,31 @@
+.viete {
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+}
+.viete h2 {
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  margin: 2rem 0;
+}
+.vieteRoots {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.vieteRoots label {
+  display: grid;
+  gap: 0.6rem;
+  max-width: 9rem;
+  font-size: 0.875rem;
+}
+.vieteRoots input {
+  width: 100%;
+  text-align: center;
+  font: inherit;
+  font-size: 2rem;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--rule);
+}

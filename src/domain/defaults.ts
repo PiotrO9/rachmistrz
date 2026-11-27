@@ -15,6 +15,7 @@ export function defaults(): SavedProgress {
     matches: { ...module(), enabled: false, history: [] },
     revision: 0,
     negativeNumbers: false,
+    viete: { enabled: false, solved: 0, skipped: 0 },
     showSolution: false,
     theme: "system",
     changes: [],
