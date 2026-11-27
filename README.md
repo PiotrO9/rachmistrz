@@ -2,9 +2,15 @@
 
 Minimalistyczny, nieskończony trening liczenia w pamięci. React + TypeScript + Vite, instalowalna PWA, bez backendu i kont.
 
-Pytania użytkowników i odpowiedzi: [FAQ](docs/FAQ.md).
-
 Favicon przedstawia znak „r·” z nagłówka na jasnym, zaokrąglonym tle.
+
+## Mapa dokumentacji
+
+- Jak działa trening z perspektywy gracza? [FAQ](docs/FAQ.md)
+- Jakie były założenia produktu i które zasady zmieniły się później? [Założenia i późniejsze ustalenia](docs/BRIEF.md)
+- Gdzie zmienić obsługę odpowiedzi, zapis postępu lub aktualizację PWA? [Opis techniczny](docs/TECHNICAL.md)
+- Jakie scenariusze regresji już sprawdzano i jakie ograniczenia odnotowano? [Historia weryfikacji](docs/VERIFICATION.md)
+- Jak porównywano tempo awansu dla różnych profili uczniów? [Badanie adaptacji](docs/ADAPTATION-STUDY.md)
 
 ## Uruchomienie
 
