@@ -16,6 +16,7 @@ export const LEVELS = [
   { value: 5, name: "Ekspercki" },
 ] as const;
 export const getLevel = (value: Level) => LEVELS[value - 1];
+export const MISSING_NUMBER_SHARE = 1 / 3;
 export const REVIEW_SHARE = 0.2;
 type Interval = readonly [number, number];
 type Operands =

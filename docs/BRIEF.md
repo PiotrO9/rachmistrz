@@ -34,6 +34,8 @@ Jasny, minimalistyczny interfejs, dużo pustej przestrzeni, duże cyfry. Robocza
 
 ## Później
 
+- [x] **Brakująca liczba** — wdrożona 27 listopada 2026. Opcja w ustawieniach dodaje równania z luką do czterech działań podstawowych. Poziom i adaptacja zależą od działania widocznego w równaniu.
+
 Późniejsze ustalenie — 12 listopada 2026: cyfry wpisane poza polem w widoku treningu automatycznie kierują fokus i wpis do odpowiedzi. Pole jest pomijane przez Tab i nie fokusuje się kliknięciem myszy; dotyk nadal otwiera klawiaturę. Enter/Spacja pomijają zadanie tylko w polu odpowiedzi.
 
 - **Mnożenie i dzielenie ułamków zwykłych** — rozszerzenie modułu ułamków o kolejne dwa działania.

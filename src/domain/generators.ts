@@ -5,6 +5,7 @@ import {
   type Task,
   type SavedProgress,
 } from "./types";
+import { withMissingOperand } from "./missing-number";
 import { CURRICULUM, REVIEW_SHARE } from "./config";
 
 import { generateFraction } from "./fractions";
@@ -108,6 +109,7 @@ export function nextTask(
   previous?: Task,
   random = Math.random,
   negativeNumbers = false,
+  missingNumber = false,
 ): Task {
   const active = operations.filter((op) => modules[op].enabled);
   const op = active[Math.floor(random() * active.length)] ?? "add";
@@ -127,5 +129,6 @@ export function nextTask(
     i++
   )
     task = generate(op, modules[op].level, random, negativeNumbers);
+  if (missingNumber) task = withMissingOperand(task, random);
   return { ...task, epoch: modules[op].epoch ?? 0 };
 }

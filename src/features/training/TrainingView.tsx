@@ -14,6 +14,14 @@ const spoken = {
   percent: "procent z",
 };
 function spokenEquation(task: Task) {
+  if (task.missingOperand)
+    return [
+      task.missingOperand === "a" ? "brakująca liczba" : task.a,
+      spoken[task.operation],
+      task.missingOperand === "b" ? "brakująca liczba" : task.b,
+      "równa się",
+      task.answer,
+    ].join(" ");
   if (task.operation === "fraction") {
     const sign = task.operator === "+" ? "plus" : "minus";
     return [
@@ -68,6 +76,8 @@ export function TrainingView({
     onInput,
     onSkip,
   });
+  const missing = state.task.missingOperand;
+  const instruction = missing ? "Wpisz brakującą liczbę" : "Wpisz wynik";
   const fraction = state.task.operation === "fraction" ? state.task : undefined;
   const fractionLabel =
     fraction &&
@@ -83,18 +93,32 @@ export function TrainingView({
       <p className="srOnly" role="status" aria-live="polite" aria-atomic="true">
         {state.announcement}{" "}
         {state.revealed
-          ? `Wynik: ${formatAnswer(state.task)}. Wybierz następne zadanie.`
-          : `${spokenEquation(state.task)}. Wpisz wynik.`}
+          ? `${missing ? "Brakująca liczba" : "Wynik"}: ${formatAnswer(state.task)}. Wybierz następne zadanie.`
+          : `${spokenEquation(state.task)}. ${instruction}.`}
       </p>
       <div className="exercise">
         <div
           className={`equation ${state.task.operation === "power" || state.task.operation === "root" ? "unaryEquation" : ""}`}
           aria-label={
-            fractionLabel ??
-            `${state.task.a} ${state.task.operation === "power" ? "^" : state.task.operation === "percent" ? spoken.percent : symbols[state.task.operation]} ${state.task.b}`
+            missing
+              ? spokenEquation(state.task)
+              : (fractionLabel ??
+                `${state.task.a} ${state.task.operation === "power" ? "^" : state.task.operation === "percent" ? spoken.percent : symbols[state.task.operation]} ${state.task.b}`)
           }
         >
-          {fraction ? (
+          {missing ? (
+            <>
+              <span className="firstOperand">
+                {missing === "a" ? "□" : state.task.a}
+              </span>
+              <span className="operator">{symbols[state.task.operation]}</span>
+              <span className="secondOperand">
+                {missing === "b" ? "□" : state.task.b}
+              </span>
+              <span className="equals">=</span>
+              <span className="knownResult">{state.task.answer}</span>
+            </>
+          ) : fraction ? (
             <>
               <span className="firstOperand">
                 <Fraction n={fraction.a} d={fraction.denominatorA} />
@@ -135,7 +159,7 @@ export function TrainingView({
             ref={answerInput.input}
             tabIndex={-1}
             onPointerDown={answerInput.onPointerDown}
-            aria-label="Twoja odpowiedź"
+            aria-label={missing ? "Brakująca liczba" : "Twoja odpowiedź"}
             aria-describedby="answer-hint"
             readOnly={!canInteract || state.revealed}
             aria-busy={busy}
@@ -191,10 +215,12 @@ export function TrainingView({
           : !ready
             ? "Odczytujemy postęp…"
             : state.revealed
-              ? "Poprawny wynik. Przejdź dalej, gdy będziesz gotowy."
+              ? missing
+                ? "Brakująca liczba jest w polu odpowiedzi. Przejdź dalej, gdy będziesz gotowy."
+                : "Poprawny wynik. Przejdź dalej, gdy będziesz gotowy."
               : fraction
                 ? "Wpisz wynik jako ułamek, np. 3/4, lub liczbę całkowitą."
-                : "Wpisz wynik, aby przejść dalej."}
+                : `${instruction}, aby przejść dalej.`}
       </p>
       {solution && (
         <details className="solutionMethod" key={state.sequence}>

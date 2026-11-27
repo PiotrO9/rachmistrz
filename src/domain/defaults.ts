@@ -14,6 +14,7 @@ export function defaults(): SavedProgress {
     version: CURRENT_PROGRESS_VERSION,
     matches: { ...module(), enabled: false, history: [] },
     revision: 0,
+    missingNumber: false,
     negativeNumbers: false,
     viete: { enabled: false, solved: 0, skipped: 0 },
     showSolution: false,

@@ -41,6 +41,16 @@
   color: var(--operator);
   text-align: center;
 }
+.equals {
+  grid-column: 1;
+  grid-row: 3;
+  text-align: center;
+  color: var(--operator);
+}
+.knownResult {
+  grid-column: 2;
+  grid-row: 3;
+}
 .answerWrap {
   position: relative;
   display: inline-flex;

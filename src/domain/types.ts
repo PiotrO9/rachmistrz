@@ -29,8 +29,17 @@ export type FractionTask = TaskValues & {
   denominatorB: number;
   answerDenominator: number;
 };
+export type BasicOperation = "add" | "subtract" | "multiply" | "divide";
+export type MissingNumberTask = TaskValues & {
+  operation: BasicOperation;
+  missingOperand: "a" | "b";
+};
 export type Task =
-  FractionTask | (TaskValues & { operation: Exclude<Operation, "fraction"> });
+  | MissingNumberTask
+  | ((
+      | FractionTask
+      | (TaskValues & { operation: Exclude<Operation, "fraction"> })
+    ) & { missingOperand?: never });
 export interface Outcome {
   corrections: number;
   skipped: boolean;
@@ -64,13 +73,14 @@ export interface Day {
   modules: Record<Operation, number>;
   details?: Record<Operation, Stats>;
 }
-export const CURRENT_PROGRESS_VERSION = 9 as const;
+export const CURRENT_PROGRESS_VERSION = 10 as const;
 export interface SavedProgress {
   version: typeof CURRENT_PROGRESS_VERSION;
   revision: number;
   matches: OperationProgress & {
     history: { date: string; clean: number; helped: number; skipped: number }[];
   };
+  missingNumber: boolean;
   negativeNumbers: boolean;
   viete: { enabled: boolean; solved: number; skipped: number };
   showSolution: boolean;

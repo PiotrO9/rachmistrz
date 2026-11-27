@@ -13,7 +13,7 @@ import {
 import { defaults } from "../domain/defaults";
 import { ADAPTATION } from "../domain/config";
 export type PreviousSaved = Omit<SavedProgress, "version"> & {
-  version: 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  version: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 };
 export interface LegacySaved {
   version: 1;
@@ -152,6 +152,7 @@ export function validateStored(
       x.version !== 6 &&
       x.version !== 7 &&
       x.version !== 8 &&
+      x.version !== 9 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");
@@ -176,8 +177,10 @@ export function validateStored(
     !isList(matches.history, isMatchDay)
   )
     throw new SavedDataError("Niepoprawny postęp zapałek.");
+  const missingNumber = x.version >= 10 ? x.missingNumber : false;
   const negativeNumbers = x.version >= 6 ? x.negativeNumbers : false;
   if (
+    typeof missingNumber !== "boolean" ||
     typeof negativeNumbers !== "boolean" ||
     !isNonNegativeInteger(x.revision) ||
     typeof x.showSolution !== "boolean" ||
@@ -188,8 +191,7 @@ export function validateStored(
     !isList(x.changes, isLevelChange)
   )
     throw new SavedDataError("Niepoprawne dane postępu.");
-  const viete =
-    x.version === CURRENT_PROGRESS_VERSION ? x.viete : defaults().viete;
+  const viete = x.version >= 9 ? x.viete : defaults().viete;
   if (
     !isRecord(viete) ||
     typeof viete.enabled !== "boolean" ||
@@ -208,6 +210,7 @@ export function validateStored(
     modules: x.modules,
     history: x.history,
     matches: { ...matches, history: matches.history },
+    missingNumber,
     negativeNumbers,
     showSolution: x.showSolution,
     theme: x.theme ?? "system",

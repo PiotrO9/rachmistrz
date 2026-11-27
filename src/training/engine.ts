@@ -1,3 +1,4 @@
+import { expectedAnswer } from "../domain/missing-number";
 import { adapt } from "../domain/adaptation";
 import { formatAnswer, matchesFraction } from "../domain/fractions";
 import { HISTORY_LIMITS } from "../domain/config";
@@ -32,6 +33,7 @@ export type SettingsAction =
   | { type: "matches"; enabled: boolean }
   | { type: "matchResult"; id: string; epoch: number; outcome: Outcome }
   | { type: "preset"; active: Operation[] }
+  | { type: "missingNumber"; enabled: boolean }
   | { type: "negativeNumbers"; enabled: boolean }
   | { type: "solution"; enabled: boolean }
   | { type: "viete"; enabled: boolean }
@@ -69,7 +71,13 @@ export function createState(
 ): TrainingState {
   return {
     saved,
-    task: nextTask(saved.modules, undefined, env.random, saved.negativeNumbers),
+    task: nextTask(
+      saved.modules,
+      undefined,
+      env.random,
+      saved.negativeNumbers,
+      saved.missingNumber,
+    ),
     input: "",
     corrections: 0,
     editing: false,
@@ -110,6 +118,8 @@ export function configure(
         : current;
     return { ...saved, matches: { ...progress, history } };
   }
+  if (action.type === "missingNumber")
+    return { ...saved, missingNumber: action.enabled };
   if (action.type === "negativeNumbers")
     return { ...saved, negativeNumbers: action.enabled };
   if (action.type === "viete")
@@ -186,6 +196,7 @@ export function reconcile(
       state.task,
       env.random,
       saved.negativeNumbers,
+      saved.missingNumber,
     ),
     input: "",
     corrections: 0,
@@ -231,7 +242,7 @@ export function interpret(
     if (
       state.task.operation === "fraction"
         ? matchesFraction(value, state.task)
-        : value !== "" && Number(value) === state.task.answer
+        : value !== "" && Number(value) === expectedAnswer(state.task)
     )
       return {
         kind: "commit",
@@ -302,7 +313,9 @@ export function settle(
       saved,
       revealed: true,
       input: formatAnswer(command.task),
-      announcement: `Pominięto. Poprawny wynik: ${formatAnswer(command.task)}.`,
+      announcement: command.task.missingOperand
+        ? `Pominięto. Brakująca liczba to ${formatAnswer(command.task)}.`
+        : `Pominięto. Poprawny wynik: ${formatAnswer(command.task)}.`,
     };
   return {
     ...reconcile(preview, saved, { task: "replace" }, env),

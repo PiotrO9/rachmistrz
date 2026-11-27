@@ -2,6 +2,22 @@ import { describe, it, expect } from "vitest";
 import { defaults, record, operations } from "../domain";
 import { parseSaved } from "./migrations";
 describe("format danych", () => {
+  it("preserves v9 progress and round-trips the missing-number preference", () => {
+    const saved = record(
+      defaults(),
+      "add",
+      { corrections: 1, skipped: false },
+      "2026-11-27",
+    );
+    saved.viete.solved = 3;
+    const legacy = { ...saved, missingNumber: undefined, version: 9 };
+    expect(parseSaved(JSON.stringify(legacy))).toEqual(saved);
+    saved.missingNumber = true;
+    expect(parseSaved(JSON.stringify(saved))).toEqual(saved);
+    expect(() =>
+      parseSaved(JSON.stringify({ ...saved, missingNumber: "true" })),
+    ).toThrow();
+  });
   it("migruje v2 raz, zachowuje historię i odcina zadanie starej epoki", () => {
     const previous = record(
       defaults(),
@@ -15,7 +31,7 @@ describe("format danych", () => {
     previous.theme = "dark";
     const raw = JSON.stringify({ ...previous, version: 2 });
     const migrated = parseSaved(raw);
-    expect(migrated.version).toBe(9);
+    expect(migrated.version).toBe(10);
     expect(migrated.history).toEqual(previous.history);
     expect(migrated.changes).toEqual(previous.changes);
     expect(migrated.theme).toBe("dark");
@@ -70,7 +86,7 @@ describe("format danych", () => {
       ],
     };
     const saved = parseSaved(JSON.stringify(old));
-    expect(saved.version).toBe(9);
+    expect(saved.version).toBe(10);
     expect(saved.history[0].solved).toBe(7);
     expect(saved.history[0].details).toBeUndefined();
     expect(saved.changes).toEqual([]);

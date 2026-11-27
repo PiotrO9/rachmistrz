@@ -1,3 +1,4 @@
+import { expectedAnswer } from "./missing-number";
 import type { Family } from "./config";
 import type { FractionTask, Task } from "./types";
 
@@ -43,7 +44,7 @@ export const formatRatio = (n: number, d: number) =>
 export const formatAnswer = (task: Task) =>
   task.operation === "fraction"
     ? formatRatio(task.answer, task.answerDenominator)
-    : String(task.answer);
+    : String(expectedAnswer(task));
 
 export function matchesFraction(value: string, task: FractionTask) {
   const [numerator, denominator = "1"] = value.split("/");

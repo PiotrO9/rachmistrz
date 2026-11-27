@@ -92,6 +92,26 @@ export function SettingsView({
           }
         />
       </div>
+      <div className="solutionSetting">
+        <div>
+          <h2>Brakująca liczba</h2>
+          <p>
+            W części zadań z dodawania, odejmowania, mnożenia i dzielenia
+            wpisujesz brakującą liczbę, np. 7 × □ = 56.
+          </p>
+        </div>
+        <Switch
+          label="Brakująca liczba"
+          checked={saved.missingNumber}
+          disabled={controlsDisabled}
+          onChange={() =>
+            void onConfigure({
+              type: "missingNumber",
+              enabled: !saved.missingNumber,
+            })
+          }
+        />
+      </div>
       <div className="modules">
         {operations.map((op) => (
           <OperationSettings

@@ -214,3 +214,9 @@ Cloudflare Wrangler sprawdzony: brak zalogowanego konta. Wdrożenie publiczne ni
 - Node 22.23.5. `npm run check` zakończone powodzeniem, 159 testów i produkcyjny build PWA.
 - Po buildzie `npm run test:e2e -- --workers=4`: 22/22 w Chromium headless. Sprawdzono włączenie minigry, odwrotną kolejność pierwiastków, błędną parę, pomijanie, osobne liczniki oraz wyłączenie z drugiej karty.
 - Nie sprawdzano minigry na fizycznym telefonie ani w Safari.
+
+## Brakująca liczba — 27 listopada 2026
+
+- Node 24.22.3, `npm run check` przeszło wraz ze 167 testami, kontrolą typów i produkcyjnym buildem PWA. Sprawdzono obie pozycje luki na pięciu poziomach czterech działań, jednoznaczność przy zerze, wspólny awans i spadek oraz migrację v9 do v10.
+- `npm run test:e2e -- --workers=4`: 23/23 w Chromium headless. Nowy scenariusz włącza wariant, otwiera nową kartę offline przy szerokości 320 px, zachowuje wpis po wyłączeniu opcji w drugiej karcie i zapisuje odpowiedź do historii dodawania.
+- Safari, fizyczna klawiatura ekranowa i odczyt przez czytnik ekranu pozostają niesprawdzone.

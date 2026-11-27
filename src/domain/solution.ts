@@ -1,3 +1,4 @@
+import { explainMissingNumber } from "./missing-number";
 import { explainFraction } from "./fractions";
 import type { Task, Operation } from "./types";
 import type { Solution } from "./solutions/types";
@@ -31,6 +32,7 @@ const strategies: Record<
   }),
 };
 export function explainSolution(task: Task): Solution {
+  if (task.missingOperand) return explainMissingNumber(task);
   if (task.operation === "fraction") return explainFraction(task);
   if (task.operation === "multiply" && task.a < 0) {
     const positive = explainMultiplication({
