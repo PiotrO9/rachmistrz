@@ -1,4 +1,10 @@
-import { operations, labels, symbols, type SavedProgress } from "../../domain";
+import {
+  LEVELS,
+  operations,
+  labels,
+  symbols,
+  type SavedProgress,
+} from "../../domain";
 import { Icon } from "../../ui/Icon";
 import { SectionTitle } from "../../ui/SectionTitle";
 import { ProgressHistory } from "./ProgressHistory";
@@ -14,19 +20,30 @@ export function HistoryView({
       <SectionTitle title="Historia treningu">
         Aktualne poziomy i dzienne podsumowania.
       </SectionTitle>
-      <div className="levelSummary">
+      <ul className="levelSummary" aria-label="Aktualne poziomy działań">
         {operations.map((op) => (
-          <div key={op}>
-            <span>
-              {symbols[op]} <span>{labels[op]}</span>
+          <li key={op} className="levelCard">
+            <span className="levelCardSymbol" aria-hidden="true">
+              {symbols[op]}
             </span>
-            <strong>
-              {saved.modules[op].level}
-              <small> / 5</small>
-            </strong>
-          </div>
+            <div className="levelCardDetails">
+              <strong>{labels[op]}</strong>
+              <span className="levelCardValue">
+                <span className="srOnly">Poziom </span>
+                {saved.modules[op].level} / {LEVELS.length}
+              </span>
+              <span className="levelCardScale" aria-hidden="true">
+                {LEVELS.map(({ value }) => (
+                  <span
+                    key={value}
+                    data-filled={value <= saved.modules[op].level}
+                  />
+                ))}
+              </span>
+            </div>
+          </li>
         ))}
-      </div>
+      </ul>
       {saved.history.length === 0 ? (
         <div className="empty">
           <h2>Jeszcze bez wyników</h2>

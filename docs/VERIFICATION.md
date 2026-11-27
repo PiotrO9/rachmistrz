@@ -354,3 +354,8 @@ Przeszły `npm run check`, 196 testów i build PWA. Dwa pełne przebiegi E2E w C
 ## Wymiary pól szybkiej sesji — 27 listopada 2026
 
 - Przy 320 i 1280 px test Chromium porównał szerokość i wysokość pól „Działanie” i „Trudność” oraz wyrównanie ich krawędzi. Na Node 24.22.3 przeszły `npm run check` (199 testów i build PWA) oraz `npm run test:e2e -- --workers=4` (33/33). Nie sprawdzano na fizycznym telefonie.
+
+## Kafelki poziomów w historii — 27 listopada 2026
+
+- Na Node 24.22.3 przeszło `npm run check` (196 testów i build PWA). W pełnym przebiegu E2E przeszło 30/31 scenariuszy. Test dwóch zapałek przekroczył limit czasu i przeszedł po ponowieniu.
+- W Chromium headless sprawdzono dziewięć kart, pięć segmentów na kartę, wypełnienie dla poziomu 1 oraz brak przepełnienia nazw przy szerokościach 320, 621, 800, 941 i 1280 px. Siatka miała odpowiednio 1, 2, 2, 3 i 3 kolumny. Bez testu na fizycznym telefonie.
