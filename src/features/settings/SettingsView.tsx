@@ -13,12 +13,14 @@ interface SettingsViewProps {
   saved: SavedProgress;
   controlsDisabled: boolean;
   dataToolsDisabled: boolean;
+  hasSavedProgress: boolean;
   onConfigure: (action: SettingsAction) => Promise<boolean>;
 }
 export function SettingsView({
   saved,
   controlsDisabled,
   dataToolsDisabled,
+  hasSavedProgress,
   onConfigure,
 }: SettingsViewProps) {
   const lastChange = saved.changes.at(-1);
@@ -255,7 +257,7 @@ export function SettingsView({
         </div>
       )}
       <DataTools
-        saved={saved}
+        fallback={hasSavedProgress ? saved : undefined}
         disabled={dataToolsDisabled}
         onImport={(saved) => onConfigure({ type: "import", saved })}
       />

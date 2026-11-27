@@ -2,6 +2,7 @@ import { createTestTrainingState } from "../testing/training-state";
 import { describe, it, expect } from "vitest";
 import { defaults, record } from "../domain";
 import {
+  settle,
   reducer as reduceTraining,
   type TrainingState,
   type Action,
@@ -17,6 +18,37 @@ const reducer = (state: TrainingState, action: Action) =>
     date: () => "2026-11-10",
   });
 describe("zachowanie zadania", () => {
+  it.each([true, false])(
+    "po rundzie Zapałek uzgadnia zadanie z ustawieniami: %s",
+    (enabled) => {
+      const state = initial();
+      const latest = defaults();
+      latest.modules.multiply.enabled = enabled;
+      const next = settle(
+        state,
+        latest,
+        {
+          type: "configure",
+          date: "2026-11-27",
+          action: {
+            type: "matchResult",
+            id: "runda",
+            epoch: 0,
+            outcome: { skipped: true, corrections: 0 },
+          },
+        },
+        { random: () => 0, date: () => "2026-11-27" },
+      );
+      expect(next.settledMatch).toBe("runda");
+      if (enabled) {
+        expect(next.task).toBe(state.task);
+        expect(next.input).toBe(state.input);
+      } else {
+        expect(next.task.operation).toBe("add");
+        expect(next.input).toBe("");
+      }
+    },
+  );
   it("import unieważnia model dla zadań otwartych w pozostałych kartach", () => {
     const s = initial();
     const next = reducer(s, { type: "import", saved: defaults() });

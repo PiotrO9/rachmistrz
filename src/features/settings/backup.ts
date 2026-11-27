@@ -1,11 +1,12 @@
 import { localDate, type SavedProgress } from "../../domain";
 export async function prepareBackup(
   read: () => Promise<SavedProgress>,
-  fallback: SavedProgress,
+  fallback: SavedProgress | undefined,
 ) {
   try {
     return { progress: await read(), stale: false };
-  } catch {
+  } catch (error) {
+    if (!fallback) throw error;
     return { progress: fallback, stale: true };
   }
 }

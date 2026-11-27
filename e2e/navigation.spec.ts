@@ -251,14 +251,16 @@ test("menu mobilne: nawigacja, zamykanie i zmiana szerokości", async ({
 for (const touch of [false, true]) {
   test(`ponowne naciśnięcie selektora zamyka listę (${touch ? "dotyk" : "mysz"})`, async ({
     browser,
+    baseURL,
   }) => {
     const context = await browser.newContext({
+      baseURL,
       hasTouch: touch,
       viewport: { width: 390, height: 844 },
     });
     try {
       const page = await context.newPage();
-      await page.goto("http://127.0.0.1:4178/");
+      await page.goto("/");
       await ready(page);
       await settings(page);
       const level = page.locator("#level-subtract");

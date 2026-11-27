@@ -3,11 +3,11 @@ import { useRef, useState, type ChangeEvent } from "react";
 import { type SavedProgress } from "../../domain";
 import { parseSaved, readSaved } from "../../storage";
 export function DataTools({
-  saved,
+  fallback,
   onImport,
   disabled,
 }: {
-  saved: SavedProgress;
+  fallback: SavedProgress | undefined;
   onImport: (data: SavedProgress) => Promise<boolean>;
   disabled: boolean;
 }) {
@@ -19,7 +19,7 @@ export function DataTools({
     setWorking(true);
     setMessage("");
     try {
-      const backup = await prepareBackup(readSaved, saved);
+      const backup = await prepareBackup(readSaved, fallback);
       downloadBackup(backup.progress);
       setMessage(
         backup.stale
@@ -99,7 +99,7 @@ export function DataTools({
                   setMessage("Postęp został zaimportowany.");
                 } else
                   setMessage(
-                    "Import nie został zapisany. Obecne dane pozostają bez zmian.",
+                    "Nie udało się zapisać importu. Możesz ponownie wybrać „Zastąp obecny postęp” lub anulować import.",
                   );
               } finally {
                 setWorking(false);
@@ -111,7 +111,10 @@ export function DataTools({
           <button
             className="secondary"
             disabled={working}
-            onClick={() => setPending(null)}
+            onClick={() => {
+              setPending(null);
+              setMessage("Import anulowany.");
+            }}
           >
             Anuluj import
           </button>

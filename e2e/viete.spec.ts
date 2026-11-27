@@ -59,4 +59,7 @@ test("Viète is opt-in, accepts either order and keeps progress independently", 
     solved: 1,
     skipped: 1,
   });
+  await page.getByRole("button", { name: "Historia", exact: true }).click();
+  await expect(page.getByText("Rozwiązane: 1 · Pominięte: 1")).toBeVisible();
+  await expect(page.getByText("Jeszcze bez wyników")).toHaveCount(0);
 });

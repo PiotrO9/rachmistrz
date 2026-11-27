@@ -20,7 +20,7 @@ Node.js 22.13+ lub 24+; `npm ci`, następnie `npm run dev`. Weryfikacja: `npm ru
 
 - `npm run check` — formatowanie, ESLint (także hooki i nieobsłużone Promise), testy logiki i zapisu, TypeScript oraz build PWA.
 - `npm run format` — ujednolicenie formatowania.
-- `npx playwright install chromium`, potem `npm run build` i `npm run test:e2e` — testy Chromium bez widocznego okna. Preview uruchamia się automatycznie na porcie 4178, chyba że już działa.
+- `npx playwright install chromium`, potem `npm run build` i `npm run test:e2e` — testy Chromium bez widocznego okna. Playwright uruchamia własny preview na porcie 4178. Zajęty port zgłasza przed rozpoczęciem testów.
 
 CI wykonuje oba zestawy kontroli. Testy przeglądarki używają osobnych profili; nie zmieniają postępu w Twojej przeglądarce. Trace i zrzuty nieudanych scenariuszy trafiają do `test-results/`.
 
@@ -47,6 +47,8 @@ W Historii dziewięć kafelków pokazuje symbol, nazwę i aktualny poziom dział
 W Historii dwa rankingi porównują działania treningowe z wybranego okresu (dzisiaj, ostatnie 7 dni lub domyślnie ostatnie 30 dni) według liczby rozwiązanych zadań i odsetka rozwiązań bez poprawek wśród wszystkich prób. Podświetlenie przełącznika płynnie przesuwa się do wybranego okresu. Przy włączonym systemowym ograniczeniu ruchu zmienia pozycję od razu. Wybranie działania pokazuje wynik za dziś lub wykres dzienny dla dłuższego okresu. Wyniki z jednej lub dwóch prób są oznaczone i umieszczone na końcu rankingu skuteczności. Wykresy korzystają z dostępnych szczegółów dziennych.
 
 Historia pokazuje wyniki według działań, udział rozwiązań bez poprawek, pominięcia i zmiany poziomów (maks. 500). Szczegóły są liczone dopiero od v2; starsze sumy pozostają zachowane bez szacowania brakujących danych. Zmiana ustawień nie usuwa bieżącego zadania, dopóki jego działanie jest włączone. Zakończenie zadania rozpoczętego przed ręczną zmianą poziomu trafia do historii, lecz nie ocenia nowego modelu adaptacji. Aktualnego zadania i wpisu nie zachowujemy po przeładowaniu. Nieudana transakcja zachowuje wpis w otwartej karcie i udostępnia przycisk ponowienia. Kopię można zaimportować również po błędzie odczytu; uszkodzone dane nie są automatycznie zerowane.
+
+Po błędzie importu możesz ponownie zatwierdzić wybrany plik lub anulować import w jego podglądzie. Jeśli eksport nie może odczytać bazy, pobierze ostatni znany postęp z tej karty, o ile karta wcześniej odczytała lub zapisała dane. Przy błędzie pierwszego odczytu wyświetli komunikat i pozwoli ponowić eksport.
 
 ### Sposób liczenia i postęp adaptacji
 

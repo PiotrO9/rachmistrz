@@ -6,8 +6,8 @@ React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, 
 
 1. Gracz wpisuje `12` w zadaniu `7 + 5`. Widok zwykłego treningu przekazuje zmianę pola jako akcję `input`. [Obsługa pola odpowiedzi](../src/features/session/SessionTraining.tsx#L73)
 2. Silnik sprawdza wpis. Gdy rozpozna poprawny wynik, tworzy komendę `complete` z zadaniem, liczbą poprawek i datą. [`interpretExercise`](../src/training/engine.ts#L396)
-3. Kontroler zleca zapis. W jednej transakcji IndexedDB repozytorium odczytuje najnowszy rekord, stosuje do niego komendę i zapisuje wynik. Dzięki temu zachowuje także postęp zapisany w międzyczasie w innej karcie. [`commit`](../src/training/controller.ts#L150) · [`transact`](../src/persistence/database.ts#L34) · [`applyCommand`](../src/training/engine.ts#L455)
-4. Po zatwierdzeniu transakcji silnik losuje następne zadanie. Jeśli zapis się nie powiedzie, wpis pozostaje w polu. „Spróbuj ponownie” wysyła tę samą komendę z już policzonymi poprawkami. [`settle`](../src/training/engine.ts#L503) · [`retry`](../src/training/controller.ts#L243)
+3. Kontroler zleca zapis. W jednej transakcji IndexedDB repozytorium odczytuje najnowszy rekord, stosuje do niego komendę i zapisuje wynik. Dzięki temu zachowuje także postęp zapisany w międzyczasie w innej karcie. [`commit`](../src/training/controller.ts#L144) · [`transact`](../src/persistence/database.ts#L34) · [`applyCommand`](../src/training/engine.ts#L455)
+4. Po zatwierdzeniu transakcji silnik losuje następne zadanie. Jeśli zapis się nie powiedzie, wpis pozostaje w polu. „Spróbuj ponownie” wysyła tę samą komendę z już policzonymi poprawkami. [`settle`](../src/training/engine.ts#L503) · [`retry`](../src/training/controller.ts#L251)
 
 ## Architektura i środowisko
 
@@ -29,7 +29,7 @@ Aktualizacja zależności z 11 listopada 2026: React/React DOM 19.3.1, Vite 8.3.
 
 Historia obejmuje podsumowania dzienne, a nie każde zdarzenie, co ogranicza rozmiar zapisu. Błąd zapisu jest sygnalizowany graczowi. Brak przechowywania danych osobowych i sekretów.
 
-IndexedDB: baza `rachmistrz`, magazyn `progress`, rekord `state`. Każda odpowiedź i zmiana ustawień odczytuje najnowszy stan wewnątrz transakcji readwrite. Powiadomienia BroadcastChannel oraz storage/focus odświeżają widoki; poprawność zapisu nie zależy od dostarczenia powiadomień. Rewizje chronią widok przed spóźnionym odczytem. Poprzedni localStorage `rachmistrz:v1` jest źródłem migracji i nie jest modyfikowany. Import, po zatwierdzeniu, zastępuje rekord transakcyjnie. Limit pliku importu: 2 MB.
+IndexedDB przechowuje rekord `state` w magazynie `progress` bazy `rachmistrz`. Każda odpowiedź i zmiana ustawień odczytuje najnowszy stan wewnątrz transakcji readwrite. Powiadomienia BroadcastChannel oraz zdarzenia storage i focus wyzwalają odczyt. Kontroler odrzuca odczyt rozpoczęty przed zakończonym w tej karcie zapisem. Świeży odczyt przyjmuje również wtedy, gdy po odzyskaniu bazy numer rewizji spadł lub się powtórzył. Poprzedni localStorage `rachmistrz:v1` jest źródłem migracji. Potwierdzony import zastępuje rekord transakcyjnie. Limit pliku importu wynosi 2 MB.
 
 Zmiana poziomu/adaptacji zwiększa epokę modułu: rozpoczęte wcześniej zadania trafiają do historii, lecz nie zmieniają nowego modelu. Dane szczegółowe sprzed migracji pozostają nieznane; zachowujemy sumy i wyświetlamy „—” zamiast szacunków. Oprócz oceny dwóch kolejnych bloków adaptacja uwzględnia próbę startową i serie odpowiedzi z bieżącego materiału. Czas nie jest sygnałem adaptacji.
 
@@ -43,7 +43,9 @@ Repozytorium lokalne jest zainicjalizowane. Do publikacji wymagane są docelowe 
 
 Odpowiedź interpretujemy raz. Komenda zawiera zadanie, poprawki i datę, a transakcja stosuje ją do najnowszych danych. Nowe zadanie jest losowane po powodzeniu transakcji. Dodatkowe cyfry/Enter po rozpoczęciu zatwierdzania nie przechodzą do następnego zadania. Podczas zapisu ustawień wpis nadal się aktualizuje; ostatni wpis jest sprawdzany po zapisie, jeśli zadanie pozostało to samo.
 
-Przycisk „Spróbuj ponownie” ponawia tę samą nieudaną komendę bez ponownego naliczania poprawek. Import może zastąpić uszkodzony zapis po podglądzie i potwierdzeniu. Zablokowane otwarcie bazy nie zatruwa przyszłych prób; spóźnione połączenie jest zamykane. Błąd BroadcastChannel nie zmienia zatwierdzonego zapisu w pozorną awarię. Odmontowany widok nie otrzymuje aktualizacji, ale rozpoczęta transakcja może się zakończyć.
+Po awarii zapisu odpowiedzi lub ustawień przycisk „Spróbuj ponownie” ponawia tę samą komendę. Po udanej transakcji kontroler pamięta komendę do czasu zakończenia przejścia w silniku. Jeśli losowanie zadania zawiedzie lub widok zostanie odmontowany, kolejny odczyt kończy przejście na aktualnym rekordzie. Komenda trafia do historii tylko raz.
+
+Po nieudanym imporcie wybrany plik pozostaje w podglądzie. Ponowne zatwierdzenie pliku zleca import, a anulowanie zamyka podgląd. Eksport awaryjny korzysta z postępu karty po jej pierwszym udanym odczycie lub zapisie. Błąd powiadomienia BroadcastChannel pozostawia zatwierdzony zapis ważny. Zablokowane otwarcie bazy można ponowić, a spóźnione połączenie jest zamykane.
 
 ## Weryfikacja
 

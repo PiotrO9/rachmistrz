@@ -49,8 +49,9 @@ export function createTrainingController(
   let inFlightWrite: PendingWrite | undefined;
   // Retry reuses the interpreted command; corrections and history are never rebuilt.
   let retryableWrite: PendingWrite | undefined;
-  // A committed command must be reflected once when the view reconnects.
-  let detachedCommit: PendingWrite | undefined;
+  // A committed command may still need to advance the task or settle after reconnect.
+  let pendingSettlement: PendingWrite | undefined;
+  let completedWrites = 0;
   let failureMessage = "";
   let refreshing = false;
   let refreshRequested = false;
@@ -61,30 +62,39 @@ export function createTrainingController(
   };
   const message = (error: unknown) =>
     error instanceof Error ? error.message : "Nie udało się zapisać postępu.";
-  function acceptRead(saved: SavedProgress, initialRead: boolean) {
-    let state = snapshot.state;
-    if (detachedCommit) {
-      state = settle(
-        detachedCommit.preview,
-        saved,
-        detachedCommit.command,
-        env,
-      );
-    } else if (initialRead || saved.revision > state.saved.revision) {
+  function acceptSaved(saved: SavedProgress, initialRead: boolean) {
+    const operation = pendingSettlement;
+    let state: TrainingState;
+    if (operation) {
+      try {
+        state = settle(operation.preview, saved, operation.command, env);
+      } catch {
+        emit({
+          state: { ...operation.preview, saved },
+          initialized: true,
+          status: "error",
+          error:
+            "Postęp został zapisany. Spróbuj ponownie, aby wznowić trening.",
+        });
+        return false;
+      }
+      pendingSettlement = undefined;
+    } else {
       state = reconcile(
-        state,
+        snapshot.state,
         saved,
         { task: initialRead ? "replace" : "preserve" },
         env,
       );
     }
-    detachedCommit = undefined;
     emit({
       state,
       initialized: true,
       status: retryableWrite ? "error" : "ready",
       error: retryableWrite ? failureMessage : "",
     });
+    if (operation && !inFlightWrite) flushBufferedInput(operation);
+    return true;
   }
   async function refresh(initialRead = false): Promise<boolean> {
     if (!active) return false;
@@ -93,29 +103,25 @@ export function createTrainingController(
       return false;
     }
     const token = generation;
-    const revisionAtRead = snapshot.state.saved.revision;
+    const writesAtRead = completedWrites;
     refreshing = true;
     try {
       const saved = await port.read();
       if (!active || token !== generation) return false;
-      if (
-        snapshot.state.saved.revision !== revisionAtRead &&
-        saved.revision <= snapshot.state.saved.revision
-      )
-        return false;
+      // A recovered record may legitimately have a lower or equal revision.
+      if (completedWrites !== writesAtRead) return false;
       // A transaction can start while a read is in flight. Apply external updates after it settles.
       if (inFlightWrite) {
         refreshRequested = true;
         return false;
       }
-      acceptRead(saved, initialRead);
-      return true;
+      return acceptSaved(saved, initialRead);
     } catch (error) {
       if (
         active &&
         token === generation &&
         !inFlightWrite &&
-        snapshot.state.saved.revision === revisionAtRead
+        completedWrites === writesAtRead
       )
         emit({ status: "error", error: message(error) });
       return false;
@@ -135,48 +141,48 @@ export function createTrainingController(
     if (lastInput && snapshot.state.task === operation.preview.task)
       void dispatch(lastInput);
   }
-  function acceptCommit(operation: PendingWrite, saved: SavedProgress) {
-    if (!active) {
-      detachedCommit = operation;
-      return;
-    }
-    emit({
-      state: settle(operation.preview, saved, operation.command, env),
-      status: "ready",
-      error: "",
-      initialized: true,
-    });
-  }
   async function commit(operation: PendingWrite): Promise<boolean> {
+    const previous = snapshot;
+    const importing =
+      operation.command.type === "configure" &&
+      operation.command.action.type === "import";
     inFlightWrite = operation;
-    retryableWrite = undefined;
     emit({ state: operation.preview, status: "saving", error: "" });
-    let success = false;
     try {
-      const saved = await port.transact(
-        (latest) => applyCommand(latest, operation.command),
-        operation.command.type === "configure" &&
-          operation.command.action.type === "import",
-      );
+      let saved: SavedProgress;
+      try {
+        saved = await port.transact(
+          (latest) => applyCommand(latest, operation.command),
+          importing,
+        );
+      } catch (error) {
+        if (importing) {
+          // Only the file preview can retry a replacement. Keep any earlier failed answer.
+          if (active) emit({ status: previous.status, error: previous.error });
+          if (previous.status === "loading") refreshRequested = true;
+        } else {
+          retryableWrite = operation;
+          failureMessage = message(error);
+          if (active) emit({ status: "error", error: failureMessage });
+        }
+        return false;
+      }
+      completedWrites++;
+      retryableWrite = undefined;
+      pendingSettlement = operation;
       // Signaling is best effort and must never report an already committed write as failed.
       try {
         port.notify(saved.revision);
       } catch {
         /* Focus refresh remains available. */
       }
-      success = true;
-      acceptCommit(operation, saved);
+      if (active) acceptSaved(saved, false);
       return true;
-    } catch (error) {
-      retryableWrite = operation;
-      failureMessage = message(error);
-      if (active) emit({ status: "error", error: failureMessage });
-      return false;
     } finally {
       if (inFlightWrite === operation) inFlightWrite = undefined;
       if (active) {
         // Input typed during a settings write still belongs to the same task.
-        if (success) {
+        if (!pendingSettlement && snapshot.status === "ready") {
           flushBufferedInput(operation);
         }
         if (refreshRequested && !inFlightWrite) {
@@ -190,7 +196,7 @@ export function createTrainingController(
     if (
       !active ||
       (!snapshot.initialized && action.type !== "import") ||
-      (retryableWrite && action.type !== "import")
+      (snapshot.status === "error" && action.type !== "import")
     )
       return false;
     if (inFlightWrite) {
@@ -207,6 +213,8 @@ export function createTrainingController(
       }
       return false;
     }
+    if ((pendingSettlement || retryableWrite) && action.type !== "import")
+      return false;
     const transition = interpret(snapshot.state, action, env);
     if (transition.kind === "local") {
       if (transition.state !== snapshot.state)

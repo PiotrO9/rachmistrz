@@ -111,45 +111,11 @@ export default function App() {
             dataToolsDisabled={
               training.busy || (!training.ready && training.storageOK)
             }
+            hasSavedProgress={training.ready}
             onConfigure={training.dispatch}
           />
         ) : (
-          <>
-            {" "}
-            <HistoryView
-              saved={training.state.saved}
-              onTrain={() => setView("game")}
-            />
-            {training.state.saved.matches.history.length > 0 && (
-              <section>
-                <h2>Zapałki</h2>
-                {training.state.saved.matches.history.map((d) => (
-                  <p key={d.date}>
-                    {d.date} · Samodzielnie {d.clean} · Z pomocą {d.helped} ·
-                    Pominięte {d.skipped}
-                  </p>
-                ))}
-              </section>
-            )}
-            {saved.logarithms.solved + saved.logarithms.skipped > 0 && (
-              <section>
-                <h2>Logarytmy</h2>
-                <p>
-                  Rozwiązane: {saved.logarithms.solved} · Pominięte:{" "}
-                  {saved.logarithms.skipped}
-                </p>
-              </section>
-            )}
-            {saved.viete.solved + saved.viete.skipped > 0 && (
-              <section>
-                <h2>Wzory Viète’a</h2>
-                <p>
-                  Rozwiązane: {saved.viete.solved} · Pominięte:{" "}
-                  {saved.viete.skipped}
-                </p>
-              </section>
-            )}
-          </>
+          <HistoryView saved={saved} onTrain={() => setView("game")} />
         )}
       </main>
     </div>

@@ -25,6 +25,74 @@ async function setup() {
   };
 }
 describe("trening i asynchroniczny zapis", () => {
+  it("po awarii losowania kończy zapisaną odpowiedź bez kolejnej transakcji", async () => {
+    const { controller, port, random, saved, answer } = await setup();
+    random.mockImplementationOnce(() => {
+      throw Error("Losowanie");
+    });
+    await controller.dispatch({
+      type: "input",
+      value: answer,
+      inputType: "insertText",
+    });
+    expect(controller.getSnapshot().status).toBe("error");
+    expect(saved().history[0].solved).toBe(1);
+    expect(await controller.dispatch({ type: "skip" })).toBe(false);
+    const sequence = controller.getSnapshot().state.sequence;
+    expect(await controller.retry()).toBe(true);
+    expect(controller.getSnapshot().state.sequence).toBe(sequence + 1);
+    expect(controller.getSnapshot().state.saved.history[0].solved).toBe(1);
+    expect(port.transact).toHaveBeenCalledTimes(1);
+  });
+
+  it("globalne ponowienie po nieudanym imporcie nie zastępuje danych", async () => {
+    const { controller, port, saved } = await setup();
+    const before = saved();
+    vi.mocked(port.transact).mockRejectedValueOnce(Error("Brak miejsca"));
+    expect(
+      await controller.dispatch({
+        type: "import",
+        saved: { ...before, theme: "dark" },
+      }),
+    ).toBe(false);
+    await controller.retry();
+    expect(saved()).toEqual(before);
+    expect(port.transact).toHaveBeenCalledTimes(1);
+  });
+
+  it("nieudany import pozostawia do ponowienia wcześniejszą odpowiedź", async () => {
+    const { controller, port, answer, saved } = await setup();
+    vi.mocked(port.transact)
+      .mockRejectedValueOnce(Error("Odpowiedź"))
+      .mockRejectedValueOnce(Error("Import"));
+    await controller.dispatch({
+      type: "input",
+      value: answer,
+      inputType: "insertText",
+    });
+    await controller.dispatch({
+      type: "import",
+      saved: { ...defaults(), theme: "dark" },
+    });
+    expect(controller.getSnapshot().error).toBe("Odpowiedź");
+    expect(await controller.retry()).toBe(true);
+    expect(saved().history[0].solved).toBe(1);
+    expect(saved().theme).toBe("system");
+  });
+
+  it.each([0, 1])(
+    "przyjmuje aktualny odczyt po odzyskaniu rekordu z rewizją %i",
+    async (revision) => {
+      const { controller, external, setSaved } = await setup();
+      await controller.dispatch({ type: "theme", theme: "dark" });
+      setSaved({ ...defaults(), revision, theme: "light" });
+      external();
+      await vi.waitFor(() =>
+        expect(controller.getSnapshot().state.saved.theme).toBe("light"),
+      );
+    },
+  );
+
   it("ponawia wynik szybkiej sesji i kończy ją dopiero po zatwierdzeniu", async () => {
     const { controller, port, stop, random } = await setup();
     await controller.dispatch({

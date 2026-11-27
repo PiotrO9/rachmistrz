@@ -536,7 +536,10 @@ export function settle(
     return next;
   }
   if (command.type === "configure" && command.action.type === "matchResult")
-    return { ...preview, saved, settledMatch: command.action.id };
+    return {
+      ...reconcile(preview, saved, { task: "preserve" }, env),
+      settledMatch: command.action.id,
+    };
   if (command.type === "configure" && command.action.type === "vieteResult")
     return {
       ...reconcile(preview, saved, { task: "preserve" }, env),

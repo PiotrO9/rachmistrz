@@ -75,6 +75,7 @@ test("automatyczna odpowiedź, poprawki, zachowanie rachunku i skróty", async (
 test("cyfry poza polem trafiają do odpowiedzi bez przejmowania innych kontrolek", async ({
   page,
   browser,
+  baseURL,
 }) => {
   await page.goto("/");
   const input = await ready(page);
@@ -120,13 +121,14 @@ test("cyfry poza polem trafiają do odpowiedzi bez przejmowania innych kontrolek
   expect((await readProgress(page)).history[0].solved).toBe(1);
 
   const touch = await browser.newContext({
+    baseURL,
     hasTouch: true,
     isMobile: true,
     viewport: { width: 375, height: 667 },
   });
   try {
     const mobile = await touch.newPage();
-    await mobile.goto("http://127.0.0.1:4178/");
+    await mobile.goto("/");
     const mobileInput = await ready(mobile);
     await expect(mobileInput).not.toBeFocused();
     await mobileInput.tap();

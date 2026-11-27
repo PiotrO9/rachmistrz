@@ -10,6 +10,33 @@ import {
 import type { SettingsAction } from "../../training/engine";
 import { LevelSelect } from "./LevelSelect";
 import { Switch } from "../../ui/Switch";
+
+function describeAdaptation(progress: OperationProgress): string {
+  if (progress.startPhase === "opening")
+    return `Rozwiąż pierwsze ${ADAPTATION.blockSize} zadań bez poprawek i pominięć, aby awansować.`;
+  if (progress.startPhase === "confirm")
+    return "Awans wymaga dobrego bloku i kolejnego bloku bez poprawek ani pominięć.";
+  if (progress.level === 2 || progress.level === 3) {
+    const required =
+      progress.level === 2
+        ? ADAPTATION.levelTwoCleanRun
+        : ADAPTATION.levelThreeCleanRun;
+    const sentences = [
+      `Aby awansować szybciej, rozwiąż samodzielnie ${required} kolejnych zadań z materiału tego poziomu.`,
+    ];
+    if (progress.checkFirstPromotion)
+      sentences.push(
+        `W pierwszych ${ADAPTATION.firstPromotionWindow} zadaniach z nowego materiału ${ADAPTATION.firstPromotionErrors} odpowiedzi z poprawką lub pominięciem oznaczają powrót na poziom 1.`,
+      );
+    return sentences.join(" ");
+  }
+  if (progress.trend === 1)
+    return "Poprzedni blok był łatwy. Kolejny dobry blok może podnieść poziom.";
+  if (progress.trend === -1)
+    return "Poprzedni blok był trudny. Kolejny trudny blok może obniżyć poziom.";
+  return `Liczba kolejnych bloków o tym samym kierunku potrzebna do zmiany poziomu wynosi ${ADAPTATION.consecutiveBlocks}.`;
+}
+
 export function OperationSettings({
   operation: op,
   progress: m,
@@ -82,18 +109,7 @@ export function OperationSettings({
       {m.adaptive && m.enabled && (
         <p className="smallNote">
           Ocena poziomu: {m.block.length} / {ADAPTATION.blockSize} zadań w
-          bieżącym bloku.
-          {m.startPhase === "opening"
-            ? " Osiem pierwszych zadań bez poprawek i pominięć daje awans."
-            : m.startPhase === "confirm"
-              ? " Awans wymaga dobrego bloku i kolejnego bloku bez poprawek ani pominięć."
-              : m.level === 2 || m.level === 3
-                ? ` Seria ${m.level === 2 ? ADAPTATION.levelTwoCleanRun : ADAPTATION.levelThreeCleanRun} samodzielnych odpowiedzi na materiale tego poziomu daje awans.${m.checkFirstPromotion ? " Trzy zadania z poprawką lub pominięciem w pierwszych sześciu z nowego materiału oznaczają powrót na poziom 1." : ""}`
-                : m.trend === 1
-                  ? " Poprzedni blok był łatwy. Kolejny dobry blok może podnieść poziom."
-                  : m.trend === -1
-                    ? " Poprzedni blok był trudny. Kolejny trudny blok może obniżyć poziom."
-                    : " Do zmiany poziomu potrzebne są dwa kolejne bloki o tym samym kierunku."}
+          bieżącym bloku. {describeAdaptation(m)}
         </p>
       )}
     </div>

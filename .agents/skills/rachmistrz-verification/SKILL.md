@@ -12,7 +12,7 @@ Wszystkie ścieżki poniżej są względem katalogu głównego repozytorium. Czy
 1. Sprawdź wersję Node (`node --version`) względem `package.json` oraz zakres zmian. Nie zmieniaj globalnej instalacji Node, jeśli można użyć zgodnego środowiska lokalnego.
 2. Uruchom `npm run check` z katalogu repozytorium. Obejmuje formatowanie, lint, testy, typy i produkcyjny build PWA.
 3. Po udanym buildzie uruchom `npm run test:e2e`. Jeśli po `check` zmieniono kod aplikacji, najpierw ponów odpowiednie kontrole i build. Jeśli brakuje Chromium, zainstaluj je przez `npx playwright install chromium`.
-4. Playwright uruchamia produkcyjny `npm run preview` na porcie 4178. Jeśli korzysta z istniejącego serwera, potwierdź, że obsługuje ten projekt i aktualny build. Nie zatrzymuj obcego procesu tylko po to, aby zwolnić port. Zachowaj tryb headless i brak przejmowania fokusu.
+4. Playwright uruchamia własny produkcyjny `npm run preview` na porcie 4178. Zajęty port powoduje jawny błąd przed startem scenariuszy. Zachowaj tryb headless i pozostaw obce procesy działające.
 
 ## Dobór regresji
 
