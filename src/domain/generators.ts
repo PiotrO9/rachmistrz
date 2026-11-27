@@ -15,6 +15,7 @@ export function generate(
   operation: Operation,
   level: Level,
   random = Math.random,
+  negativeNumbers = false,
 ): Task {
   const int = (lo: number, hi: number) =>
     Math.floor(random() * (hi - lo + 1)) + lo;
@@ -67,7 +68,13 @@ export function generate(
     [a, b] = pick(productPool(operation, family));
     if (operation === "divide") a *= b;
   }
+  if (negativeNumbers && random() < 0.25) {
+    if (operation === "subtract") [a, b] = [b, a];
+    else if (operation === "add") [a, b] = [-Math.max(a, b), Math.min(a, b)];
+    else a = -a;
+  }
   return {
+    signedInput: negativeNumbers,
     operation,
     level,
     materialLevel,
@@ -88,10 +95,11 @@ export function nextTask(
   modules: SavedProgress["modules"],
   previous?: Task,
   random = Math.random,
+  negativeNumbers = false,
 ): Task {
   const active = operations.filter((op) => modules[op].enabled);
   const op = active[Math.floor(random() * active.length)] ?? "add";
-  let task = generate(op, modules[op].level, random);
+  let task = generate(op, modules[op].level, random, negativeNumbers);
   for (
     let i = 0;
     i < 10 &&
@@ -101,6 +109,6 @@ export function nextTask(
     task.b === previous.b;
     i++
   )
-    task = generate(op, modules[op].level, random);
+    task = generate(op, modules[op].level, random, negativeNumbers);
   return { ...task, epoch: modules[op].epoch ?? 0 };
 }

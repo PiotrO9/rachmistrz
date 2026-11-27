@@ -1,6 +1,6 @@
 # Plan techniczny i wdrożenie
 
-React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, precache zasobów, aktualizacja po decyzji gracza. Aktualny format danych: v5, z migracją v1–v4.
+React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, precache zasobów, aktualizacja po decyzji gracza. Aktualny format danych: v6, z migracją v1–v5.
 
 Aktualizacja zależności z 11 listopada 2026: React/React DOM 19.3.1, Vite 8.3.8, TypeScript 6.0.3 i Prettier 3.10.0. Jawny `build.target` zachowuje poprzedni zakres transformacji Vite 7: Chrome/Edge 107, Firefox 104 i Safari 16; nie oznacza to testów na każdej z tych przeglądarek. Plugin React 5.2.0 deklaruje zgodność z Vite 8. Wersja 6.3.0 powodowała konflikt opcjonalnych zależności Babel podczas instalacji, dlatego nie wymuszono jej użycia. TypeScript 7 pozostaje poza zakresem wspieranym przez typescript-eslint (`>=4.8.4 <6.1.0`). Typy Node pozostają w linii 22, zgodnie ze środowiskiem CI.
 
@@ -89,3 +89,7 @@ Rodziny procentów dobierają stawkę i wielokrotność podstawy tak, aby wynik 
 Aktualna wersja rekordu i eksportu to v4. Dodano moduły `power` i `root`, domyślnie wyłączone. Starsze rekordy v1–v3 dostają wyłączone moduły oraz zerowe liczniki nowych działań w historii przed walidacją pełnej struktury. Migracja v3 zachowuje bloki, trendy i epoki istniejących działań; v1/v2 zachowują dotychczasowy reset związany ze zmianą programu nauki. Repozytorium utrwala migrację w transakcji na najnowszym rekordzie, bez zmiany wersji bazy IndexedDB. Starszy klient odrzuca v4.
 
 Rodzina `power` w `CURRICULUM` określa zakres podstaw i wykładnik. Pierwiastki generujemy od całkowitego wyniku przez potęgowanie, bez zaokrągleń. Renderowanie używa indeksu górnego i symbolu pierwiastka, a komunikat czytnika podaje stopień pierwiastka i liczbę pod nim. Preset „Podstawowe działania” nie włącza nowych modułów.
+
+## Liczby ujemne i zapis v6 — 27 listopada 2026
+
+Migracja dodaje wyłączoną preferencję `negativeNumbers`. Generator czterech podstawowych działań po dobraniu rodziny i operandów losuje wariant ze zmianą znaku z prawdopodobieństwem 25%. Rozpoczęte zadanie pamięta, czy dopuszcza wpis z minusem. Zmiana preferencji zachowuje wpis, epokę i blok adaptacji.

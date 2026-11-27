@@ -16,7 +16,7 @@ Rachmistrz służy do spokojnego treningu liczenia w pamięci. Zadania pojawiaj�
 
 ## 4. Czy mogę ćwiczyć tylko wybrane działania, także potęgi i pierwiastki?
 
-Tak. W ustawieniach wybierz gotowy zestaw albo osobno włącz interesujące Cię działania. Co najmniej jedno musi pozostać aktywne. Domyślnie włączone są dodawanie, odejmowanie, mnożenie i dzielenie. Potęgowanie i pierwiastkowanie włączasz samodzielnie. Wszystkie zadania mają nieujemne, całkowite wyniki; dzielenie jest bez reszty, a pierwiastki są dokładne.
+Tak. W ustawieniach wybierz gotowy zestaw albo osobno włącz interesujące Cię działania. Co najmniej jedno musi pozostać aktywne. Domyślnie włączone są dodawanie, odejmowanie, mnożenie i dzielenie. Potęgowanie i pierwiastkowanie włączasz samodzielnie. Domyślnie wyniki są nieujemne. Jeśli włączysz „Liczby ujemne”, w czterech podstawowych działaniach możesz też otrzymać wynik poniżej zera. Wpisz znak minus przed cyframi. Dzielenie nadal jest bez reszty, a pierwiastki są dokładne.
 
 ## 5. Skąd aplikacja wie, kiedy zmienić mi poziom?
 

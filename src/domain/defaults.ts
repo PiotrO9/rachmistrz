@@ -13,6 +13,7 @@ export function defaults(): SavedProgress {
   return {
     version: CURRENT_PROGRESS_VERSION,
     revision: 0,
+    negativeNumbers: false,
     showSolution: false,
     theme: "system",
     changes: [],

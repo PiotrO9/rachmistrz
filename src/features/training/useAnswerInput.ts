@@ -6,6 +6,7 @@ import {
 } from "react";
 
 interface Options {
+  signedInput: boolean;
   sequence: number;
   revealed?: boolean;
   canInteract: boolean;
@@ -15,6 +16,7 @@ interface Options {
 }
 
 export function useAnswerInput({
+  signedInput,
   sequence,
   revealed,
   canInteract,
@@ -39,7 +41,7 @@ export function useAnswerInput({
         event.ctrlKey ||
         event.metaKey ||
         event.altKey ||
-        !/^[0-9]$/.test(event.key) ||
+        !(signedInput ? /^[0-9−-]$/ : /^[0-9]$/).test(event.key) ||
         event.target === field
       )
         return;
@@ -58,7 +60,7 @@ export function useAnswerInput({
     };
     window.addEventListener("keydown", captureDigit);
     return () => window.removeEventListener("keydown", captureDigit);
-  }, [canInteract, busy, revealed, onInput]);
+  }, [canInteract, busy, revealed, onInput, signedInput]);
 
   return {
     input,

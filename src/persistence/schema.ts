@@ -12,7 +12,7 @@ import {
 import { defaults } from "../domain/defaults";
 import { ADAPTATION } from "../domain/config";
 export type PreviousSaved = Omit<SavedProgress, "version"> & {
-  version: 2 | 3 | 4;
+  version: 2 | 3 | 4 | 5;
 };
 export interface LegacySaved {
   version: 1;
@@ -135,6 +135,7 @@ export function validateStored(
       x.version !== 2 &&
       x.version !== 3 &&
       x.version !== 4 &&
+      x.version !== 5 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");
@@ -151,7 +152,10 @@ export function validateStored(
     throw new SavedDataError("Szczegóły historii nie zgadzają się z sumami.");
   if (x.version === 1)
     return { version: 1, modules: x.modules, history: x.history };
+  const negativeNumbers =
+    x.version === CURRENT_PROGRESS_VERSION ? x.negativeNumbers : false;
   if (
+    typeof negativeNumbers !== "boolean" ||
     !isNonNegativeInteger(x.revision) ||
     typeof x.showSolution !== "boolean" ||
     (x.theme !== undefined &&
@@ -166,6 +170,7 @@ export function validateStored(
     revision: x.revision,
     modules: x.modules,
     history: x.history,
+    negativeNumbers,
     showSolution: x.showSolution,
     theme: x.theme ?? "system",
     changes: x.changes,

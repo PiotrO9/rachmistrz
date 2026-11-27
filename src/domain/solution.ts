@@ -27,5 +27,17 @@ const strategies: Record<Operation, (task: Task) => Solution> = {
   }),
 };
 export function explainSolution(task: Task): Solution {
+  if (task.operation === "multiply" && task.a < 0) {
+    const positive = explainMultiplication({
+      ...task,
+      a: -task.a,
+      answer: -task.answer,
+    });
+    return {
+      explanation:
+        "Pomnóż wartości bezwzględne. Czynniki mają różne znaki, więc wynik jest ujemny.",
+      steps: [...positive.steps, `(${task.a}) × ${task.b} = ${task.answer}`],
+    };
+  }
   return strategies[task.operation](task);
 }

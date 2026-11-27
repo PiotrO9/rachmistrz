@@ -36,7 +36,7 @@ Jasny, minimalistyczny interfejs, dużo pustej przestrzeni, duże cyfry. Robocza
 
 Późniejsze ustalenie — 12 listopada 2026: cyfry wpisane poza polem w widoku treningu automatycznie kierują fokus i wpis do odpowiedzi. Pole jest pomijane przez Tab i nie fokusuje się kliknięciem myszy; dotyk nadal otwiera klawiaturę. Enter/Spacja pomijają zadanie tylko w polu odpowiedzi.
 
-Ułamki, potęgi i liczby ujemne. Poza zakresem pierwszej wersji: konta, ranking publiczny, backend, płatności.
+Ułamki i potęgi. Poza zakresem pierwszej wersji: konta, ranking publiczny, backend, płatności.
 
 ## Późniejsza zmiana: balans poziomów — 12 listopada 2026
 
@@ -59,3 +59,7 @@ W ustawieniach można włączyć **Procenty**. Gracz oblicza procent danej liczb
 ## Późniejsza zmiana: działania opcjonalne — 12 listopada 2026
 
 Potęgowanie i pierwiastkowanie wchodzą do zakresu jako osobno włączane działania w ustawieniach. Domyślnie pozostają wyłączone, także po migracji. Używamy dodatnich podstaw, wykładników 2–4 i dokładnych całkowitych pierwiastków. Każde działanie ma pięć poziomów, własną adaptację i historię. Zestaw podstawowy nadal obejmuje tylko cztery wcześniejsze działania.
+
+## Późniejsza zmiana — 27 listopada 2026
+
+Opcja „Liczby ujemne”, domyślnie wyłączona, dopuszcza ujemne wyniki w czterech podstawowych działaniach. Zachowujemy osobny poziom i adaptację każdego działania. Przełączenie opcji dotyczy kolejnych zadań.

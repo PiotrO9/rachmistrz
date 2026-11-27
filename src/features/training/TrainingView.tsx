@@ -34,6 +34,7 @@ export function TrainingView({
   onSkip,
 }: TrainingViewProps) {
   const answerInput = useAnswerInput({
+    signedInput: !!state.task.signedInput,
     sequence: state.sequence,
     revealed: state.revealed,
     canInteract,
@@ -95,8 +96,8 @@ export function TrainingView({
             value={state.input}
             placeholder="?"
             type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
+            inputMode={state.task.signedInput ? "text" : "numeric"}
+            pattern={state.task.signedInput ? "-?[0-9]*" : "[0-9]*"}
             autoComplete="off"
             spellCheck={false}
             onChange={(e) =>

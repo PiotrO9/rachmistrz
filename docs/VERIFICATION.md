@@ -190,3 +190,9 @@ Cloudflare Wrangler sprawdzony: brak zalogowanego konta. Wdrożenie publiczne ni
 - Node 22.23.5, `npm run check`: formatowanie, lint, 138/138 testów, TypeScript i produkcyjny build PWA przeszły. Sprawdzono całkowite wyniki i podpowiedzi na pięciu poziomach oraz migrację v4 z zachowaniem postępu pierwiastków.
 - Po buildzie `npm run test:e2e -- --workers=4`: 17/17 scenariuszy Chromium headless. Sprawdzono start z wyłączonymi procentami, ręczne włączenie, 16 poprawnych odpowiedzi, niezależny awans i zapis historii po przeładowaniu. Przeszły również testy offline i aktualizacji PWA.
 - Balans trudności wymaga oceny podczas gry. Nie testowano na fizycznym telefonie, w Safari ani z czytnikiem ekranu.
+
+## Liczby ujemne — 27 listopada 2026
+
+- `npm run check` na Node 22: formatowanie, lint, 141/141 testów, TypeScript i build produkcyjny przeszły. Sprawdzono generowanie dla wszystkich poziomów, znak wyniku, migrację v5 oraz zachowanie bloku adaptacji.
+- Po buildzie `npm run test:e2e -- --workers=4`: 18/18 scenariuszy Chromium headless. Nowy scenariusz obejmuje przełącznik, przeładowanie, wpisanie minusa spoza pola, dokończenie zadania po wyłączeniu opcji oraz zapis wyniku do historii mnożenia.
+- Nie sprawdzano klawiatury ekranowej na fizycznym telefonie ani Safari.

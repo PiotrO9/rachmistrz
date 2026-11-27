@@ -72,6 +72,26 @@ export function SettingsView({
           ]}
         />
       </div>
+      <div className="solutionSetting">
+        <div>
+          <h2>Liczby ujemne</h2>
+          <p>
+            Ćwicz także ujemne wyniki w dodawaniu, odejmowaniu, mnożeniu i
+            dzieleniu.
+          </p>
+        </div>
+        <Switch
+          label="Liczby ujemne"
+          checked={saved.negativeNumbers}
+          disabled={controlsDisabled}
+          onChange={() =>
+            void onConfigure({
+              type: "negativeNumbers",
+              enabled: !saved.negativeNumbers,
+            })
+          }
+        />
+      </div>
       <div className="modules">
         {operations.map((op) => (
           <OperationSettings

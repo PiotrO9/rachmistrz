@@ -26,6 +26,7 @@ export interface TrainingState {
 }
 export type SettingsAction =
   | { type: "preset"; active: Operation[] }
+  | { type: "negativeNumbers"; enabled: boolean }
   | { type: "solution"; enabled: boolean }
   | { type: "theme"; theme: Theme }
   | { type: "import"; saved: SavedProgress }
@@ -60,7 +61,7 @@ export function createState(
 ): TrainingState {
   return {
     saved,
-    task: nextTask(saved.modules, undefined, env.random),
+    task: nextTask(saved.modules, undefined, env.random, saved.negativeNumbers),
     input: "",
     corrections: 0,
     editing: false,
@@ -73,6 +74,8 @@ export function configure(
   date: string,
 ): SavedProgress {
   if (action.type === "import") return importProgress(saved, action.saved);
+  if (action.type === "negativeNumbers")
+    return { ...saved, negativeNumbers: action.enabled };
   if (action.type === "solution")
     return { ...saved, showSolution: action.enabled };
   if (action.type === "theme") return { ...saved, theme: action.theme };
@@ -132,7 +135,12 @@ export function reconcile(
   return {
     ...state,
     saved,
-    task: nextTask(saved.modules, state.task, env.random),
+    task: nextTask(
+      saved.modules,
+      state.task,
+      env.random,
+      saved.negativeNumbers,
+    ),
     input: "",
     corrections: 0,
     editing: false,
@@ -154,21 +162,22 @@ export function interpret(
         : state,
     };
   if (action.type === "input") {
-    if (state.revealed || !/^\d{0,9}$/.test(action.value))
-      return { kind: "local", state };
+    const value = action.value.replace(/^−/, "-");
+    const valid = state.task.signedInput ? /^-?\d{0,9}$/ : /^\d{0,9}$/;
+    if (state.revealed || !valid.test(value)) return { kind: "local", state };
     const change = correction(
       state.input,
-      action.value,
+      value,
       state.editing,
       action.inputType,
     );
     const preview = {
       ...state,
-      input: action.value,
+      input: value,
       corrections: state.corrections + change.increment,
       editing: change.editing,
     };
-    if (action.value !== "" && Number(action.value) === state.task.answer)
+    if (value !== "" && Number(value) === state.task.answer)
       return {
         kind: "commit",
         preview,
