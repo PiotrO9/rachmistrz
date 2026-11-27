@@ -1,13 +1,49 @@
 import { test, expect } from "@playwright/test";
 import { ready, settings, readProgress, answer } from "./helpers";
 
+test("procenty: ręczne włączenie i niezależny awans po dwóch blokach", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await ready(page);
+  await settings(page);
+  await page
+    .getByRole("switch", { name: "Włącz procenty", exact: true })
+    .click();
+  for (const other of ["dodawanie", "odejmowanie", "mnożenie", "dzielenie"]) {
+    await page
+      .getByRole("switch", { name: `Włącz ${other}`, exact: true })
+      .click();
+  }
+  await page.getByRole("button", { name: "Trening", exact: true }).click();
+  for (let i = 0; i < 16; i++) {
+    const input = await ready(page);
+    const equation = page.locator(".equation");
+    const rate = await equation.locator(".firstOperand").innerText();
+    expect(rate).toMatch(/^\d+%$/);
+    const base = Number(await equation.locator(".secondOperand").innerText());
+    await input.fill(String((parseInt(rate, 10) * base) / 100));
+    await expect(input).toHaveValue("");
+  }
+  await page.reload();
+  await ready(page);
+  const saved = await readProgress(page);
+  expect(saved.modules.percent).toMatchObject({
+    enabled: true,
+    adaptive: true,
+    level: 2,
+  });
+  expect(saved.history[0].details?.percent.clean).toBe(16);
+  expect(saved.modules.add.level).toBe(1);
+});
+
 test("opcjonalne działania: włączenie, odpowiedź, trwałość i wyłączenie", async ({
   page,
 }) => {
   await page.goto("/");
   await ready(page);
   await settings(page);
-  for (const name of ["potęgowanie", "pierwiastkowanie"]) {
+  for (const name of ["potęgowanie", "pierwiastkowanie", "procenty"]) {
     await expect(
       page.getByRole("switch", { name: `Włącz ${name}`, exact: true }),
     ).not.toBeChecked();

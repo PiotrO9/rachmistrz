@@ -7,7 +7,15 @@ const legacyDay: Day = {
   solved: 10,
   skipped: 2,
   corrections: 3,
-  modules: { add: 12, subtract: 0, multiply: 0, divide: 0, power: 0, root: 0 },
+  modules: {
+    add: 12,
+    subtract: 0,
+    multiply: 0,
+    divide: 0,
+    power: 0,
+    root: 0,
+    percent: 0,
+  },
 };
 
 it("zachowuje dawne sumy, a brak szczegółów pokazuje jako nieznany", () => {
@@ -30,6 +38,7 @@ it("liczy jakość tylko z dostępnych szczegółów i filtruje działania", () 
       multiply: { solved: 0, skipped: 0, clean: 0, corrections: 0 },
       power: { solved: 0, skipped: 0, clean: 0, corrections: 0 },
       root: { solved: 0, skipped: 0, clean: 0, corrections: 0 },
+      percent: { solved: 0, skipped: 0, clean: 0, corrections: 0 },
       divide: { solved: 0, skipped: 0, clean: 0, corrections: 0 },
     },
   };

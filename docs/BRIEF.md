@@ -36,7 +36,7 @@ Jasny, minimalistyczny interfejs, dużo pustej przestrzeni, duże cyfry. Robocza
 
 Późniejsze ustalenie — 12 listopada 2026: cyfry wpisane poza polem w widoku treningu automatycznie kierują fokus i wpis do odpowiedzi. Pole jest pomijane przez Tab i nie fokusuje się kliknięciem myszy; dotyk nadal otwiera klawiaturę. Enter/Spacja pomijają zadanie tylko w polu odpowiedzi.
 
-Ułamki, procenty, potęgi i liczby ujemne. Poza zakresem pierwszej wersji: konta, ranking publiczny, backend, płatności.
+Ułamki, potęgi i liczby ujemne. Poza zakresem pierwszej wersji: konta, ranking publiczny, backend, płatności.
 
 ## Późniejsza zmiana: balans poziomów — 12 listopada 2026
 
@@ -51,6 +51,10 @@ Historyczna tabela powyżej opisuje pierwszy zakres. Zastępujemy go pięcioma p
 | 5      | Łańcuchy przeniesień i pożyczki przez zero    | Ogólne iloczyny dwucyfrowe                      | Trudniejsze dzielniki dwucyfrowe |
 
 Składniki dodawania/odejmowania nie przekraczają 999, podobnie dzielna. Około 20% zadań na poziomach 2–5 stanowią powtórki poprzedniego poziomu. Progi adaptacji i zasady treningu pozostają zachowane. Zapis v3 migruje historię i ustawienia v1/v2 oraz jednorazowo resetuje bloki/trendy i zwiększa epoki. Odczucie balansu wymaga dalszej oceny podczas gry.
+
+## Późniejsza zmiana: procenty — 27 listopada 2026
+
+W ustawieniach można włączyć **Procenty**. Gracz oblicza procent danej liczby (np. 15% z 80) i wpisuje wynik całkowity. Moduł startuje wyłączony, również po migracji. Ma pięć poziomów i własną adaptację: od połowy i dziesiątej części liczby przez ćwiartki i wielokrotności 5% po mniej typowe stawki, np. 28% z 175.
 
 ## Późniejsza zmiana: działania opcjonalne — 12 listopada 2026
 

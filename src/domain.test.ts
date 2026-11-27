@@ -37,6 +37,7 @@ describe("generatory", () => {
           }
           if (op === "power") expect(t.answer).toBe(t.a ** t.b);
           if (op === "root") expect(t.answer ** t.b).toBe(t.a);
+          if (op === "percent") expect(t.answer * 100).toBe(t.a * t.b);
           if (op === "divide") {
             expect(t.b).toBeGreaterThan(0);
             expect(t.a % t.b).toBe(0);

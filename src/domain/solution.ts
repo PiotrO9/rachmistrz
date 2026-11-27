@@ -5,6 +5,11 @@ import { explainDivision } from "./solutions/division";
 import { explainMultiplication } from "./solutions/multiplication";
 export type { Solution } from "./solutions/types";
 const strategies: Record<Operation, (task: Task) => Solution> = {
+  percent: ({ a, b, answer }) => ({
+    explanation:
+      "Procent to jedna setna. Pomnóż liczbę przez podaną stawkę procentową i podziel wynik przez 100.",
+    steps: [`${b} × ${a} = ${b * a}`, `${b * a} ÷ 100 = ${answer}`],
+  }),
   add: explainAddition,
   subtract: explainSubtraction,
   multiply: explainMultiplication,

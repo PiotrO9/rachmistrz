@@ -31,6 +31,12 @@ export type Family = { id: string; weight: number } & (
       zeroAt?: number;
     }
   | { kind: "nearHundred" }
+  | {
+      kind: "percent";
+      rates: readonly number[];
+      baseStep: number;
+      multiples: Interval;
+    }
   | { kind: "power"; base: Interval; exponent: number }
   | {
       kind: "product";
@@ -277,6 +283,73 @@ export const CURRICULUM: Record<
       ],
     },
   ],
+  percent: [
+    {
+      description: "Połowa i dziesiąta część · np. 50% z 80",
+      families: [
+        {
+          kind: "percent",
+          id: "percent-1",
+          weight: 1,
+          rates: [10, 50],
+          baseStep: 10,
+          multiples: [2, 16],
+        },
+      ],
+    },
+    {
+      description: "Ćwiartki · np. 25% z 64",
+      families: [
+        {
+          kind: "percent",
+          id: "percent-2",
+          weight: 1,
+          rates: [25, 75],
+          baseStep: 4,
+          multiples: [3, 38],
+        },
+      ],
+    },
+    {
+      description: "Wielokrotności 5% · np. 15% z 80",
+      families: [
+        {
+          kind: "percent",
+          id: "percent-3",
+          weight: 1,
+          rates: [5, 15, 35, 45],
+          baseStep: 20,
+          multiples: [3, 28],
+        },
+      ],
+    },
+    {
+      description: "Procenty powyżej połowy · np. 85% z 240",
+      families: [
+        {
+          kind: "percent",
+          id: "percent-4",
+          weight: 1,
+          rates: [55, 65, 85, 95],
+          baseStep: 20,
+          multiples: [6, 35],
+        },
+      ],
+    },
+    {
+      description: "Mniej typowe procenty · np. 28% z 175",
+      families: [
+        {
+          kind: "percent",
+          id: "percent-5",
+          weight: 1,
+          rates: [12, 24, 28, 36, 44, 48],
+          baseStep: 25,
+          multiples: [4, 36],
+        },
+      ],
+    },
+  ],
   root: [
     {
       description: "Pierwiastek stopnia 2 · wyniki 2–10",
@@ -344,6 +417,7 @@ export const labels: Record<Operation, string> = {
   divide: "Dzielenie",
   power: "Potęgowanie",
   root: "Pierwiastkowanie",
+  percent: "Procenty",
 };
 export const symbols: Record<Operation, string> = {
   add: "+",
@@ -352,6 +426,7 @@ export const symbols: Record<Operation, string> = {
   divide: "÷",
   power: "xⁿ",
   root: "√",
+  percent: "%",
 };
 export const PRESETS: { name: string; active: Operation[] }[] = [
   {

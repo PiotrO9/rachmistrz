@@ -11,7 +11,9 @@ import {
 } from "../domain/types";
 import { defaults } from "../domain/defaults";
 import { ADAPTATION } from "../domain/config";
-export type PreviousSaved = Omit<SavedProgress, "version"> & { version: 2 | 3 };
+export type PreviousSaved = Omit<SavedProgress, "version"> & {
+  version: 2 | 3 | 4;
+};
 export interface LegacySaved {
   version: 1;
   modules: SavedProgress["modules"];
@@ -80,15 +82,31 @@ const isLevelChange = (x: unknown): x is LevelChange =>
 export function validateStored(
   x: unknown,
 ): SavedProgress | PreviousSaved | LegacySaved {
-  if (isRecord(x) && (x.version === 1 || x.version === 2 || x.version === 3)) {
+  if (
+    isRecord(x) &&
+    (x.version === 1 || x.version === 2 || x.version === 3 || x.version === 4)
+  ) {
     const initial = defaults();
+    const added =
+      x.version === 4
+        ? (["percent"] as const)
+        : (["power", "root", "percent"] as const);
+    const newModules = Object.fromEntries(
+      added.map((op) => [op, initial.modules[op]]),
+    );
+    const newCounts = Object.fromEntries(added.map((op) => [op, 0]));
+    const newStats = Object.fromEntries(
+      added.map((op) => [
+        op,
+        { solved: 0, skipped: 0, corrections: 0, clean: 0 },
+      ]),
+    );
     x = {
       ...x,
       modules: isRecord(x.modules)
         ? {
             ...x.modules,
-            power: initial.modules.power,
-            root: initial.modules.root,
+            ...newModules,
           }
         : x.modules,
       history: Array.isArray(x.history)
@@ -97,23 +115,12 @@ export function validateStored(
               ? {
                   ...day,
                   modules: isRecord(day.modules)
-                    ? { ...day.modules, power: 0, root: 0 }
+                    ? { ...day.modules, ...newCounts }
                     : day.modules,
                   details: isRecord(day.details)
                     ? {
                         ...day.details,
-                        power: {
-                          solved: 0,
-                          skipped: 0,
-                          corrections: 0,
-                          clean: 0,
-                        },
-                        root: {
-                          solved: 0,
-                          skipped: 0,
-                          corrections: 0,
-                          clean: 0,
-                        },
+                        ...newStats,
                       }
                     : day.details,
                 }
@@ -127,6 +134,7 @@ export function validateStored(
     (x.version !== 1 &&
       x.version !== 2 &&
       x.version !== 3 &&
+      x.version !== 4 &&
       x.version !== CURRENT_PROGRESS_VERSION)
   )
     throw new SavedDataError("Nieobsługiwany format danych.");

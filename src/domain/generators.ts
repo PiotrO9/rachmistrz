@@ -32,6 +32,19 @@ export function generate(
     families.find((item) => (weight -= item.weight) < 0) ??
     families[families.length - 1];
   let a: number, b: number;
+  if (family.kind === "percent") {
+    a = pick(family.rates);
+    b = family.baseStep * int(...family.multiples);
+    return {
+      operation,
+      level,
+      materialLevel,
+      familyId: family.id,
+      a,
+      b,
+      answer: (a * b) / 100,
+    };
+  }
   if (family.kind === "power") {
     const base = int(...family.base);
     b = family.exponent;

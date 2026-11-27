@@ -10,6 +10,7 @@ const spoken = {
   divide: "podzielić przez",
   power: "do potęgi",
   root: "pierwiastek stopnia",
+  percent: "procent z",
 };
 interface TrainingViewProps {
   state: Pick<
@@ -53,7 +54,7 @@ export function TrainingView({
       <div className="exercise">
         <div
           className={`equation ${state.task.operation === "power" || state.task.operation === "root" ? "unaryEquation" : ""}`}
-          aria-label={`${state.task.a} ${state.task.operation === "power" ? "^" : symbols[state.task.operation]} ${state.task.b}`}
+          aria-label={`${state.task.a} ${state.task.operation === "power" ? "^" : state.task.operation === "percent" ? spoken.percent : symbols[state.task.operation]} ${state.task.b}`}
         >
           {state.task.operation === "root" ? (
             <span className="radical">
@@ -67,8 +68,15 @@ export function TrainingView({
             </span>
           ) : (
             <>
-              <span className="firstOperand">{state.task.a}</span>
-              <span className="operator">{symbols[state.task.operation]}</span>
+              <span className="firstOperand">
+                {state.task.a}
+                {state.task.operation === "percent" && "%"}
+              </span>
+              <span className="operator">
+                {state.task.operation === "percent"
+                  ? "z"
+                  : symbols[state.task.operation]}
+              </span>
               <span className="secondOperand">{state.task.b}</span>
             </>
           )}

@@ -1,6 +1,6 @@
 # Plan techniczny i wdrożenie
 
-React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, precache zasobów, aktualizacja po decyzji gracza. Aktualny format danych: v3, z migracją v1 i v2.
+React + TypeScript + Vite. CSS z lokalnym fontem Manrope. PWA: vite-plugin-pwa, precache zasobów, aktualizacja po decyzji gracza. Aktualny format danych: v5, z migracją v1–v4.
 
 Aktualizacja zależności z 11 listopada 2026: React/React DOM 19.3.1, Vite 8.3.8, TypeScript 6.0.3 i Prettier 3.10.0. Jawny `build.target` zachowuje poprzedni zakres transformacji Vite 7: Chrome/Edge 107, Firefox 104 i Safari 16; nie oznacza to testów na każdej z tych przeglądarek. Plugin React 5.2.0 deklaruje zgodność z Vite 8. Wersja 6.3.0 powodowała konflikt opcjonalnych zależności Babel podczas instalacji, dlatego nie wymuszono jej użycia. TypeScript 7 pozostaje poza zakresem wspieranym przez typescript-eslint (`>=4.8.4 <6.1.0`). Typy Node pozostają w linii 22, zgodnie ze środowiskiem CI.
 
@@ -79,6 +79,10 @@ Rodziny w `config.ts` mają jawne ograniczenia (`bridgeToTwenty`, `zeroAt`, `exc
 `CURRENT_PROGRESS_VERSION` określa aktualną wersję zapisu. Migracje mają osobne kroki v1 → v2 i v2 → v3, po których wykonywana jest normalizacja kopii danych. `migrateStored` zwraca stan i informację o zmianie wersji; repozytorium używa jej do utrwalenia migracji w transakcji czytającej najnowszy rekord. Normalizacja v3 nie resetuje adaptacji ani epok. Usunięto testowy helper `decode`, który ukrywał błędy danych — `parseSaved` zgłasza błędny format. Format rekordu nadal wynosi v3, a wersja bazy IndexedDB pozostaje 1.
 
 Testowy `readRawProgress` zwraca rzeczywisty rekord bez konwersji. `readProgress` waliduje go i wymaga utrwalonego v3, nie uruchamia migracji. Test aktualizacji PWA porównuje surowe rekordy.
+
+## Procenty i zapis v5 — 27 listopada 2026
+
+Rodziny procentów dobierają stawkę i wielokrotność podstawy tak, aby wynik był całkowity. Moduł korzysta ze wspólnej adaptacji i powtórek. Migracja v4 dodaje wyłączony moduł oraz zerowe liczniki procentów, zachowując ustawienia i postęp sześciu wcześniejszych działań. Starsze formaty przechodzą dotychczasową migrację z uzupełnieniem procentów.
 
 ## Opcjonalne działania i zapis v4 — 12 listopada 2026
 

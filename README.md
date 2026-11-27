@@ -30,7 +30,7 @@ Poprawny wynik automatycznie zmienia zadanie. Błędny pozostaje do ręcznej kor
 
 Każde działanie oceniamy osobno w blokach po 8 zadań. Dwa kolejne dobre bloki (minimum 7 odpowiedzi bez poprawek i zero pominięć) podnoszą poziom. Dwa kolejne trudne bloki (minimum 3 pominięcia, 5 poprawianych zadań lub 8 poprawek) obniżają go. Neutralny blok przerywa serię. Granice 1–5. Czas nie wpływa na poziom. Seria kasowania i ponownego wpisywania liczy się jako jedna poprawka; dopisywanie cyfr nie jest błędem. To przybliżenie obejmujące literówki.
 
-Historia dzienna (maks. 365 dni aktywności), ustawienia i adaptacja zapisują się transakcyjnie w IndexedDB, format v4. Format v3 jest migrowany z zachowaniem dotychczasowej adaptacji i dodaniem wyłączonych modułów potęgowania i pierwiastkowania. Formaty v1 i v2 są migrowane automatycznie: historia, motyw i numery poziomów pozostają zachowane, a bloki i trendy adaptacji są jednorazowo zerowane. Starsze karty po migracji wymagają aktualizacji. Zapis v1 z localStorage jest migrowany automatycznie i pozostaje nietknięty jako źródło migracji. Karty tej samej przeglądarki synchronizują się, a transakcje zapobiegają utracie równoczesnych odpowiedzi. Brak synchronizacji między urządzeniami — służą do tego eksport/import pliku JSON w ustawieniach. Import wymaga podglądu i potwierdzenia zastąpienia danych.
+Historia dzienna (maks. 365 dni aktywności), ustawienia i adaptacja zapisują się transakcyjnie w IndexedDB, format v5. Format v4 jest migrowany z dodaniem wyłączonych procentów. Format v3 jest migrowany z zachowaniem dotychczasowej adaptacji i dodaniem wyłączonych modułów potęgowania i pierwiastkowania. Formaty v1 i v2 są migrowane automatycznie: historia, motyw i numery poziomów pozostają zachowane, a bloki i trendy adaptacji są jednorazowo zerowane. Starsze karty po migracji wymagają aktualizacji. Zapis v1 z localStorage jest migrowany automatycznie i pozostaje nietknięty jako źródło migracji. Karty tej samej przeglądarki synchronizują się, a transakcje zapobiegają utracie równoczesnych odpowiedzi. Brak synchronizacji między urządzeniami — służą do tego eksport/import pliku JSON w ustawieniach. Import wymaga podglądu i potwierdzenia zastąpienia danych.
 
 Historia pokazuje wyniki według działań, udział rozwiązań bez poprawek, pominięcia i zmiany poziomów (maks. 500). Szczegóły są liczone dopiero od v2; starsze sumy pozostają zachowane bez szacowania brakujących danych. Zmiana ustawień nie usuwa bieżącego zadania, dopóki jego działanie jest włączone. Zakończenie zadania rozpoczętego przed ręczną zmianą poziomu trafia do historii, lecz nie ocenia nowego modelu adaptacji. Aktualnego zadania i wpisu nie zachowujemy po przeładowaniu. Nieudana transakcja zachowuje wpis w otwartej karcie i udostępnia przycisk ponowienia. Kopię można zaimportować również po błędzie odczytu; uszkodzone dane nie są automatycznie zerowane.
 
@@ -63,9 +63,11 @@ Ustawienia pokazują postęp bieżącego bloku i kierunek poprzedniej oceny. Pro
 
 ## Dalszy rozwój
 
-Liczby ujemne, ułamki i procenty. Generator oraz reguły poziomów dodawaj niezależnie od widoku gry. Reguły adaptacji są punktem wyjścia do oceny w praktyce.
+Liczby ujemne i ułamki. Generator oraz reguły poziomów dodawaj niezależnie od widoku gry. Reguły adaptacji są punktem wyjścia do oceny w praktyce.
 
 ## Opcjonalne działania
+
+W ustawieniach można włączyć **Procenty**. Gracz oblicza procent danej liczby (np. 15% z 80) i wpisuje wynik całkowity. Moduł startuje wyłączony, również po migracji. Ma pięć poziomów i własną adaptację: od połowy i dziesiątej części liczby przez ćwiartki i wielokrotności 5% po mniej typowe stawki, np. 28% z 175.
 
 W ustawieniach można osobno włączyć potęgowanie i pierwiastkowanie. Domyślnie są wyłączone, również po aktualizacji. Zestaw „Podstawowe działania” obejmuje cztery dotychczasowe działania. Nowe działania mają własne poziomy i adaptację; pierwiastki zawsze mają całkowity wynik. Poziomy obejmują kwadraty podstaw 2–10, kwadraty 11–20, sześciany 2–10, kwadraty 21–30 oraz czwarte potęgi 2–6 (dla pierwiastków są to zakresy wyników).
 

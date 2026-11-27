@@ -184,3 +184,9 @@ Cloudflare Wrangler sprawdzony: brak zalogowanego konta. Wdrożenie publiczne ni
 - Usunięto przycisk instalacji z nagłówka i menu mobilnego, instrukcję instalacji oraz przechwytywanie `beforeinstallprompt`. Instalacja pozostaje po stronie przeglądarki. Obsługa aktualizacji PWA pozostaje aktywna. Dostosowano test pętli fokusu do trzech pozycji menu.
 - `npm run check` przez `npm exec --yes --package=node@22`: formatowanie, lint, 127/127 testów, TypeScript i build PWA przeszły. Następnie `npm run test:e2e -- --workers=4` w tym samym środowisku: 16/16 testów Chromium headless, w tym nawigacja, układy mobilne, offline i aktualizacja PWA.
 - Nie sprawdzano instalacji na fizycznym urządzeniu ani w Safari. Nie publikowano aplikacji.
+
+## Procenty i migracja v5 — 27 listopada 2026
+
+- Node 22.23.5, `npm run check`: formatowanie, lint, 138/138 testów, TypeScript i produkcyjny build PWA przeszły. Sprawdzono całkowite wyniki i podpowiedzi na pięciu poziomach oraz migrację v4 z zachowaniem postępu pierwiastków.
+- Po buildzie `npm run test:e2e -- --workers=4`: 17/17 scenariuszy Chromium headless. Sprawdzono start z wyłączonymi procentami, ręczne włączenie, 16 poprawnych odpowiedzi, niezależny awans i zapis historii po przeładowaniu. Przeszły również testy offline i aktualizacji PWA.
+- Balans trudności wymaga oceny podczas gry. Nie testowano na fizycznym telefonie, w Safari ani z czytnikiem ekranu.

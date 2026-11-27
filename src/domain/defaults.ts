@@ -23,6 +23,7 @@ export function defaults(): SavedProgress {
       divide: module(),
       power: { ...module(), enabled: false },
       root: { ...module(), enabled: false },
+      percent: { ...module(), enabled: false },
     },
     history: [],
   };
